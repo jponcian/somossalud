@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Especialista\DisponibilidadController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,15 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcion
     return view('panel.clinica');
 })->name('panel.clinica');
 
+Route::middleware(['auth', 'verified', 'role:especialista'])
+    ->prefix('especialista')
+    ->name('especialista.')
+    ->group(function () {
+        Route::get('horarios', [DisponibilidadController::class, 'index'])->name('horarios.index');
+        Route::post('horarios', [DisponibilidadController::class, 'store'])->name('horarios.store');
+        Route::delete('horarios/{disponibilidad}', [DisponibilidadController::class, 'destroy'])->name('horarios.destroy');
+    });
+
 Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica'])
     ->prefix('admin')
     ->name('admin.')
@@ -38,9 +48,22 @@ Route::middleware('auth')->group(function () {
         ->name('suscripcion.show');
     Route::post('/suscripcion/pagar', [\App\Http\Controllers\SuscripcionController::class, 'paySandbox'])
         ->name('suscripcion.pagar');
+    Route::post('/suscripcion/reportar', [\App\Http\Controllers\SuscripcionController::class, 'reportarPago'])
+        ->name('suscripcion.reportar');
+    Route::get('/suscripcion/carnet', [\App\Http\Controllers\SuscripcionController::class, 'carnet'])
+        ->name('suscripcion.carnet');
 
     // Rutas para citas (resource). El controlador protegerá creación/almacenamiento con verificar.suscripcion.
     Route::resource('citas', \App\Http\Controllers\CitaController::class);
 });
+
+Route::middleware(['auth', 'verified', 'role:recepcionista'])
+    ->prefix('recepcion')
+    ->name('recepcion.')
+    ->group(function () {
+        Route::get('pagos', [\App\Http\Controllers\Recepcion\PagoManualController::class, 'index'])->name('pagos.index');
+        Route::post('pagos/{reporte}/aprobar', [\App\Http\Controllers\Recepcion\PagoManualController::class, 'aprobar'])->name('pagos.aprobar');
+        Route::post('pagos/{reporte}/rechazar', [\App\Http\Controllers\Recepcion\PagoManualController::class, 'rechazar'])->name('pagos.rechazar');
+    });
 
 require __DIR__ . '/auth.php';

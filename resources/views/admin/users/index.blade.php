@@ -46,6 +46,7 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th>Nombre</th>
+                                    <th>Cédula</th>
                                     <th>Correo</th>
                                     <th>Roles</th>
                                     <th>Especialidad</th>
@@ -56,6 +57,7 @@
                                 @forelse ($usuarios as $usuario)
                                     <tr>
                                         <td>{{ $usuario->name }}</td>
+                                        <td>{{ $usuario->cedula ?? '—' }}</td>
                                         <td>{{ $usuario->email }}</td>
                                         <td>
                                             @php

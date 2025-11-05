@@ -50,6 +50,15 @@
                             @enderror
                         </div>
                         <div class="form-group">
+                            <label for="cedula">Cédula</label>
+                            <input type="text" name="cedula" id="cedula" value="{{ old('cedula') }}"
+                                class="form-control @error('cedula') is-invalid @enderror" required>
+                            <small class="form-text text-muted">Se registrará en mayúsculas para evitar duplicados por formato.</small>
+                            @error('cedula')
+                                <span class="invalid-feedback" role="alert">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
                             <label for="email">Correo electrónico</label>
                             <input type="email" name="email" id="email" value="{{ old('email') }}"
                                 class="form-control @error('email') is-invalid @enderror" required>

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 
@@ -40,6 +41,7 @@ class UserManagementController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'cedula' => ['required', 'string', 'max:50', 'unique:usuarios,cedula'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'roles' => ['required', 'array', 'min:1'],
@@ -57,6 +59,7 @@ class UserManagementController extends Controller
 
         $usuario = User::create([
             'name' => $validated['name'],
+            'cedula' => Str::upper($validated['cedula']),
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'especialidad_id' => $esEspecialista ? $validated['especialidad_id'] : null,
