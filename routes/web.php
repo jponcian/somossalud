@@ -11,7 +11,8 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware(['auth', 'verified', 'role:paciente'])->get('/panel/pacientes', function () {
+// El panel de pacientes es accesible por cualquier usuario autenticado (pacientes y personal)
+Route::middleware(['auth', 'verified'])->get('/panel/pacientes', function () {
     return view('panel.pacientes');
 })->name('panel.pacientes');
 

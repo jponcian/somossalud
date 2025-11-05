@@ -31,6 +31,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email'],
             'cedula' => ['required', 'string', 'max:50', 'unique:usuarios,cedula'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -40,15 +41,22 @@ class RegisteredUserController extends Controller
 
         $user = User::create([
             'name' => $request->name,
+            'email' => $request->email,
             'cedula' => $request->cedula,
             'password' => Hash::make($request->password),
             'clinica_id' => $clinicaId,
         ]);
 
+        // Asignar rol de paciente por defecto a los usuarios que se registran desde el portal
+        if (method_exists($user, 'assignRole')) {
+            $user->assignRole('paciente');
+        }
+
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Redirigir a la zona de pacientes tras el registro
+        return redirect()->route('panel.pacientes');
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Route;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Fix for older MySQL/MariaDB installations where the max key length
+        // with utf8mb4 exceeds the default. This sets the default string length
+        // to 191 to avoid "Specified key was too long" errors during migrations.
+        Schema::defaultStringLength(191);
+
+        // Safety: ensure Spatie middleware aliases exist at runtime even if
+        // Kernel.php changes haven't been picked up by a running process.
+        // This prevents a BindingResolutionException when the string
+        // 'role' is treated as a class name by the container.
+        try {
+            $router = $this->app->make('router');
+            if (method_exists($router, 'aliasMiddleware')) {
+                $router->aliasMiddleware('role', \Spatie\Permission\Middleware\RoleMiddleware::class);
+                $router->aliasMiddleware('permission', \Spatie\Permission\Middleware\PermissionMiddleware::class);
+                $router->aliasMiddleware('role_or_permission', \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class);
+            }
+        } catch (\Throwable $e) {
+            // If router isn't available yet (rare), silently ignore — Kernel should register middleware.
+        }
     }
 }

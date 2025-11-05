@@ -81,6 +81,39 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
+
+    @php
+        $__server_ts = now()->timestamp;
+        $__server_tz = config('app.timezone') ?? date_default_timezone_get();
+    @endphp
+
+    <!-- Badge con la hora del servidor (actualiza cada segundo en el cliente) -->
+    <div id="server-time-badge" style="position:fixed;bottom:12px;right:12px;z-index:9999;background:#0d6efd;color:#fff;padding:6px 10px;border-radius:6px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+        Servidor: <span id="server-time-text">{{ now()->format('H:i:s') }}</span>
+        <small style="opacity:.85;margin-left:6px;font-size:12px;vertical-align:middle">({{ $__server_tz }})</small>
+    </div>
+
+    <script>
+        (function(){
+            // timestamp del servidor en ms
+            let serverTs = {{ $__server_ts }} * 1000;
+
+            function pad(n){ return n.toString().padStart(2,'0'); }
+
+            function updateServerTime(){
+                serverTs += 1000; // avanzamos 1s
+                const d = new Date(serverTs);
+                const h = pad(d.getHours());
+                const m = pad(d.getMinutes());
+                const s = pad(d.getSeconds());
+                const el = document.getElementById('server-time-text');
+                if(el) el.textContent = `${h}:${m}:${s}`;
+            }
+
+            // Actualizar cada segundo; el texto inicial se renderizó desde el servidor
+            setInterval(updateServerTime, 1000);
+        })();
+    </script>
     @stack('scripts')
 </body>
 
