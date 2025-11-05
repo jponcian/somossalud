@@ -3,11 +3,7 @@
 @section('title', 'SomosSalud | Panel interno')
 
 @section('sidebar')
-    <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            {{-- Los ítems del menú se renderizarán según el rol del usuario --}}
-        </ul>
-    </nav>
+    @include('panel.partials.sidebar')
 @endsection
 
 @section('content-header')

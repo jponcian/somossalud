@@ -12,6 +12,7 @@
         crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css"
         crossorigin="anonymous">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
     @stack('styles')
 </head>
@@ -54,12 +55,22 @@
 
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="{{ route('panel.clinica') }}" class="brand-link text-decoration-none">
-                <span class="brand-text font-weight-light">SomosSalud · Clínica</span>
+            <a href="{{ route('panel.clinica') }}"
+                class="brand-link text-decoration-none d-flex align-items-center gap-3">
+                <div class="bg-white d-flex align-items-center justify-content-center rounded-circle"
+                    style="width:44px;height:44px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+                    <img src="{{ asset('images/logo.png') }}" alt="SomosSalud" class="brand-image"
+                        style="width:30px;height:30px;object-fit:contain;">
+                </div>
+                <span class="brand-text font-weight-semibold text-white"> SomosSalud</span>
             </a>
 
             <div class="sidebar">
-                @yield('sidebar')
+                @hasSection('sidebar')
+                    @yield('sidebar')
+                @else
+                    @include('panel.partials.sidebar')
+                @endif
             </div>
         </aside>
 

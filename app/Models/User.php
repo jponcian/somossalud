@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Especialidad;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -26,6 +27,7 @@ class User extends Authenticatable
         'password',
         'clinica_id',
         'cedula',
+        'especialidad_id',
     ];
 
     /**
@@ -54,6 +56,11 @@ class User extends Authenticatable
     public function clinica()
     {
         return $this->belongsTo(Clinica::class);
+    }
+
+    public function especialidad()
+    {
+        return $this->belongsTo(Especialidad::class, 'especialidad_id');
     }
 
     // Accesores para nombres en español (lectura)

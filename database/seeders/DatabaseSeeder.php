@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             \Database\Seeders\ClinicaSeeder::class,
             \Database\Seeders\RolesSeeder::class,
+            \Database\Seeders\EspecialidadSeeder::class,
             \Database\Seeders\AdminUserSeeder::class,
             \Database\Seeders\TestUsersSeeder::class,
         ]);
