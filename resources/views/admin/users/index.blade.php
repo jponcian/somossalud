@@ -51,6 +51,7 @@
                                     <th>Roles</th>
                                     <th>Especialidad</th>
                                     <th class="text-nowrap">Registrado</th>
+                                    <th class="text-right">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -69,10 +70,15 @@
                                         <td class="text-nowrap">
                                             {{ optional($usuario->created_at)->format('d/m/Y H:i') ?? '—' }}
                                         </td>
+                                        <td class="text-right text-nowrap align-middle">
+                                            <a href="{{ route('admin.users.edit', $usuario) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-user-edit mr-1"></i> Editar
+                                            </a>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center py-4">
+                                        <td colspan="7" class="text-center py-4">
                                             No hay usuarios registrados todavía.
                                         </td>
                                     </tr>

@@ -35,7 +35,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::resource('users', UserManagementController::class)->only(['index', 'create', 'store']);
+        Route::resource('users', UserManagementController::class)->only(['index', 'create', 'store', 'edit', 'update']);
     });
 
 Route::middleware('auth')->group(function () {

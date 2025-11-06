@@ -71,4 +71,61 @@ class UserManagementController extends Controller
             ->route('admin.users.index')
             ->with('status', 'Usuario registrado correctamente.');
     }
+
+    public function edit(User $user): View
+    {
+        $user->load(['roles', 'especialidad']);
+
+        $roles = Role::orderBy('name')->pluck('name');
+        $especialidades = Especialidad::orderBy('nombre')->get();
+        $assignedRoles = $user->roles->pluck('name')->toArray();
+
+        return view('admin.users.edit', [
+            'usuario' => $user,
+            'roles' => $roles,
+            'especialidades' => $especialidades,
+            'assignedRoles' => $assignedRoles,
+        ]);
+    }
+
+    public function update(Request $request, User $user): RedirectResponse
+    {
+        $roles = Role::pluck('name');
+        $roleNames = $roles->toArray();
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'cedula' => ['required', 'string', 'max:50', 'unique:usuarios,cedula,' . $user->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email,' . $user->id],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => ['string', 'in:' . implode(',', $roleNames)],
+            'especialidad_id' => ['nullable', 'exists:especialidades,id'],
+        ]);
+
+        $esEspecialista = collect($validated['roles'])->contains('especialista');
+
+        if ($esEspecialista) {
+            $request->validate([
+                'especialidad_id' => ['required', 'exists:especialidades,id'],
+            ]);
+        }
+
+        $user->name = $validated['name'];
+        $user->cedula = Str::upper($validated['cedula']);
+        $user->email = $validated['email'];
+        $user->especialidad_id = $esEspecialista ? $validated['especialidad_id'] : null;
+
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        $user->save();
+
+        $user->syncRoles($validated['roles']);
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with('status', 'Usuario actualizado correctamente.');
+    }
 }

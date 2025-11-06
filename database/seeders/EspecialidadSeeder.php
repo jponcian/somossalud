@@ -11,21 +11,48 @@ class EspecialidadSeeder extends Seeder
     public function run(): void
     {
         $especialidades = [
-            ['nombre' => 'Medicina General', 'descripcion' => 'Atención primaria y seguimiento de pacientes.'],
-            ['nombre' => 'Pediatría', 'descripcion' => 'Salud integral para niños y adolescentes.'],
-            ['nombre' => 'Odontología', 'descripcion' => 'Prevención y tratamiento de salud bucal.'],
-            ['nombre' => 'Ginecología', 'descripcion' => 'Salud sexual y reproductiva de la mujer.'],
-            ['nombre' => 'Cardiología', 'descripcion' => 'Diagnóstico y manejo de enfermedades cardiovasculares.'],
+            'Anestesiología',
+            'Cardiología',
+            'Cirugía',
+            'Dermatología',
+            'Ecografía',
+            'Enfermería',
+            'Fisioterapia',
+            'Fisitría',
+            'Gastrología',
+            'Ginecología',
+            'Laboratorio',
+            'Medicina Interna',
+            'Nefrología',
+            'Neumología',
+            'Neurología',
+            'Nutrición',
+            'Odontología',
+            'Oftalmología',
+            'Oncología',
+            'Ortodoncia',
+            'Otorrinología',
+            'Pediatría',
+            'Psicología',
+            'Psiquiatría',
+            'Quirofano',
+            'Traumatología',
+            'Urología',
+            'Medicina General',
         ];
 
-        foreach ($especialidades as $especialidad) {
+        $nombres = collect($especialidades);
+
+        Especialidad::whereNotIn('nombre', $nombres->all())->delete();
+
+        $nombres->each(function (string $nombre) {
             Especialidad::updateOrCreate(
-                ['slug' => Str::slug($especialidad['nombre'])],
+                ['slug' => Str::slug($nombre)],
                 [
-                    'nombre' => $especialidad['nombre'],
-                    'descripcion' => $especialidad['descripcion'],
+                    'nombre' => $nombre,
+                    'descripcion' => null,
                 ]
             );
-        }
+        });
     }
 }
