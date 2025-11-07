@@ -43,11 +43,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Rutas de suscripción (MVP sandbox)
+    // Rutas de suscripción
     Route::get('/suscripcion', [\App\Http\Controllers\SuscripcionController::class, 'show'])
         ->name('suscripcion.show');
-    Route::post('/suscripcion/pagar', [\App\Http\Controllers\SuscripcionController::class, 'paySandbox'])
-        ->name('suscripcion.pagar');
     Route::post('/suscripcion/reportar', [\App\Http\Controllers\SuscripcionController::class, 'reportarPago'])
         ->name('suscripcion.reportar');
     Route::get('/suscripcion/carnet', [\App\Http\Controllers\SuscripcionController::class, 'carnet'])

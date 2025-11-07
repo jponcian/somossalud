@@ -20,28 +20,7 @@ class SuscripcionController extends Controller
         ]);
     }
 
-    public function paySandbox(Request $request)
-    {
-        $user = Auth::user();
-
-        $inicio = now()->toDateString();
-        $vencimiento = now()->addYear()->toDateString();
-
-        $sus = Suscripcion::updateOrCreate(
-            ['usuario_id' => $user->id],
-            [
-                'plan' => 'anual',
-                'precio' => 10.00,
-                'periodo_inicio' => $inicio,
-                'periodo_vencimiento' => $vencimiento,
-                'estado' => 'activo',
-                'metodo_pago' => 'sandbox',
-                'transaccion_id' => 'sandbox-' . uniqid(),
-            ]
-        );
-
-        return redirect()->route('suscripcion.show')->with('success', 'Suscripción activada (sandbox).');
-    }
+    // Método de sandbox eliminado para producción.
 
     public function reportarPago(Request $request)
     {

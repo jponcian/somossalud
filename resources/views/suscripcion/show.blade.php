@@ -138,14 +138,6 @@
             </div>
         </div>
 
-        <div class="mt-6 bg-white shadow rounded-lg p-5">
-            <h3 class="text-sm font-medium text-gray-900 mb-2">Sandbox (solo pruebas locales)</h3>
-            <form method="POST" action="{{ route('suscripcion.pagar') }}" class="inline">
-                @csrf
-                <button
-                    class="inline-flex items-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-medium rounded-md"
-                    type="submit">Activar (sandbox)</button>
-            </form>
-        </div>
+        {{-- Sección sandbox eliminada para entorno productivo --}}
     </div>
 @endsection
