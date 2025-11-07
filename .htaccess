@@ -1,12 +1,5 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-
-    # Si ya es /public, no reescribir
-    RewriteRule ^public/ - [L]
-
-    # Redirige la raíz a /public/
+    # Solo redirigir la raíz del proyecto a /public/
     RewriteRule ^$ public/ [L]
-
-    # Cualquier otra ruta, prepende /public/
-    RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
