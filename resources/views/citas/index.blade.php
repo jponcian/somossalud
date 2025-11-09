@@ -47,10 +47,11 @@
                             </td>
                             <td class="small">{{ optional($cita->especialista)->name ?? '—' }}</td>
                             <td class="text-end">
-                                <a href="{{ route('citas.show', $cita) }}" class="btn btn-outline-secondary btn-sm" title="Ver detalle"><i class="fa-solid fa-eye"></i></a>
                                 @php($yo = auth()->user())
                                 @if(($yo->id === $cita->especialista_id) || $yo->hasRole(['super-admin','admin_clinica']))
                                     <a href="{{ route('citas.show', $cita) }}#gestion" class="btn btn-outline-primary btn-sm" title="Gestionar"><i class="fa-solid fa-stethoscope"></i></a>
+                                @else
+                                    <a href="{{ route('citas.show', $cita) }}" class="btn btn-outline-secondary btn-sm" title="Ver detalle"><i class="fa-solid fa-eye"></i></a>
                                 @endif
                                 @if($cita->medicamentos()->exists())
                                     <a href="{{ route('citas.receta', $cita) }}" class="btn btn-outline-success btn-sm" title="Receta"><i class="fa-solid fa-prescription-bottle-med"></i></a>

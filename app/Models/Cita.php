@@ -50,4 +50,15 @@ class Cita extends Model
     {
         return $this->hasMany(CitaMedicamento::class, 'cita_id')->orderBy('orden');
     }
+
+    public function getEstadoBadgeAttribute()
+    {
+        return match ($this->estado) {
+            'pendiente' => 'secondary',
+            'confirmada' => 'success',
+            'cancelada' => 'danger',
+            'concluida' => 'info',
+            default => 'light',
+        };
+    }
 }

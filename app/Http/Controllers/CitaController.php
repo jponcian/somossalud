@@ -356,7 +356,6 @@ class CitaController extends Controller
 
         $validated = $request->validate([
             'diagnostico' => ['required','string','min:3'],
-            'tratamiento' => ['nullable','string'],
             'observaciones' => ['nullable','string'],
             'concluir' => ['nullable','boolean'],
             // medicamentos estructurados
@@ -373,7 +372,6 @@ class CitaController extends Controller
 
     DB::transaction(function () use ($cita, $validated, $request) {
             $cita->diagnostico = $validated['diagnostico'];
-            $cita->tratamiento = $validated['tratamiento'] ?? null;
             $cita->observaciones = $validated['observaciones'] ?? null;
             // Mantener medicamentos_texto como respaldo si el front lo provee en bloque (opcional)
             if ($request->filled('medicamentos_texto')) {

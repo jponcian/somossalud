@@ -6,20 +6,7 @@
     @include('panel.partials.sidebar')
 @endsection
 
-@section('content-header')
-    <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Registrar usuario</h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('panel.clinica') }}">Inicio</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Usuarios</a></li>
-                <li class="breadcrumb-item active">Nuevo</li>
-            </ol>
-        </div>
-    </div>
-@endsection
+{{-- Breadcrumb removido para creación de usuario --}}
 
 @section('content')
     <div class="row">

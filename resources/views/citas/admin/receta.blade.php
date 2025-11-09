@@ -2,20 +2,7 @@
 
 @section('title','Receta | SomosSalud')
 
-@section('content-header')
-    <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1 class="m-0">Receta</h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('panel.clinica') }}">Inicio</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('citas.index') }}">Citas</a></li>
-                <li class="breadcrumb-item active">Receta</li>
-            </ol>
-        </div>
-    </div>
-@endsection
+{{-- Breadcrumb removido para vista receta admin --}}
 
 @section('content')
     <div class="card shadow-sm">
@@ -48,14 +35,14 @@
                 </ul>
             @endif
             @if($cita->tratamiento)
-                <h6 class="fw-semibold">Indicaciones adicionales</h6>
+                <h6 class="fw-semibold">Indicaciones adicionales (legado)</h6>
                 <p class="small">{{ $cita->tratamiento }}</p>
             @endif
             @if($cita->observaciones)
                 <h6 class="fw-semibold">Observaciones</h6>
                 <p class="small">{{ $cita->observaciones }}</p>
             @endif
-            <a href="{{ route('citas.show', $cita) }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left mr-1"></i> Volver</a>
+            <a href="{{ route('citas.index') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left mr-1"></i> Volver al listado</a>
         </div>
     </div>
 @endsection

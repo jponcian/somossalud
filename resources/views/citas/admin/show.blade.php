@@ -2,20 +2,7 @@
 
 @section('title','Detalle de cita | SomosSalud')
 
-@section('content-header')
-    <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1 class="m-0">Detalle de la cita</h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('panel.clinica') }}">Inicio</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('citas.index') }}">Citas</a></li>
-                <li class="breadcrumb-item active">Detalle</li>
-            </ol>
-        </div>
-    </div>
-@endsection
+{{-- Breadcrumb removido para vista show de cita --}}
 
 @section('content')
     <div class="card shadow-sm mb-4">
@@ -64,10 +51,7 @@
                         <textarea name="diagnostico" class="form-control form-control-sm" rows="2" required>{{ old('diagnostico', $cita->diagnostico) }}</textarea>
                         @error('diagnostico')<div class="text-danger small">{{ $message }}</div>@enderror
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Tratamiento</label>
-                        <textarea name="tratamiento" class="form-control form-control-sm" rows="2">{{ old('tratamiento', $cita->tratamiento) }}</textarea>
-                    </div>
+                    {{-- Campo de tratamiento eliminado: el tratamiento se expresa con el detalle de medicamentos --}}
                     <div class="mb-3">
                         <label class="form-label fw-semibold d-flex align-items-center gap-2">Medicamentos estructurados <span class="badge badge-light">Máx 10</span></label>
                         <div id="medicamentos-wrapper" class="d-grid gap-3">

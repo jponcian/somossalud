@@ -54,6 +54,12 @@
                     </div>
                 @endif
 
+                @if($cita->tratamiento)
+                    <div class="mb-3">
+                        <div class="text-muted small mb-1">Indicaciones adicionales (legado)</div>
+                        <div class="border rounded p-2 bg-light small" style="white-space:pre-wrap">{{ $cita->tratamiento }}</div>
+                    </div>
+                @endif
                 @if($cita->observaciones)
                     <div class="mb-3">
                         <div class="text-muted small mb-1">Observaciones</div>
@@ -62,7 +68,7 @@
                 @endif
 
                 <div class="d-flex justify-content-between">
-                    <a href="{{ route('citas.show', $cita) }}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Volver</a>
+                    <a href="{{ route('citas.index') }}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Volver al listado</a>
                     @if($cita->medicamentos->count())
                         <button onclick="window.print()" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-print me-1"></i> Imprimir</button>
                     @endif

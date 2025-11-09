@@ -92,19 +92,7 @@
     </script>
 @endpush
 
-@section('content-header')
-    <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Validación de pagos</h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('panel.clinica') }}">Inicio</a></li>
-                <li class="breadcrumb-item active">Pagos</li>
-            </ol>
-        </div>
-    </div>
-@endsection
+{{-- Breadcrumb removido para módulo de pagos en recepción --}}
 
 @section('content')
     <div class="card">

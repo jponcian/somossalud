@@ -51,10 +51,7 @@
                             <textarea name="diagnostico" class="form-control form-control-sm" rows="2" required>{{ old('diagnostico', $cita->diagnostico) }}</textarea>
                             @error('diagnostico')<div class="text-danger small">{{ $message }}</div>@enderror
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Tratamiento</label>
-                            <textarea name="tratamiento" class="form-control form-control-sm" rows="2">{{ old('tratamiento', $cita->tratamiento) }}</textarea>
-                        </div>
+                        {{-- Tratamiento explícito removido: se infiere de los medicamentos registrados --}}
                         <div class="mb-3">
                             <label class="form-label fw-semibold d-flex align-items-center gap-2">Medicamentos estructurados <span class="badge text-bg-light">Máx 10</span></label>
                             <div id="medicamentos-wrapper" class="d-grid gap-3">

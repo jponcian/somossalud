@@ -2,19 +2,7 @@
 
 @section('title','Citas | SomosSalud')
 
-@section('content-header')
-    <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1 class="m-0">Citas</h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('panel.clinica') }}">Inicio</a></li>
-                <li class="breadcrumb-item active">Citas</li>
-            </ol>
-        </div>
-    </div>
-@endsection
+{{-- Breadcrumb removido para ahorrar espacio vertical --}}
 
 @section('content')
     <div class="card">
@@ -43,22 +31,16 @@
                             {{ $f->format('d/m/Y') }} {{ str_replace(' ', '', $f->format('h:i a')) }}
                         </td>
                         <td class="small">
-                            @php $badge = match($cita->estado){
-                                'pendiente' => 'secondary',
-                                'confirmada' => 'success',
-                                'cancelada' => 'danger',
-                                'concluida' => 'info',
-                                default => 'light'
-                            }; @endphp
-                            <span class="badge badge-{{ $badge }}">{{ ucfirst($cita->estado) }}</span>
+                            <span class="badge badge-{{ $cita->estado_badge }}">{{ ucfirst($cita->estado) }}</span>
                         </td>
                         <td class="small">{{ optional($cita->usuario)->name ?? '—' }}</td>
                         <td class="small">{{ optional($cita->especialista)->name ?? '—' }}</td>
                         <td class="text-right text-nowrap">
-                            <a href="{{ route('citas.show', $cita) }}" class="btn btn-outline-secondary btn-sm" title="Ver"><i class="fas fa-eye"></i></a>
                             @php($yo = auth()->user())
                             @if(($yo->id === $cita->especialista_id) || $yo->hasRole(['super-admin','admin_clinica']))
                                 <a href="{{ route('citas.show', $cita) }}#gestion" class="btn btn-outline-primary btn-sm" title="Gestionar"><i class="fas fa-stethoscope"></i></a>
+                            @else
+                                <a href="{{ route('citas.show', $cita) }}" class="btn btn-outline-secondary btn-sm" title="Ver"><i class="fas fa-eye"></i></a>
                             @endif
                             @if($cita->medicamentos()->exists())
                                 <a href="{{ route('citas.receta', $cita) }}" class="btn btn-outline-success btn-sm" title="Receta"><i class="fas fa-prescription-bottle"></i></a>

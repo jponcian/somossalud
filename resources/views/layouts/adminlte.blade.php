@@ -76,11 +76,13 @@
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <div class="content-header">
-                <div class="container-fluid">
-                    @yield('content-header')
+            @hasSection('content-header')
+                <div class="content-header">
+                    <div class="container-fluid">
+                        @yield('content-header')
+                    </div>
                 </div>
-            </div>
+            @endif
 
             <section class="content">
                 <div class="container-fluid">
