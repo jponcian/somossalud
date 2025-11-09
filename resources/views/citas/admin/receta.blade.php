@@ -21,8 +21,7 @@
                 <ul class="list-group mb-3">
                     @foreach($cita->medicamentos as $m)
                         <li class="list-group-item small">
-                            <div class="fw-semibold">{{ $m->nombre_generico }}</div>
-                            <div class="text-muted">{{ $m->presentacion ?? '' }}</div>
+                            <div class="fw-semibold">{{ $m->nombre_generico }} @if($m->presentacion) <span class="text-muted">— {{ $m->presentacion }}</span>@endif</div>
                             @if($m->posologia || $m->frecuencia || $m->duracion)
                                 <div class="mt-1 d-flex flex-wrap gap-2">
                                     @if($m->posologia)<span class="badge badge-info">Posología: {{ $m->posologia }}</span>@endif

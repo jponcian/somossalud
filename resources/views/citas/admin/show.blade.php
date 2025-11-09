@@ -66,11 +66,8 @@
                                 <div class="border rounded p-2 position-relative bg-light medicamento-item">
                                     <button type="button" class="btn-close position-absolute" style="top:4px;right:4px;font-size:.6rem" aria-label="Eliminar"></button>
                                     <div class="row g-2">
-                                        <div class="col-md-4">
-                                            <input type="text" name="medicamentos[{{ $idx }}][nombre_generico]" class="form-control form-control-sm" placeholder="Nombre genérico" value="{{ $med['nombre_generico'] ?? '' }}">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input type="text" name="medicamentos[{{ $idx }}][presentacion]" class="form-control form-control-sm" placeholder="Presentación" value="{{ $med['presentacion'] ?? '' }}">
+                                        <div class="col-md-6">
+                                            <input type="text" name="medicamentos[{{ $idx }}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)" value="{{ trim(($med['nombre_generico'] ?? '') . ' ' . ($med['presentacion'] ?? '')) }}">
                                         </div>
                                         <div class="col-md-3">
                                             <input type="text" name="medicamentos[{{ $idx }}][posologia]" class="form-control form-control-sm" placeholder="Posología" value="{{ $med['posologia'] ?? '' }}">
@@ -146,11 +143,8 @@
         div.innerHTML = `
             <button type="button" class="btn-close position-absolute" style="top:4px;right:4px;font-size:.6rem" aria-label="Eliminar"></button>
             <div class="row g-2">
-                <div class="col-md-4">
-                    <input type="text" name="medicamentos[${idx}][nombre_generico]" class="form-control form-control-sm" placeholder="Nombre genérico">
-                </div>
-                <div class="col-md-2">
-                    <input type="text" name="medicamentos[${idx}][presentacion]" class="form-control form-control-sm" placeholder="Presentación">
+                <div class="col-md-6">
+                    <input type="text" name="medicamentos[${idx}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)">
                 </div>
                 <div class="col-md-3">
                     <input type="text" name="medicamentos[${idx}][posologia]" class="form-control form-control-sm" placeholder="Posología">

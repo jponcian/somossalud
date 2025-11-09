@@ -358,10 +358,9 @@ class CitaController extends Controller
             'diagnostico' => ['required','string','min:3'],
             'observaciones' => ['nullable','string'],
             'concluir' => ['nullable','boolean'],
-            // medicamentos estructurados
+            // medicamentos estructurados (campo combinado nombre + presentación)
             'medicamentos' => ['nullable','array','max:10'],
-            'medicamentos.*.nombre_generico' => ['required_with:medicamentos','string','max:150'],
-            'medicamentos.*.presentacion' => ['nullable','string','max:150'],
+            'medicamentos.*.nombre_generico' => ['required_with:medicamentos','string','max:255'], // ahora puede incluir presentación
             'medicamentos.*.posologia' => ['nullable','string','max:255'],
             'medicamentos.*.frecuencia' => ['nullable','string','max:150'],
             'medicamentos.*.duracion' => ['nullable','string','max:150'],
@@ -379,20 +378,38 @@ class CitaController extends Controller
             }
 
             if (!empty($validated['medicamentos'])) {
-                // reescribir todos los medicamentos declarados
+                // Reescribir todos los medicamentos declarados
                 $cita->medicamentos()->delete();
                 $orden = 1;
                 foreach ($validated['medicamentos'] as $med) {
-                    if (!empty($med['nombre_generico'])) {
-                        $cita->medicamentos()->create([
-                            'nombre_generico' => $med['nombre_generico'],
-                            'presentacion' => $med['presentacion'] ?? null,
-                            'posologia' => $med['posologia'] ?? null,
-                            'frecuencia' => $med['frecuencia'] ?? null,
-                            'duracion' => $med['duracion'] ?? null,
-                            'orden' => $orden++,
-                        ]);
+                    if (empty($med['nombre_generico'])) continue;
+                    // Intentar separar presentación si el usuario ingresó "Nombre Presentación" o con coma/ guión
+                    $nombreBruto = trim($med['nombre_generico']);
+                    $nombre = $nombreBruto; $presentacion = null;
+                    // Heurística: si contiene ' - ' o ' — ' dividir; si contiene coma, dividir primera coma; si varias palabras y última parece unidad (mg, ml, %, UI, comprimidos, caps, tab, ampolla(s)) entonces separar
+                    if (preg_match('/\s[-–—]\s/', $nombreBruto)) {
+                        [$nombre,$presentacion] = preg_split('/\s[-–—]\s/', $nombreBruto,2);
+                    } elseif (str_contains($nombreBruto, ',')) {
+                        [$nombre,$presentacion] = array_map('trim', explode(',', $nombreBruto,2));
+                    } else {
+                        $parts = preg_split('/\s+/', $nombreBruto);
+                        if (count($parts) > 1) {
+                            $ultima = strtolower(end($parts));
+                            if (preg_match('/^(mg|ml|g|ug|µg|mcg|%|ui|u|comprimidos?|tabs?|tabletas?|caps?(ulas)?|cap?s|amp(olla|ollas)?|viales?)$/', $ultima)) {
+                                $presentacion = array_pop($parts);
+                                $nombre = trim(implode(' ', $parts));
+                            }
+                        }
                     }
+
+                    $cita->medicamentos()->create([
+                        'nombre_generico' => $nombre,
+                        'presentacion' => $presentacion,
+                        'posologia' => $med['posologia'] ?? null,
+                        'frecuencia' => $med['frecuencia'] ?? null,
+                        'duracion' => $med['duracion'] ?? null,
+                        'orden' => $orden++,
+                    ]);
                 }
             }
 

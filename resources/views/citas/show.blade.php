@@ -66,11 +66,8 @@
                                     <div class="border rounded p-2 position-relative bg-light medicamento-item">
                                         <button type="button" class="btn-close position-absolute top-0 end-0 small text-danger remove-med" aria-label="Eliminar" style="font-size:.6rem"></button>
                                         <div class="row g-2">
-                                            <div class="col-md-4">
-                                                <input type="text" name="medicamentos[{{ $idx }}][nombre_generico]" class="form-control form-control-sm" placeholder="Nombre genérico" value="{{ $med['nombre_generico'] ?? '' }}">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <input type="text" name="medicamentos[{{ $idx }}][presentacion]" class="form-control form-control-sm" placeholder="Presentación" value="{{ $med['presentacion'] ?? '' }}">
+                                            <div class="col-md-6">
+                                                <input type="text" name="medicamentos[{{ $idx }}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)" value="{{ trim(($med['nombre_generico'] ?? '') . ' ' . ($med['presentacion'] ?? '')) }}">
                                             </div>
                                             <div class="col-md-3">
                                                 <input type="text" name="medicamentos[{{ $idx }}][posologia]" class="form-control form-control-sm" placeholder="Posología" value="{{ $med['posologia'] ?? '' }}">
@@ -143,26 +140,23 @@
         if(currentCount() >= 10) return alert('Máximo 10 medicamentos');
         const idx = Date.now();
         const div = document.createElement('div');
-        div.className = 'border rounded p-2 position-relative bg-light medicamento-item';
-        div.innerHTML = `
-            <button type="button" class="btn-close position-absolute top-0 end-0 small text-danger remove-med" aria-label="Eliminar" style="font-size:.6rem"></button>
-            <div class="row g-2">
-                <div class="col-md-4">
-                    <input type="text" name="medicamentos[${idx}][nombre_generico]" class="form-control form-control-sm" placeholder="Nombre genérico">
-                </div>
-                <div class="col-md-2">
-                    <input type="text" name="medicamentos[${idx}][presentacion]" class="form-control form-control-sm" placeholder="Presentación">
-                </div>
-                <div class="col-md-3">
-                    <input type="text" name="medicamentos[${idx}][posologia]" class="form-control form-control-sm" placeholder="Posología">
-                </div>
-                <div class="col-md-2">
-                    <input type="text" name="medicamentos[${idx}][frecuencia]" class="form-control form-control-sm" placeholder="Frecuencia">
-                </div>
-                <div class="col-md-1">
-                    <input type="text" name="medicamentos[${idx}][duracion]" class="form-control form-control-sm" placeholder="Duración">
-                </div>
-            </div>`;
+            div.className = 'border rounded p-2 position-relative bg-light medicamento-item';
+            div.innerHTML = \`
+                <button type="button" class="btn-close position-absolute top-0 end-0 small text-danger remove-med" aria-label="Eliminar" style="font-size:.6rem"></button>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <input type="text" name="medicamentos[\${idx}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="medicamentos[\${idx}][posologia]" class="form-control form-control-sm" placeholder="Posología">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" name="medicamentos[\${idx}][frecuencia]" class="form-control form-control-sm" placeholder="Frecuencia">
+                    </div>
+                    <div class="col-md-1">
+                        <input type="text" name="medicamentos[\${idx}][duracion]" class="form-control form-control-sm" placeholder="Duración">
+                    </div>
+                </div>\`;
         wrapper.appendChild(div);
     });
     wrapper.addEventListener('click', e => {
