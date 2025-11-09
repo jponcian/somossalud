@@ -1,5 +1,6 @@
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        {{-- Bloque de marca interno eliminado: solo queda la imagen arriba en brand-link --}}
         <li class="nav-item">
             <a href="{{ route('panel.clinica') }}"
                 class="nav-link {{ request()->routeIs('panel.clinica') ? 'active' : '' }}">

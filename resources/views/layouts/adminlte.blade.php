@@ -14,6 +14,14 @@
         crossorigin="anonymous">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
+    <style>
+        /* Separación superior del contenido cuando no hay content-header */
+        .content-wrapper > .content { padding-top: .75rem; }
+        @media (min-width: 768px) {
+            .content-wrapper > .content { padding-top: 1rem; }
+        }
+    </style>
+
     @stack('styles')
 </head>
 
@@ -55,14 +63,8 @@
 
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="{{ route('panel.clinica') }}"
-                class="brand-link text-decoration-none d-flex align-items-center gap-3">
-                <div class="bg-white d-flex align-items-center justify-content-center rounded-circle"
-                    style="width:44px;height:44px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
-                    <img src="{{ asset('images/logo.png') }}" alt="SomosSalud" class="brand-image"
-                        style="width:30px;height:30px;object-fit:contain;">
-                </div>
-                <span class="brand-text font-weight-semibold text-white"> SomosSalud</span>
+            <a href="{{ route('panel.clinica') }}" class="brand-link d-flex align-items-center justify-content-center" style="min-height:58px;">
+                <img src="{{ asset('images/logo.png') }}" alt="SomosSalud" class="brand-image" style="max-height:38px; width:auto; object-fit:contain; opacity:1;">
             </a>
 
             <div class="sidebar">
