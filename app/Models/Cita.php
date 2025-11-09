@@ -14,9 +14,16 @@ class Cita extends Model
     protected $fillable = [
         'usuario_id',
         'clinica_id',
-        'fecha_hora',
-        'motivo',
+        'especialista_id',
+        'fecha',
+        'precio',
+        'precio_descuento',
         'estado',
+        'diagnostico',
+        'tratamiento',
+        'medicamentos_texto',
+        'observaciones',
+        'concluida_at',
     ];
 
     public function usuario()
@@ -27,5 +34,20 @@ class Cita extends Model
     public function clinica()
     {
         return $this->belongsTo(Clinica::class, 'clinica_id');
+    }
+
+    public function especialista()
+    {
+        return $this->belongsTo(User::class, 'especialista_id');
+    }
+
+    public function adjuntos()
+    {
+        return $this->hasMany(CitaAdjunto::class, 'cita_id');
+    }
+
+    public function medicamentos()
+    {
+        return $this->hasMany(CitaMedicamento::class, 'cita_id')->orderBy('orden');
     }
 }

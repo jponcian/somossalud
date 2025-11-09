@@ -6,14 +6,17 @@
     </x-slot>
 
     @php
-        $suscripcionActiva = \App\Models\Suscripcion::where('usuario_id', auth()->id())
+        // Variables ahora llegan desde la ruta, pero mantenemos fallback por si acaso
+        $suscripcionActiva = $suscripcionActiva ?? \App\Models\Suscripcion::where('usuario_id', auth()->id())
             ->where('estado', 'activo')
             ->latest()
             ->first();
+        $reportePendiente = $reportePendiente ?? \App\Models\ReportePago::where('usuario_id', auth()->id())->where('estado','pendiente')->latest()->first();
+        $ultimoRechazado = $ultimoRechazado ?? \App\Models\ReportePago::where('usuario_id', auth()->id())->where('estado','rechazado')->latest()->first();
         $tieneActiva = (bool) $suscripcionActiva;
     @endphp
 
-    @if (! $tieneActiva)
+    @if (! $tieneActiva && ! $reportePendiente)
         <!-- Modal Bootstrap: Activación de suscripción -->
         <div class="modal fade" id="activarSuscripcionModal" tabindex="-1" aria-labelledby="activarSuscripcionLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -33,7 +36,17 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <div class="border rounded p-3 h-100">
-                                    <p class="fw-semibold mb-2"><i class="fas fa-dollar-sign me-1 text-success"></i> Costo: $10 USD</p>
+                                    @php
+                                        $__rateModal = optional(\App\Models\ExchangeRate::latestEffective()->first());
+                                        $__bsEquivModal = ($__rateModal && $__rateModal->rate) ? 10 * (float) $__rateModal->rate : null;
+                                    @endphp
+                                    <p class="fw-semibold mb-2"><i class="fas fa-dollar-sign me-1 text-success"></i> Costo: $10 USD
+                                        @if($__bsEquivModal !== null)
+                                            <span class="d-block small text-muted">Aprox. {{ number_format((float)$__bsEquivModal, 2, ',', '.') }} Bs (tasa actual)</span>
+                                        @else
+                                            <span class="d-block small text-muted">Equivalente en Bs no disponible</span>
+                                        @endif
+                                    </p>
                                     <ul class="mb-0 small">
                                         <li>Acceso a agenda de citas</li>
                                         <li>Resultados y estudios</li>
@@ -78,6 +91,7 @@
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     var el = document.getElementById('activarSuscripcionModal');
+                    // Solo auto-mostrar si no hay reporte pendiente (controlado también en Blade)
                     if (el && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
                         var modal = new bootstrap.Modal(el);
                         modal.show();
@@ -89,6 +103,31 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+            @if (!$tieneActiva)
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-start border-4 border-success">
+                    <div class="p-4 d-flex align-items-center justify-content-between">
+                        <div class="me-3">
+                            @if($reportePendiente)
+                                <div class="fw-semibold">Tu pago está en revisión</div>
+                                <div class="text-muted small">Referencia: {{ $reportePendiente->referencia }} — Te avisaremos al aprobarse.</div>
+                            @elseif($ultimoRechazado)
+                                <div class="fw-semibold text-danger">Tu último reporte fue rechazado</div>
+                                <div class="text-muted small">@if($ultimoRechazado->observaciones) Motivo: {{ $ultimoRechazado->observaciones }} @endif</div>
+                            @else
+                                <div class="fw-semibold">Activa tu suscripción</div>
+                                <div class="text-muted small">Realiza tu pago móvil y repórtalo para habilitar todas las funciones.</div>
+                            @endif
+                        </div>
+                        <div class="text-nowrap">
+                            <a href="{{ route('suscripcion.show') }}" class="btn btn-success btn-sm">
+                                <i class="fas fa-paper-plane me-1"></i>
+                                {{ $reportePendiente ? 'Ver estado' : 'Reportar mi pago' }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-semibold text-gray-800 mb-3">Tu próxima atención</h3>
@@ -133,6 +172,51 @@
                                 class="ml-2">→</span></a>
                     </div>
                 </div>
+
+                @if($ultimaReceta)
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-pink-400 relative">
+                        <div class="p-6">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h4 class="text-base font-semibold text-gray-800 mb-0">Medicamentos recientes</h4>
+                                <span class="badge text-bg-light small">{{ $ultimaReceta->concluida_at ? 'Concluida' : 'En curso' }}</span>
+                            </div>
+                            @php $__fechaRec = \Illuminate\Support\Carbon::parse($ultimaReceta->fecha)->format('d/m/Y'); @endphp
+                            <p class="text-xs text-gray-500 mb-3">Receta de la cita con {{ optional($ultimaReceta->especialista)->name ?? 'Especialista' }} ({{ $__fechaRec }})</p>
+                            <div class="small" style="max-height: 220px; overflow-y:auto;">
+                                @foreach($ultimaReceta->medicamentos->sortBy('orden') as $m)
+                                    <div class="border rounded p-2 mb-2 position-relative">                                        
+                                        <div class="fw-semibold mb-1">
+                                            {{ $m->nombre_generico }}
+                                            @if($m->presentacion)
+                                                <span class="text-muted">— {{ $m->presentacion }}</span>
+                                            @endif
+                                        </div>
+                                        @if($m->posologia)
+                                            <div class="text-muted"><span class="fw-medium">Posología:</span> {{ $m->posologia }}</div>
+                                        @endif
+                                        @if($m->frecuencia)
+                                            <div class="text-muted"><span class="fw-medium">Frecuencia:</span> {{ $m->frecuencia }}</div>
+                                        @endif
+                                        @if($m->duracion)
+                                            <div class="text-muted"><span class="fw-medium">Duración:</span> {{ $m->duracion }}</div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                                @if($ultimaReceta->medicamentos->isEmpty())
+                                    <div class="text-muted fst-italic">No hay medicamentos registrados.</div>
+                                @endif
+                            </div>
+                            <div class="mt-3">
+                                <a href="{{ route('citas.receta', $ultimaReceta) }}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-prescription-bottle-alt me-1"></i> Ver receta completa
+                                </a>
+                            </div>
+                        </div>
+                        <span class="position-absolute top-0 end-0 p-2 text-pink-400">
+                            <i class="fas fa-pills"></i>
+                        </span>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

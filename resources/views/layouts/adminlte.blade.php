@@ -89,9 +89,21 @@
             </section>
         </div>
 
-        <footer class="main-footer text-sm">
-            <strong>© {{ date('Y') }} SomosSalud.</strong>
-            <span class="d-none d-sm-inline-block"> Gestión interna.</span>
+        @php
+            $__rateAdmin = optional(\App\Models\ExchangeRate::latestEffective()->first());
+        @endphp
+        <footer class="main-footer text-sm d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+                <strong>© {{ date('Y') }} SomosSalud.</strong>
+                <span class="d-none d-sm-inline-block"> Gestión interna.</span>
+            </div>
+            <div class="text-muted small my-1">
+                @if($__rateAdmin && $__rateAdmin->rate)
+                    Tasa BCV: <strong>{{ number_format((float)$__rateAdmin->rate, 2, ',', '.') }} Bs</strong> • {{ $__rateAdmin->date?->format('d/m/Y') }}
+                @else
+                    Tasa no disponible
+                @endif
+            </div>
             <div class="float-right d-none d-sm-inline">Versión 1.0.0</div>
         </footer>
     </div>

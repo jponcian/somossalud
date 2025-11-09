@@ -1,5 +1,0 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    # Solo redirigir la raíz del proyecto a /public/
-    RewriteRule ^$ public/ [L]
-</IfModule>

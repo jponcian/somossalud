@@ -15,8 +15,15 @@
                 <p>Gestión de usuarios</p>
             </a>
         </li>
+        <li class="nav-item">
+            <a href="{{ route('admin.settings.pagos') }}"
+                class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cog"></i>
+                <p>Configuración</p>
+            </a>
+        </li>
         @endhasanyrole
-        @role('recepcionista')
+        @hasanyrole('recepcionista|admin_clinica|super-admin')
         <li class="nav-item">
             <a href="{{ route('recepcion.pagos.index') }}"
                 class="nav-link {{ request()->routeIs('recepcion.pagos.*') ? 'active' : '' }}">
@@ -24,13 +31,19 @@
                 <p>Validar pagos</p>
             </a>
         </li>
-        @endrole
+        @endhasanyrole
         @role('especialista')
         <li class="nav-item">
             <a href="{{ route('especialista.horarios.index') }}"
                 class="nav-link {{ request()->routeIs('especialista.horarios.*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-calendar-check"></i>
                 <p>Mis horarios</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route('citas.index') }}" class="nav-link {{ request()->routeIs('citas.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-notes-medical"></i>
+                <p>Mis citas</p>
             </a>
         </li>
         @endrole

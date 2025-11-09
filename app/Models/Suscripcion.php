@@ -13,6 +13,7 @@ class Suscripcion extends Model
 
     protected $fillable = [
         'usuario_id',
+        'numero',
         'plan',
         'precio',
         'periodo_inicio',

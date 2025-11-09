@@ -48,6 +48,19 @@
                                     class="fa-solid fa-user-plus me-2"></i>Quiero afiliarme</a>
                         @endauth
                     </div>
+                    @php
+                        $__rateAff = optional(\App\Models\ExchangeRate::latestEffective()->first());
+                        $__bsEquivalent = ($__rateAff && $__rateAff->rate) ? 10 * (float) $__rateAff->rate : null;
+                    @endphp
+                    <div class="mt-2 small text-muted">
+                        <i class="fa-solid fa-circle-info me-1"></i>
+                        Costo de afiliación: <strong>$10</strong>
+                        @if($__bsEquivalent !== null)
+                            <span class="ms-1">(aprox. {{ number_format((float) $__bsEquivalent, 2, ',', '.') }} Bs a la tasa actual)</span>
+                        @else
+                            <span class="ms-1">(equivalente en Bs no disponible)</span>
+                        @endif
+                    </div>
                     <!-- <div class="row mt-4 g-3 text-start">
                                                                 <div class="col-6 col-md-4">
                                                                     <div class="metric-card">
@@ -137,6 +150,16 @@
     <footer>
         <div class="container text-center py-3">
             <span>© {{ date('Y') }} SomosSalud — Innovación en salud comunitaria.</span>
+            @php
+                $__rateLanding = optional(\App\Models\ExchangeRate::latestEffective()->first());
+            @endphp
+            <div class="text-muted small mt-2">
+                @if($__rateLanding && $__rateLanding->rate)
+                    Tasa BCV: <strong>{{ number_format((float)$__rateLanding->rate, 2, ',', '.') }} Bs</strong> • {{ $__rateLanding->date?->format('d/m/Y') }}
+                @else
+                    Tasa BCV no disponible
+                @endif
+            </div>
             <!-- <div class="d-flex gap-3 justify-content-center mt-2">
                 <a href="https://www.instagram.com/clinicasaludsonrisave/?hl=es" target="_blank" rel="noopener"><i
                     class="fa-brands fa-instagram me-1"></i>Instagram</a>

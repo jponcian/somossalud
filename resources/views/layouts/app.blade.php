@@ -18,11 +18,14 @@
     <!-- Bootstrap 5 (preferido en todo el proyecto) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
+    <!-- Font Awesome 6 (iconos) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" crossorigin="anonymous">
+
     @stack('head')
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen bg-gray-100 d-flex flex-column">
         @include('layouts.navigation')
 
         <!-- Page Heading -->
@@ -35,13 +38,29 @@
         @endisset
 
         <!-- Page Content -->
-        <main>
-            @hasSection('content')
-                @yield('content')
-            @else
-                {{ $slot ?? '' }}
-            @endif
+        <main class="flex-grow-1">
+            {{ $slot ?? '' }}
         </main>
+
+        @php
+            $__rate = optional(\App\Models\ExchangeRate::latestEffective()->first());
+        @endphp
+    <footer class="main-footer border-top bg-white small d-flex justify-content-between align-items-center flex-wrap py-2 px-3 mt-auto" style="min-height:auto;">
+            <div class="text-muted my-1">
+                <strong>© {{ date('Y') }} SomosSalud.</strong>
+                <span class="d-none d-sm-inline"> Plataforma de pacientes.</span>
+            </div>
+            <div class="text-muted my-1">
+                @if($__rate && $__rate->rate)
+                    Tasa BCV: <strong>{{ number_format((float)$__rate->rate, 2, ',', '.') }} Bs</strong> • {{ $__rate->date?->format('d/m/Y') }}
+                @else
+                    Tasa no disponible
+                @endif
+            </div>
+            <div class="text-muted my-1">
+                <span class="d-none d-sm-inline">Versión 1.0.0</span>
+            </div>
+        </footer>
     </div>
 
     <!-- Bootstrap JS bundle -->

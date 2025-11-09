@@ -10,6 +10,7 @@ return new class extends Migration {
         Schema::create('suscripciones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('usuario_id')->constrained('usuarios')->cascadeOnDelete();
+            $table->unsignedBigInteger('numero')->unique()->nullable();
             $table->string('plan');
             $table->decimal('precio', 8, 2);
             $table->date('periodo_inicio');
