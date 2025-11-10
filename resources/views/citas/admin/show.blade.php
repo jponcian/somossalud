@@ -124,7 +124,6 @@
                     })();
                     </script>
                     @endpush
-                @endif
                 @if(in_array($cita->estado,['concluida']))
                     <div class="alert alert-info small mb-3"><i class="fa fa-lock me-1"></i> La cita está concluida. Los datos se muestran en modo solo lectura.</div>
                 @elseif(in_array($cita->estado,['cancelada']))
