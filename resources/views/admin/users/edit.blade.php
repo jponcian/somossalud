@@ -72,35 +72,44 @@
                         </div>
                         <div class="form-group">
                             <label>Roles</label>
-                            <p class="text-muted small mb-2">Selecciona uno o varios roles que aplican al usuario.</p>
-                            <div class="d-flex flex-wrap">
-                                @php
-                                    $selectedRoles = old('roles', $assignedRoles ?? []);
-                                @endphp
-                                @foreach ($roles as $role)
+                            @if (auth()->user()->hasRole('recepcionista'))
+                                <p class="mb-2">
+                                    <span class="badge badge-info">Paciente</span>
+                                </p>
+                                <input type="hidden" name="roles[]" value="paciente">
+                                <small class="form-text text-muted">Como recepcionista, solo puedes editar usuarios con rol Paciente.</small>
+                            @else
+                                <p class="text-muted small mb-2">Selecciona uno o varios roles que aplican al usuario.</p>
+                                <div class="d-flex flex-wrap">
                                     @php
-                                        $roleId = 'role-' . \Illuminate\Support\Str::slug($role);
-                                        $isChecked = in_array($role, $selectedRoles, true);
+                                        $selectedRoles = old('roles', $assignedRoles ?? []);
                                     @endphp
-                                    <div class="custom-control custom-checkbox mr-4 mb-2">
-                                        <input type="checkbox" class="custom-control-input role-checkbox" id="{{ $roleId }}"
-                                            name="roles[]" value="{{ $role }}" {{ $isChecked ? 'checked' : '' }}>
-                                        <label class="custom-control-label text-capitalize"
-                                            for="{{ $roleId }}">{{ str_replace('_', ' ', $role) }}</label>
-                                    </div>
-                                @endforeach
-                            </div>
-                            @error('roles')
-                                <span class="text-danger d-block mt-1">{{ $message }}</span>
-                            @enderror
-                            @error('roles.*')
-                                <span class="text-danger d-block mt-1">{{ $message }}</span>
-                            @enderror
+                                    @foreach ($roles as $role)
+                                        @php
+                                            $roleId = 'role-' . \Illuminate\Support\Str::slug($role);
+                                            $isChecked = in_array($role, $selectedRoles, true);
+                                        @endphp
+                                        <div class="custom-control custom-checkbox mr-4 mb-2">
+                                            <input type="checkbox" class="custom-control-input role-checkbox" id="{{ $roleId }}"
+                                                name="roles[]" value="{{ $role }}" {{ $isChecked ? 'checked' : '' }}>
+                                            <label class="custom-control-label text-capitalize"
+                                                for="{{ $roleId }}">{{ str_replace('_', ' ', $role) }}</label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                @error('roles')
+                                    <span class="text-danger d-block mt-1">{{ $message }}</span>
+                                @enderror
+                                @error('roles.*')
+                                    <span class="text-danger d-block mt-1">{{ $message }}</span>
+                                @enderror
+                            @endif
                         </div>
                         <div class="form-group">
                             <label for="especialidad_id">Especialidad (solo especialistas)</label>
                             <select name="especialidad_id" id="especialidad_id"
-                                class="form-control @error('especialidad_id') is-invalid @enderror">
+                                class="form-control @error('especialidad_id') is-invalid @enderror"
+                                {{ auth()->user()->hasRole('recepcionista') ? 'disabled' : '' }}>
                                 <option value="">Selecciona una especialidad</option>
                                 @foreach ($especialidades as $especialidad)
                                     <option value="{{ $especialidad->id }}" {{ (string) $especialidad->id === (string) old('especialidad_id', $usuario->especialidad_id) ? 'selected' : '' }}>
@@ -108,8 +117,13 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <small class="form-text text-muted">Se habilita automáticamente cuando el rol "especialista"
-                                esté seleccionado.</small>
+                            <small class="form-text text-muted">
+                                @if (auth()->user()->hasRole('recepcionista'))
+                                    Campo no disponible para recepcionistas.
+                                @else
+                                    Se habilita automáticamente cuando el rol "especialista" esté seleccionado.
+                                @endif
+                            </small>
                             @error('especialidad_id')
                                 <span class="invalid-feedback" role="alert">{{ $message }}</span>
                             @enderror

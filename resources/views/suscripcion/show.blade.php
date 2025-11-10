@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="container py-4">
-        <h1 class="h4 mb-4">Mi suscripción</h1>
+        {{-- <h1 class="h4 mb-4">Mi suscripción</h1> --}}
 
         @if(session('error'))
             <div class="alert alert-danger small">{{ session('error') }}</div>
@@ -52,50 +52,6 @@
         @endif
 
         <div class="row g-4">
-            <div class="col-lg-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h2 class="h6 fw-semibold mb-2">Pagar suscripción anual</h2>
-                        @php
-                            $__ratePago = optional(\App\Models\ExchangeRate::latestEffective()->first());
-                            $__bsEquivPago = ($__ratePago && $__ratePago->rate) ? 10 * (float) $__ratePago->rate : null;
-                        @endphp
-                        <p class="small mb-2">Precio: <span class="fw-bold">$10</span>
-                            @if($__bsEquivPago !== null)
-                                <span class="text-muted">(aprox. {{ number_format((float)$__bsEquivPago, 2, ',', '.') }} Bs · tasa actual)</span>
-                            @else
-                                <span class="text-muted">(equivalente en Bs no disponible)</span>
-                            @endif
-                        </p>
-                        @if($user->clinica && $user->clinica->descuento)
-                            <p class="small mb-3">Afiliado a: <span class="fw-semibold">{{ $user->clinica->nombre }}</span> — Descuento: <span class="fw-semibold">{{ $user->clinica->descuento }}%</span></p>
-                        @endif
-                        <div class="border-top pt-3">
-                            <div class="fw-semibold small mb-2">Datos de Pago Móvil</div>
-                            <div class="row small g-2">
-                                <div class="col-6">
-                                    <div class="text-muted">Banco</div>
-                                    <div class="fw-medium">{{ $pagoMovil['banco'] }}</div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-muted">RIF/Cédula</div>
-                                    <div class="fw-medium">{{ $pagoMovil['identificacion'] }}</div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-muted">Teléfono</div>
-                                    <div class="fw-medium">{{ $pagoMovil['telefono'] }}</div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-muted">Nombre</div>
-                                    <div class="fw-medium">{{ $pagoMovil['nombre'] }}</div>
-                                </div>
-                            </div>
-                            <p class="mt-3 text-muted small">Si ves datos incorrectos, por favor contacta a administración.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="col-lg-6">
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
@@ -188,11 +144,55 @@
                                 <div class="helper-box">Verifica que el monto coincida con el pago realizado y que la referencia sea exacta. Un error puede retrasar la activación.</div>
                             </div>
                             <div class="col-12 d-flex justify-content-between align-items-center">
-                                <button class="btn btn-success btn-sm" type="submit"><i class="fa-solid fa-paper-plane me-1"></i> Enviar reporte</button>
+                                <button class="btn btn-success btn-sm d-inline-flex align-items-center" type="submit"><i class="fa-solid fa-paper-plane me-1"></i><span>Enviar reporte</span></button>
                                 <div class="text-muted small">Al aprobarse tu pago podrás agendar una cita médica</div>
                             </div>
                         </form>
                         @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h2 class="h6 fw-semibold mb-2">Pagar suscripción anual</h2>
+                        @php
+                            $__ratePago = optional(\App\Models\ExchangeRate::latestEffective()->first());
+                            $__bsEquivPago = ($__ratePago && $__ratePago->rate) ? 10 * (float) $__ratePago->rate : null;
+                        @endphp
+                        <p class="small mb-2">Precio: <span class="fw-bold">$10</span>
+                            @if($__bsEquivPago !== null)
+                                <span class="text-muted">(aprox. {{ number_format((float)$__bsEquivPago, 2, ',', '.') }} Bs · tasa actual)</span>
+                            @else
+                                <span class="text-muted">(equivalente en Bs no disponible)</span>
+                            @endif
+                        </p>
+                        @if($user->clinica && $user->clinica->descuento)
+                            <p class="small mb-3">Afiliado a: <span class="fw-semibold">{{ $user->clinica->nombre }}</span> — Descuento: <span class="fw-semibold">{{ $user->clinica->descuento }}%</span></p>
+                        @endif
+                        <div class="border-top pt-3">
+                            <div class="fw-semibold small mb-2">Datos de Pago Móvil</div>
+                            <div class="row small g-2">
+                                <div class="col-6">
+                                    <div class="text-muted">Banco</div>
+                                    <div class="fw-medium">{{ $pagoMovil['banco'] }}</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-muted">RIF/Cédula</div>
+                                    <div class="fw-medium">{{ $pagoMovil['identificacion'] }}</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-muted">Teléfono</div>
+                                    <div class="fw-medium">{{ $pagoMovil['telefono'] }}</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-muted">Nombre</div>
+                                    <div class="fw-medium">{{ $pagoMovil['nombre'] }}</div>
+                                </div>
+                            </div>
+                            <p class="mt-3 text-muted small">Si ves datos incorrectos, por favor contacta a administración.</p>
+                        </div>
                     </div>
                 </div>
             </div>

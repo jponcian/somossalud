@@ -34,14 +34,46 @@ class CitaController extends Controller
                 ->orderBy('id', 'desc')
                 ->get();
         } elseif ($user->hasRole('paciente')) {
-            $citas = Cita::where('usuario_id', $user->id)
+            // Unificar Citas y Atenciones del paciente en un solo listado
+            $citasRaw = Cita::with(['especialista'])
+                ->where('usuario_id', $user->id)
                 ->orderBy('fecha', 'desc')
                 ->orderBy('id', 'desc')
                 ->get();
-            // Si es paciente y no tiene citas aún, redirige directo al formulario de creación
-            if ($citas->isEmpty()) {
+            $atencionesRaw = \App\Models\Atencion::with(['medico'])
+                ->where('paciente_id', $user->id)
+                ->orderBy('id', 'desc')
+                ->get();
+
+            $items = collect();
+            foreach ($citasRaw as $c) {
+                $items->push([
+                    'tipo' => 'cita',
+                    'id' => $c->id,
+                    'momento' => \Carbon\Carbon::parse($c->fecha),
+                    'estado' => $c->estado,
+                    'especialista' => optional($c->especialista)->name,
+                    'tiene_meds' => $c->medicamentos()->exists(),
+                ]);
+            }
+            foreach ($atencionesRaw as $a) {
+                $items->push([
+                    'tipo' => 'atencion',
+                    'id' => $a->id,
+                    'momento' => $a->iniciada_at ?? $a->created_at,
+                    'estado' => $a->estado,
+                    'especialista' => optional($a->medico)->name,
+                    'tiene_meds' => $a->medicamentos()->exists(),
+                ]);
+            }
+            $items = $items->sortByDesc('momento')->values();
+            // Si no hay nada aún, invitar a crear primera cita
+            if ($items->isEmpty()) {
                 return redirect()->route('citas.create')->with('info', 'Crea tu primera cita.');
             }
+            return view('citas.index', [
+                'items' => $items,
+            ]);
         } else {
             $citas = Cita::orderBy('fecha', 'desc')->orderBy('id','desc')->get();
         }
@@ -124,7 +156,59 @@ class CitaController extends Controller
     {
         $user = Auth::user();
         $usaAdmin = $user->hasRole(['especialista','super-admin','admin_clinica','recepcionista','laboratorio']);
-        return view($usaAdmin ? 'citas.admin.show' : 'citas.show', compact('cita'));
+        // Construir historial resumido del paciente para especialistas/admin
+        $historial = collect();
+        if ($usaAdmin && $cita->usuario_id) {
+            $pacienteId = $cita->usuario_id;
+            $citas = Cita::with(['especialista','medicamentos'])
+                ->where('usuario_id', $pacienteId)
+                ->orderBy('fecha','desc')
+                ->limit(10)
+                ->get();
+            $ats = \App\Models\Atencion::with(['medico','medicamentos'])
+                ->where('paciente_id', $pacienteId)
+                ->orderByRaw('COALESCE(cerrada_at, updated_at, created_at) DESC')
+                ->limit(10)
+                ->get();
+
+            foreach ($citas as $c) {
+                $historial->push([
+                    'tipo' => 'cita',
+                    'momento' => \Carbon\Carbon::parse($c->fecha),
+                    'especialista' => optional($c->especialista)->name,
+                    'diagnostico' => $c->diagnostico,
+                    'observaciones' => $c->observaciones,
+                    'meds_list' => $c->medicamentos->map(fn($m)=>[
+                        'nombre'=>$m->nombre_generico,
+                        'presentacion'=>$m->presentacion,
+                        'posologia'=>$m->posologia,
+                        'frecuencia'=>$m->frecuencia,
+                        'duracion'=>$m->duracion,
+                    ])->values(),
+                ]);
+            }
+
+            foreach ($ats as $a) {
+                $historial->push([
+                    'tipo' => 'atencion',
+                    'momento' => $a->iniciada_at ?? $a->created_at,
+                    'especialista' => optional($a->medico)->name,
+                    'diagnostico' => $a->diagnostico,
+                    'observaciones' => $a->observaciones,
+                    'meds_list' => $a->medicamentos->map(fn($m)=>[
+                        'nombre'=>$m->nombre_generico,
+                        'presentacion'=>$m->presentacion,
+                        'posologia'=>$m->posologia,
+                        'frecuencia'=>$m->frecuencia,
+                        'duracion'=>$m->duracion,
+                    ])->values(),
+                ]);
+            }
+
+            $historial = $historial->sortByDesc('momento')->take(10)->values();
+        }
+
+        return view($usaAdmin ? 'citas.admin.show' : 'citas.show', compact('cita','historial'));
     }
 
     public function destroy(Cita $cita)
@@ -148,6 +232,9 @@ class CitaController extends Controller
 
         if ($cita->estado === 'cancelada') {
             return back()->with('info', 'La cita ya estaba cancelada.');
+        }
+        if ($cita->estado === 'concluida') {
+            return back()->with('info', 'No se puede cancelar una cita concluida.');
         }
 
         $anterior = $cita->fecha;
@@ -174,6 +261,10 @@ class CitaController extends Controller
             || ($user->hasRole(['super-admin','admin_clinica','recepcionista']));
         if (!$puede) {
             abort(403);
+        }
+
+        if (in_array($cita->estado, ['cancelada','concluida'])) {
+            return back()->withErrors(['fecha' => 'No se puede reprogramar una cita '.($cita->estado==='cancelada'?'cancelada':'concluida').'.']);
         }
 
         $validated = $request->validate([
@@ -205,9 +296,7 @@ class CitaController extends Controller
         $anterior = $cita->fecha;
         $cita->fecha = $validated['fecha'];
         // Mantenemos estado en 'pendiente' si estaba pendiente; si estaba 'cancelada' no permitimos reprogramar
-        if ($cita->estado === 'cancelada') {
-            return back()->withErrors(['fecha' => 'No se puede reprogramar una cita cancelada.']);
-        }
+        // Estado permanece en pendiente o similar; no se soporta reprogramación si fue cancelada o concluida (validado arriba)
         $cita->estado = 'pendiente';
         $cita->save();
 
@@ -353,6 +442,14 @@ class CitaController extends Controller
         $user = Auth::user();
         $puede = ($cita->especialista_id === $user->id) || ($user->hasRole(['super-admin','admin_clinica']));
         if (!$puede) abort(403);
+
+        // No permitir gestionar una cita cancelada o concluida
+        if ($cita->estado === 'cancelada') {
+            return back()->with('info', 'La cita está cancelada y no se puede gestionar.');
+        }
+        if ($cita->estado === 'concluida') {
+            return back()->with('info', 'La cita ya fue concluida y no se puede modificar.');
+        }
 
         $validated = $request->validate([
             'diagnostico' => ['required','string','min:3'],

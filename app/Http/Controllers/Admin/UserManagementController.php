@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
@@ -16,16 +17,42 @@ class UserManagementController extends Controller
 {
     public function index(): View
     {
-        $usuarios = User::with(['roles', 'especialidad'])->orderByDesc('created_at')->paginate(12);
+        $usuarioActual = Auth::user();
+        $roles = \Spatie\Permission\Models\Role::orderBy('name')->pluck('name');
+        $filtroRol = request('rol');
+        $usuariosQuery = User::with(['roles', 'especialidad']);
+
+        // Si es recepcionista: solo puede ver pacientes
+        if ($usuarioActual && $usuarioActual->hasRole('recepcionista')) {
+            $roles = collect(['paciente']);
+            $usuariosQuery->whereHas('roles', function ($q) {
+                $q->where('name', 'paciente');
+            });
+            // Forzar el filtro a paciente si llega otro valor
+            if ($filtroRol && $filtroRol !== 'paciente') {
+                $filtroRol = 'paciente';
+            }
+        }
+
+        if ($filtroRol) {
+            $usuariosQuery->whereHas('roles', function($q) use ($filtroRol) {
+                $q->where('name', $filtroRol);
+            });
+        }
+        $usuarios = $usuariosQuery->orderByDesc('created_at')->paginate(12)->appends(['rol' => $filtroRol]);
 
         return view('admin.users.index', [
             'usuarios' => $usuarios,
+            'roles' => $roles,
+            'filtroRol' => $filtroRol,
         ]);
     }
 
     public function create(): View
     {
-        $roles = Role::orderBy('name')->pluck('name');
+        $roles = Auth::user()->hasRole('recepcionista')
+            ? collect(['paciente'])
+            : Role::orderBy('name')->pluck('name');
         $especialidades = Especialidad::orderBy('nombre')->get();
 
         return view('admin.users.create', [
@@ -36,6 +63,11 @@ class UserManagementController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        // Si es recepcionista, forzar rol paciente y sin especialidad
+        if (Auth::user()->hasRole('recepcionista')) {
+            $request->merge(['roles' => ['paciente'], 'especialidad_id' => null]);
+        }
+
         $roles = Role::pluck('name');
         $roleNames = $roles->toArray();
 
@@ -49,7 +81,7 @@ class UserManagementController extends Controller
             'especialidad_id' => ['nullable', 'exists:especialidades,id'],
         ]);
 
-        $esEspecialista = collect($validated['roles'])->contains('especialista');
+    $esEspecialista = collect($validated['roles'])->contains('especialista');
 
         if ($esEspecialista) {
             $request->validate([
@@ -76,7 +108,14 @@ class UserManagementController extends Controller
     {
         $user->load(['roles', 'especialidad']);
 
-        $roles = Role::orderBy('name')->pluck('name');
+        // Recepcionista solo puede editar pacientes
+        if (Auth::user()->hasRole('recepcionista') && !$user->hasRole('paciente')) {
+            abort(403);
+        }
+
+        $roles = Auth::user()->hasRole('recepcionista')
+            ? collect(['paciente'])
+            : Role::orderBy('name')->pluck('name');
         $especialidades = Especialidad::orderBy('nombre')->get();
         $assignedRoles = $user->roles->pluck('name')->toArray();
 
@@ -90,6 +129,14 @@ class UserManagementController extends Controller
 
     public function update(Request $request, User $user): RedirectResponse
     {
+        // Recepcionista solo puede actualizar pacientes y forzar rol paciente
+        if (Auth::user()->hasRole('recepcionista')) {
+            if (!$user->hasRole('paciente')) {
+                abort(403);
+            }
+            $request->merge(['roles' => ['paciente'], 'especialidad_id' => null]);
+        }
+
         $roles = Role::pluck('name');
         $roleNames = $roles->toArray();
 
@@ -103,7 +150,7 @@ class UserManagementController extends Controller
             'especialidad_id' => ['nullable', 'exists:especialidades,id'],
         ]);
 
-        $esEspecialista = collect($validated['roles'])->contains('especialista');
+    $esEspecialista = collect($validated['roles'])->contains('especialista');
 
         if ($esEspecialista) {
             $request->validate([
@@ -114,7 +161,7 @@ class UserManagementController extends Controller
         $user->name = $validated['name'];
         $user->cedula = Str::upper($validated['cedula']);
         $user->email = $validated['email'];
-        $user->especialidad_id = $esEspecialista ? $validated['especialidad_id'] : null;
+    $user->especialidad_id = $esEspecialista ? $validated['especialidad_id'] : null;
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);

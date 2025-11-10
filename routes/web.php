@@ -52,11 +52,19 @@ Route::middleware(['auth', 'verified', 'role:especialista'])
         Route::delete('horarios/{disponibilidad}', [DisponibilidadController::class, 'destroy'])->name('horarios.destroy');
     });
 
-Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica'])
+// Gestión de usuarios: también accesible por recepcionista (limitado a pacientes en el controlador)
+Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcionista'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::resource('users', UserManagementController::class)->only(['index', 'create', 'store', 'edit', 'update']);
+    });
+
+// Configuración: solo administración
+Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
         Route::get('settings/pagos', [\App\Http\Controllers\Admin\SettingsController::class, 'pagos'])->name('settings.pagos');
         Route::post('settings/pagos', [\App\Http\Controllers\Admin\SettingsController::class, 'guardarPagos'])->name('settings.pagos.guardar');
     });
@@ -103,6 +111,79 @@ Route::middleware(['auth', 'verified', 'role:recepcionista|admin_clinica|super-a
         Route::get('pagos', [\App\Http\Controllers\Recepcion\PagoManualController::class, 'index'])->name('pagos.index');
         Route::post('pagos/{reporte}/aprobar', [\App\Http\Controllers\Recepcion\PagoManualController::class, 'aprobar'])->name('pagos.aprobar');
         Route::post('pagos/{reporte}/rechazar', [\App\Http\Controllers\Recepcion\PagoManualController::class, 'rechazar'])->name('pagos.rechazar');
+    });
+
+// Atenciones (seguro / guardia)
+Route::middleware(['auth','verified'])
+    ->group(function(){
+        // Listados por rol
+        Route::get('atenciones', [\App\Http\Controllers\AtencionController::class, 'index'])->name('atenciones.index');
+        // Recepción
+        Route::post('atenciones', [\App\Http\Controllers\AtencionController::class, 'store'])->name('atenciones.store');
+        Route::post('atenciones/{atencion}/asignar', [\App\Http\Controllers\AtencionController::class, 'asignarMedico'])->name('atenciones.asignar');
+        Route::post('atenciones/{atencion}/cerrar', [\App\Http\Controllers\AtencionController::class, 'cerrar'])->name('atenciones.cerrar');
+    // Buscadores AJAX recepción
+    Route::get('ajax/pacientes', [\App\Http\Controllers\AtencionController::class, 'buscarPacientes'])->name('ajax.pacientes');
+    Route::get('ajax/clinicas', [\App\Http\Controllers\AtencionController::class, 'buscarClinicas'])->name('ajax.clinicas');
+    Route::get('ajax/medicos', [\App\Http\Controllers\AtencionController::class, 'buscarMedicos'])->name('ajax.medicos');
+        // Especialista gestionar
+    Route::get('atenciones/{atencion}/gestion', function(\App\Models\Atencion $atencion){
+            // Reusar layout admin para especialistas
+            $user = \Illuminate\Support\Facades\Auth::user();
+            if(!$user->hasRole(['especialista','super-admin','admin_clinica'])) abort(403);
+            // Historial del paciente para apoyo clínico
+            $historial = collect();
+            if ($atencion->paciente_id) {
+                $pacienteId = $atencion->paciente_id;
+                $citas = \App\Models\Cita::with(['especialista','medicamentos'])
+                    ->where('usuario_id', $pacienteId)
+                    ->orderBy('fecha','desc')->limit(10)->get();
+                $ats = \App\Models\Atencion::with(['medico','medicamentos'])
+                    ->where('paciente_id', $pacienteId)
+                    ->orderByRaw('COALESCE(cerrada_at, updated_at, created_at) DESC')
+                    ->limit(10)->get();
+                foreach ($citas as $c) {
+                    $historial->push([
+                        'tipo' => 'cita',
+                        'momento' => \Carbon\Carbon::parse($c->fecha),
+                        'estado' => $c->estado,
+                        'especialista' => optional($c->especialista)->name,
+                        'diagnostico' => $c->diagnostico,
+                        'observaciones' => $c->observaciones,
+                        'meds_list' => $c->medicamentos->map(fn($m)=>[
+                            'nombre' => $m->nombre_generico,
+                            'presentacion' => $m->presentacion,
+                            'posologia' => $m->posologia,
+                            'frecuencia' => $m->frecuencia,
+                            'duracion' => $m->duracion,
+                        ])->values(),
+                    ]);
+                }
+                foreach ($ats as $a) {
+                    $historial->push([
+                        'tipo' => 'atencion',
+                        'momento' => $a->iniciada_at ?? $a->created_at,
+                        'estado' => $a->estado,
+                        'especialista' => optional($a->medico)->name,
+                        'diagnostico' => $a->diagnostico,
+                        'observaciones' => $a->observaciones,
+                        'meds_list' => $a->medicamentos->map(fn($m)=>[
+                            'nombre' => $m->nombre_generico,
+                            'presentacion' => $m->presentacion,
+                            'posologia' => $m->posologia,
+                            'frecuencia' => $m->frecuencia,
+                            'duracion' => $m->duracion,
+                        ])->values(),
+                    ]);
+                }
+                $historial = $historial->sortByDesc('momento')->take(10)->values();
+            }
+            return view('atenciones.especialista.gestion', compact('atencion','historial'));
+        })->name('atenciones.gestion');
+        Route::post('atenciones/{atencion}/gestion', [\App\Http\Controllers\AtencionController::class, 'gestionar'])->name('atenciones.gestion.post');
+        // Detalle paciente (solo lectura) - reutiliza controlador para ver una atención propia
+        Route::get('atenciones/paciente/{atencion}', [\App\Http\Controllers\AtencionController::class, 'showPaciente'])->name('atenciones.paciente.show');
+        Route::get('atenciones/paciente/{atencion}/receta', [\App\Http\Controllers\AtencionController::class, 'recetaPaciente'])->name('atenciones.paciente.receta');
     });
 
 require __DIR__ . '/auth.php';

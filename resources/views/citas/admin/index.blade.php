@@ -43,12 +43,16 @@
                                 <a href="{{ route('citas.show', $cita) }}" class="btn btn-outline-secondary btn-sm" title="Ver"><i class="fas fa-eye"></i></a>
                             @endif
                             @if($cita->medicamentos()->exists())
-                                <a href="{{ route('citas.receta', $cita) }}" class="btn btn-outline-success btn-sm" title="Receta"><i class="fas fa-prescription-bottle"></i></a>
+                                <a href="{{ route('citas.receta', $cita) }}" class="btn btn-outline-success btn-sm" title="Receta"><i class="fas fa-prescription-bottle-alt"></i></a>
+                            @else
+                                <button class="btn btn-outline-secondary btn-sm" title="Sin receta" disabled><i class="fas fa-prescription-bottle-alt"></i></button>
                             @endif
-                            <form action="{{ route('citas.cancelar', $cita) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Cancelar esta cita?');">
-                                @csrf
-                                <button class="btn btn-outline-danger btn-sm" @disabled($cita->estado==='cancelada') title="Cancelar"><i class="fas fa-ban"></i></button>
-                            </form>
+                            @if(!in_array($cita->estado,['cancelada','concluida']))
+                                <form action="{{ route('citas.cancelar', $cita) }}" method="POST" class="d-inline js-cancel-cita" data-cita-id="{{ $cita->id }}">
+                                    @csrf
+                                    <button class="btn btn-outline-danger btn-sm" title="Cancelar"><i class="fas fa-ban"></i></button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @empty
@@ -60,4 +64,29 @@
             </table>
         </div>
     </div>
+    <script>
+    (function(){
+        function ensureSwal(cb){ if(window.Swal) return cb(); const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/sweetalert2@11'; s.onload=cb; document.head.appendChild(s); }
+        function bind(){
+            document.querySelectorAll('form.js-cancel-cita').forEach(f=>{
+                if(f._swBound) return; f._swBound=true;
+                f.addEventListener('submit', function(e){
+                    e.preventDefault();
+                    ensureSwal(()=>{
+                        Swal.fire({
+                            title:'Cancelar cita',
+                            text:'¿Confirmas que deseas cancelar esta cita?',
+                            icon:'warning',
+                            showCancelButton:true,
+                            confirmButtonText:'Sí, cancelar',
+                            cancelButtonText:'No',
+                            confirmButtonColor:'#d33'
+                        }).then(r=>{ if(r.isConfirmed) f.submit(); });
+                    });
+                });
+            });
+        }
+        bind();
+    })();
+    </script>
 @endsection

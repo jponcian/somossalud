@@ -22,8 +22,21 @@
         </div>
         <div class="col-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
                     <h3 class="card-title mb-0">Usuarios registrados</h3>
+                    <form method="GET" action="{{ route('admin.users.index') }}" class="form-inline mr-2">
+                        <div class="form-group mb-0 mr-2">
+                            <select name="rol" class="form-control form-control-sm" onchange="this.form.submit()">
+                                <option value="">Todos los roles</option>
+                                @foreach ($roles ?? [] as $rol)
+                                    <option value="{{ $rol }}" {{ ($filtroRol ?? '') === $rol ? 'selected' : '' }}>{{ ucfirst(str_replace('_',' ', $rol)) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @if(request('rol'))
+                            <a href="{{ route('admin.users.index') }}" class="btn btn-link btn-sm">Limpiar filtro</a>
+                        @endif
+                    </form>
                     <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-user-plus mr-1"></i> Nuevo usuario
                     </a>

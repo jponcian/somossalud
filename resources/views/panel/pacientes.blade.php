@@ -128,21 +128,20 @@
                 </div>
             @endif
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            {{-- <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-semibold text-gray-800 mb-3">Tu próxima atención</h3>
                     <p class="text-sm text-gray-600">
                         Revisa el estado de tus citas, resultados de laboratorio y datos personales en un solo lugar.
                     </p>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-emerald-400">
                     <div class="p-6">
-                        <h4 class="text-base font-semibold text-gray-800 mb-1">Citas médicas</h4>
-                        <p class="text-sm text-gray-600 mb-4">
-                            Agenda nuevas consultas, confirma fechas y recibe recordatorios automáticos.</p>
+                        <h4 class="text-base font-semibold text-gray-800 mb-1">Consultas y atenciones</h4>
+                        <p class="text-sm text-gray-600 mb-4">Agenda nuevas consultas y revisa tus atenciones por seguro en un sólo lugar.</p>
                         <a href="{{ route('citas.index') }}"
                             class="inline-flex items-center text-emerald-600 font-semibold text-sm">Gestionar citas<span
                                 class="ml-2">→</span></a>
@@ -174,10 +173,19 @@
                 </div>
 
                 @if($ultimaReceta)
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-pink-400 relative">
+                    <style>
+                        .card-receta {
+                            background: linear-gradient(180deg, #ffffff 0%, #fff0f5 100%);
+                            border: 1px solid #f8d7e2;
+                        }
+                        .card-receta .section-title { color: #b83280; }
+                        .btn-receta { background-color: #d63384; border-color: #d63384; color: #fff; }
+                        .btn-receta:hover { background-color: #b62c71; border-color: #b62c71; color: #fff; }
+                    </style>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-pink-400 relative card-receta">
                         <div class="p-6">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h4 class="text-base font-semibold text-gray-800 mb-0">Medicamentos recientes</h4>
+                                <h4 class="text-base font-semibold section-title mb-0">Medicamentos recientes</h4>
                                 <span class="badge text-bg-light small">{{ $ultimaReceta->concluida_at ? 'Concluida' : 'En curso' }}</span>
                             </div>
                             @php $__fechaRec = \Illuminate\Support\Carbon::parse($ultimaReceta->fecha)->format('d/m/Y'); @endphp
@@ -207,13 +215,67 @@
                                 @endif
                             </div>
                             <div class="mt-3">
-                                <a href="{{ route('citas.receta', $ultimaReceta) }}" class="btn btn-outline-secondary btn-sm">
+                                <a href="{{ route('citas.receta', $ultimaReceta) }}" class="btn btn-sm btn-receta">
                                     <i class="fas fa-prescription-bottle-alt me-1"></i> Ver receta completa
                                 </a>
                             </div>
                         </div>
                         <span class="position-absolute top-0 end-0 p-2 text-pink-400">
                             <i class="fas fa-pills"></i>
+                        </span>
+                    </div>
+                @endif
+                @php
+                    $ultimaAtencionConMeds = \App\Models\Atencion::with(['medicamentos','medico'])
+                        ->where('paciente_id', auth()->id())
+                        ->whereHas('medicamentos')
+                        ->orderByRaw('COALESCE(cerrada_at, updated_at) DESC')
+                        ->first();
+                @endphp
+                @if($ultimaAtencionConMeds)
+                    <style>
+                        .card-atencion-meds { background: linear-gradient(180deg,#ffffff 0%, #eef9ff 100%); border:1px solid #cfe8ff; }
+                        .card-atencion-meds .section-title { color:#0d6efd; }
+                        .btn-atencion-meds { background:#0d6efd; border-color:#0d6efd; color:#fff; }
+                        .btn-atencion-meds:hover { background:#0b5ed7; border-color:#0b5ed7; color:#fff; }
+                    </style>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-info-400 relative card-atencion-meds">
+                        <div class="p-6">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h4 class="text-base font-semibold section-title mb-0">Medicamentos recientes (Atención)</h4>
+                                <span class="badge text-bg-light small">{{ $ultimaAtencionConMeds->estado==='cerrado' ? 'Cerrada' : 'En curso' }}</span>
+                            </div>
+                            @php $__fechaAten = ($ultimaAtencionConMeds->iniciada_at ?? $ultimaAtencionConMeds->created_at)->format('d/m/Y'); @endphp
+                            <p class="text-xs text-gray-500 mb-3">Indicados en atención con {{ optional($ultimaAtencionConMeds->medico)->name ?? 'Especialista' }} ({{ $__fechaAten }})</p>
+                            <div class="small" style="max-height: 220px; overflow-y:auto;">
+                                @foreach($ultimaAtencionConMeds->medicamentos->sortBy('orden') as $m)
+                                    <div class="border rounded p-2 mb-2 position-relative">
+                                        <div class="fw-semibold mb-1">
+                                            {{ $m->nombre_generico }} @if($m->presentacion)<span class="text-muted">— {{ $m->presentacion }}</span>@endif
+                                        </div>
+                                        @if($m->posologia)
+                                            <div class="text-muted"><span class="fw-medium">Posología:</span> {{ $m->posologia }}</div>
+                                        @endif
+                                        @if($m->frecuencia)
+                                            <div class="text-muted"><span class="fw-medium">Frecuencia:</span> {{ $m->frecuencia }}</div>
+                                        @endif
+                                        @if($m->duracion)
+                                            <div class="text-muted"><span class="fw-medium">Duración:</span> {{ $m->duracion }}</div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                                @if($ultimaAtencionConMeds->medicamentos->isEmpty())
+                                    <div class="text-muted fst-italic">No hay medicamentos registrados.</div>
+                                @endif
+                            </div>
+                            <div class="mt-3">
+                                <a href="{{ route('atenciones.paciente.receta', $ultimaAtencionConMeds) }}" class="btn btn-sm btn-atencion-meds">
+                                    <i class="fas fa-prescription-bottle-alt me-1"></i> Ver receta completa
+                                </a>
+                            </div>
+                        </div>
+                        <span class="position-absolute top-0 end-0 p-2 text-info">
+                            <i class="fas fa-briefcase-medical"></i>
                         </span>
                     </div>
                 @endif
