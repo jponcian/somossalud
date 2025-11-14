@@ -101,13 +101,13 @@
                             @endif
                         </div>
                         <div class="form-group">
-                            <label for="especialidad_id">Especialidad (solo especialistas)</label>
-                            <select name="especialidad_id" id="especialidad_id"
-                                class="form-control @error('especialidad_id') is-invalid @enderror"
-                                {{ auth()->user()->hasRole('recepcionista') ? 'disabled' : '' }}>
-                                <option value="">Selecciona una especialidad</option>
+                            <label for="especialidades">Especialidades (múltiples, solo especialistas)</label>
+                            <select name="especialidades[]" id="especialidades" class="form-control @error('especialidades') is-invalid @enderror" multiple {{ auth()->user()->hasRole('recepcionista') ? 'disabled' : '' }}>
+                                @php
+                                    $selectedEspecialidades = old('especialidades', []);
+                                @endphp
                                 @foreach ($especialidades as $especialidad)
-                                    <option value="{{ $especialidad->id }}" {{ (string) $especialidad->id === (string) old('especialidad_id') ? 'selected' : '' }}>
+                                    <option value="{{ $especialidad->id }}" {{ in_array($especialidad->id, $selectedEspecialidades) ? 'selected' : '' }}>
                                         {{ $especialidad->nombre }}
                                     </option>
                                 @endforeach
@@ -116,10 +116,10 @@
                                 @if (auth()->user()->hasRole('recepcionista'))
                                     Campo no disponible para recepcionistas.
                                 @else
-                                    Se habilita automáticamente cuando el rol "especialista" esté seleccionado.
+                                    Se habilita automáticamente cuando el rol "especialista" esté seleccionado. Usa Ctrl o Shift para seleccionar varias.
                                 @endif
                             </small>
-                            @error('especialidad_id')
+                            @error('especialidades')
                                 <span class="invalid-feedback" role="alert">{{ $message }}</span>
                             @enderror
                         </div>
@@ -134,34 +134,48 @@
     </div>
 @endsection
 
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
 @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const roleCheckboxes = Array.from(document.querySelectorAll('.role-checkbox'));
-            const especialidadSelect = document.getElementById('especialidad_id');
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#especialidades').select2({
+        placeholder: "Selecciona especialidades",
+        allowClear: true,
+        width: '100%'
+    });
+});
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const roleCheckboxes = Array.from(document.querySelectorAll('.role-checkbox'));
+        const especialidadSelect = document.getElementById('especialidad_id');
 
-            if (!especialidadSelect) {
-                return;
-            }
+        if (!especialidadSelect) {
+            return;
+        }
 
-            function toggleEspecialidad() {
-                const specialistSelected = roleCheckboxes.some(function (checkbox) {
-                    return checkbox.checked && checkbox.value === 'especialista';
-                });
-
-                especialidadSelect.disabled = !specialistSelected;
-                especialidadSelect.classList.toggle('disabled', !specialistSelected);
-
-                if (!specialistSelected) {
-                    especialidadSelect.value = '';
-                }
-            }
-
-            roleCheckboxes.forEach(function (checkbox) {
-                checkbox.addEventListener('change', toggleEspecialidad);
+        function toggleEspecialidad() {
+            const specialistSelected = roleCheckboxes.some(function (checkbox) {
+                return checkbox.checked && checkbox.value === 'especialista';
             });
 
-            toggleEspecialidad();
+            especialidadSelect.disabled = !specialistSelected;
+            especialidadSelect.classList.toggle('disabled', !specialistSelected);
+
+            if (!specialistSelected) {
+                especialidadSelect.value = '';
+            }
+        }
+
+        roleCheckboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', toggleEspecialidad);
         });
-    </script>
+
+        toggleEspecialidad();
+    });
+</script>
 @endpush

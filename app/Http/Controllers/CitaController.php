@@ -82,8 +82,8 @@ class CitaController extends Controller
 
     public function create()
     {
-        // Solo especialidades que tengan al menos un usuario con rol especialista asignado
-        $especialidades = Especialidad::whereHas('especialistas', function ($q) {
+        // Solo especialidades que tengan al menos un usuario con rol especialista asignado (muchos a muchos)
+        $especialidades = Especialidad::whereHas('usuarios', function ($q) {
                 $q->role('especialista');
             })
             ->orderBy('nombre')
@@ -100,9 +100,9 @@ class CitaController extends Controller
             'fecha' => ['required','date_format:Y-m-d H:i'],
         ]);
 
-        // Verificar que el especialista pertenece a la especialidad seleccionada
+        // Verificar que el especialista pertenece a la especialidad seleccionada (muchos a muchos)
         $especialista = User::role('especialista')->findOrFail($validated['especialista_id']);
-        if ((string) $especialista->especialidad_id !== (string) $validated['especialidad_id']) {
+        if (!$especialista->especialidades->pluck('id')->contains((int)$validated['especialidad_id'])) {
             return back()->withErrors(['especialista_id' => 'El especialista no pertenece a la especialidad seleccionada.'])->withInput();
         }
 
@@ -314,10 +314,12 @@ class CitaController extends Controller
     // AJAX: lista de especialistas por especialidad
     public function doctoresPorEspecialidad(Request $request)
     {
-    $request->validate(['especialidad_id' => ['required','exists:especialidades,id']]);
-    $especialidadId = (int) $request->query('especialidad_id');
+        $request->validate(['especialidad_id' => ['required','exists:especialidades,id']]);
+        $especialidadId = (int) $request->query('especialidad_id');
         $doctores = User::role('especialista')
-            ->where('especialidad_id', $especialidadId)
+            ->whereHas('especialidades', function ($q) use ($especialidadId) {
+                $q->where('especialidades.id', $especialidadId);
+            })
             ->orderBy('name')
             ->get(['id','name']);
 

@@ -50,7 +50,7 @@
                                     <th>Cédula</th>
                                     <th>Correo</th>
                                     <th>Roles</th>
-                                    <th>Especialidad</th>
+                                    <th>Especialidades</th>
                                     <th class="text-nowrap">Registrado</th>
                                     <th class="text-right">Acciones</th>
                                 </tr>
@@ -67,7 +67,16 @@
                                             @endphp
                                             {{ $roleNames->isEmpty() ? 'Sin roles' : $roleNames->implode(', ') }}
                                         </td>
-                                        <td>{{ $usuario->especialidad->nombre ?? 'N/A' }}</td>
+                                        <td>
+                                            @php
+                                                $especialidades = $usuario->especialidades->pluck('nombre')->toArray();
+                                            @endphp
+                                            @if(!empty($especialidades))
+                                                {!! '<span class="badge badge-info">' . implode('</span> <span class="badge badge-info">', $especialidades) . '</span>' !!}
+                                            @else
+                                                <span class="text-muted">N/A</span>
+                                            @endif
+                                        </td>
                                         <td class="text-nowrap">
                                             {{ optional($usuario->created_at)->format('d/m/Y H:i') ?? '—' }}
                                         </td>

@@ -78,14 +78,15 @@ class UserManagementController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'roles' => ['required', 'array', 'min:1'],
             'roles.*' => ['string', 'in:' . implode(',', $roleNames)],
-            'especialidad_id' => ['nullable', 'exists:especialidades,id'],
+            // 'especialidad_id' => ['nullable', 'exists:especialidades,id'], // legacy, no exigir
         ]);
 
-    $esEspecialista = collect($validated['roles'])->contains('especialista');
+        $esEspecialista = collect($validated['roles'])->contains('especialista');
 
         if ($esEspecialista) {
             $request->validate([
-                'especialidad_id' => ['required', 'exists:especialidades,id'],
+                'especialidades' => ['required', 'array', 'min:1'],
+                'especialidades.*' => ['exists:especialidades,id'],
             ]);
         }
 
@@ -98,6 +99,11 @@ class UserManagementController extends Controller
         ]);
 
         $usuario->syncRoles($validated['roles']);
+
+        // Sincronizar especialidades múltiples (solo si es especialista)
+        if ($esEspecialista && $request->has('especialidades')) {
+            $usuario->especialidades()->sync($request->input('especialidades', []));
+        }
 
         return redirect()
             ->route('admin.users.index')
@@ -147,21 +153,22 @@ class UserManagementController extends Controller
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'roles' => ['required', 'array', 'min:1'],
             'roles.*' => ['string', 'in:' . implode(',', $roleNames)],
-            'especialidad_id' => ['nullable', 'exists:especialidades,id'],
+            // 'especialidad_id' => ['nullable', 'exists:especialidades,id'], // legacy, no exigir
         ]);
 
-    $esEspecialista = collect($validated['roles'])->contains('especialista');
+        $esEspecialista = collect($validated['roles'])->contains('especialista');
 
         if ($esEspecialista) {
             $request->validate([
-                'especialidad_id' => ['required', 'exists:especialidades,id'],
+                'especialidades' => ['required', 'array', 'min:1'],
+                'especialidades.*' => ['exists:especialidades,id'],
             ]);
         }
 
         $user->name = $validated['name'];
         $user->cedula = Str::upper($validated['cedula']);
         $user->email = $validated['email'];
-    $user->especialidad_id = $esEspecialista ? $validated['especialidad_id'] : null;
+        $user->especialidad_id = $esEspecialista ? ($validated['especialidad_id'] ?? null) : null;
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
@@ -170,6 +177,13 @@ class UserManagementController extends Controller
         $user->save();
 
         $user->syncRoles($validated['roles']);
+
+        // Sincronizar especialidades múltiples (solo si es especialista)
+        if ($esEspecialista && $request->has('especialidades')) {
+            $user->especialidades()->sync($request->input('especialidades', []));
+        } else {
+            $user->especialidades()->detach();
+        }
 
         return redirect()
             ->route('admin.users.index')

@@ -59,9 +59,16 @@ class User extends Authenticatable
         return $this->belongsTo(Clinica::class);
     }
 
+    // Relación individual (legacy)
     public function especialidad()
     {
         return $this->belongsTo(Especialidad::class, 'especialidad_id');
+    }
+
+    // Relación muchos a muchos (nuevo)
+    public function especialidades()
+    {
+        return $this->belongsToMany(Especialidad::class, 'especialidad_usuario', 'usuario_id', 'especialidad_id')->withTimestamps();
     }
 
     public function disponibilidades()
