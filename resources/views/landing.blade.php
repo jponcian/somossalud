@@ -121,7 +121,7 @@
                         <p class="mb-4 text-white-75">Agenda una demo personalizada y descubre cómo SomosSalud impulsa la
                             atención comunitaria junto a tu equipo.</p>
                         <div class="d-flex flex-column flex-md-row gap-3 justify-content-center justify-content-lg-start">
-                            <a href="mailto:alianzas@somossalud.com" class="btn btn-light btn-lg">Afiliar mi clínica</a>
+                            <a href="mailto:alianzas@clinicasaludsonrisa.com" class="btn btn-light btn-lg">Afiliar mi clínica</a>
                             <!-- <a href="mailto:alianzas@somossalud.com" class="btn btn-outline-light btn-lg">Escribir al
                                                                     equipo</a> -->
                         </div>
@@ -131,12 +131,13 @@
                             <h3 class="h6 text-uppercase text-primary mb-3">Contacto directo</h3>
                             <ul class="list-unstyled mb-4">
                                 <li class="d-flex align-items-center mb-2"><i
-                                        class="fa-solid fa-phone text-primary me-3"></i><span>+58 412 0000000</span></li>
+                                        class="fa-solid fa-phone text-primary me-3"></i><span>0246-871.6474</span></li>
                                 <li class="d-flex align-items-center mb-2"><i
-                                        class="fa-solid fa-envelope text-primary me-3"></i><span>alianzas@somossalud.com</span>
-                                </li>
+                                        class="fa-solid fa-phone text-primary me-3"></i><span>0246-8718336</span></li>
+                                <li class="d-flex align-items-center mb-2"><i
+                                        class="fa-solid fa-phone text-primary me-3"></i><span>0414-1490401</span></li>
                                 <li class="d-flex align-items-center"><i
-                                        class="fa-brands fa-whatsapp text-primary me-3"></i><span>@SomosSaludVE</span></li>
+                                        class="fa-solid fa-envelope text-primary me-3"></i><span>alianzas@clinicasaludsonrisa.com</span></li>
                             </ul>
                             <p class="small text-muted mb-0">Horario de atención: lunes a viernes · 8:00 a. m. - 6:00 p. m.
                             </p>
