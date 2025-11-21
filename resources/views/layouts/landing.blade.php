@@ -4,72 +4,175 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', config('app.name', 'SomosSalud'))</title>
-    <meta name="description" content="@yield('description', 'SomosSalud - reservas y resultados')">
+    
+    <!-- SEO Meta Tags -->
+    <title>@yield('title', 'Clinica SaludSonrisa | SomosSalud')</title>
+    <meta name="description" content="@yield('description', 'Tu salud y la de tu familia en las mejores manos. Citas médicas, odontología y resultados en línea.')">
+    <meta name="keywords" content="salud, clinica, odontologia, citas medicas, venezuela, saludsonrisa, somossalud, doctores">
+    <meta name="author" content="Clinica SaludSonrisa">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:title" content="@yield('title', 'Clinica SaludSonrisa | SomosSalud')">
+    <meta property="og:description" content="@yield('description', 'Tu salud y la de tu familia en las mejores manos.')">
+    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+
+    <!-- Google Fonts: Outfit (Moderno y limpio) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('favicon.ico') }}">
 
     <style>
-        /* pequeño reset para evitar choques con estilos globales */
+        :root {
+            --primary-blue: #0056b3; /* Azul corporativo sólido */
+            --primary-light: #e3f2fd;
+            --accent-green: #28a745; /* Verde corporativo */
+            --accent-green-hover: #218838;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
         }
 
-        /* Tema azul para clínica médica */
+        /* Sobreescribir Bootstrap Colors para consistencia */
+        .text-primary { color: var(--primary-blue) !important; }
+        .bg-primary { background-color: var(--primary-blue) !important; }
+        .text-success { color: var(--accent-green) !important; }
+        .bg-success { background-color: var(--accent-green) !important; }
+
+        /* Navbar Premium */
         .navbar {
-            background-color: #ffffff !important;
-            border-bottom: 1px solid #e9ecef;
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+        }
+        .navbar-brand img {
+            height: 50px; /* Un poco más grande */
         }
 
+        /* Hero Section Dinámico */
         .hero {
-            background: linear-gradient(135deg, #00b5e2 0%, #0059a7 100%);
+            /* Gradiente Azul (#0056b3) a Verde (#28a745) de la clínica */
+            background: linear-gradient(135deg, #0056b3 0%, #28a745 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 100px 0 80px;
             color: white;
-            padding: 80px 0;
+            clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+        }
+        
+        /* Botones Modernos */
+        .btn {
+            border-radius: 50px; /* Pill shape */
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: var(--primary-blue);
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 86, 179, 0.3);
+        }
+        .btn-primary:hover {
+            background-color: #004494;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 86, 179, 0.4);
+        }
+        .btn-success {
+            background-color: var(--accent-green);
+            border: none;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        .btn-success:hover {
+            background-color: var(--accent-green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        .btn-outline-light:hover {
+            background-color: white;
+            color: var(--primary-blue);
+        }
+        .btn-outline-primary {
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--primary-blue);
+            color: white;
         }
 
+        /* Cards y Elementos */
+        .insight-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
         .feature-icon {
-            width: 64px;
-            height: 64px;
+            width: 60px;
+            height: 60px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            background: #007bff;
+            border-radius: 16px;
+            background: var(--primary-light);
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge-soft {
+            background-color: rgba(255, 255, 255, 0.2);
             color: white;
-            font-size: 24px;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 1rem;
         }
 
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
+        .hero-list li {
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.05rem;
+        }
+        .hero-list i {
+            color: #a3ffb8; /* Verde claro para iconos en fondo azul */
         }
 
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-            border-color: #218838;
-        }
-
+        /* Footer */
         footer {
-            background-color: #f8f9fa;
-            color: #6c757d;
+            background-color: white;
+            border-top: 1px solid #e9ecef;
+            color: var(--text-muted);
+            padding: 2rem 0;
         }
     </style>
 
