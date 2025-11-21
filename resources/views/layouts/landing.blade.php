@@ -34,9 +34,9 @@
 
     <style>
         :root {
-            --primary-blue: #0056b3; /* Azul corporativo sólido */
+            --primary-blue: #0056b3; /* Azul original */
             --primary-light: #e3f2fd;
-            --accent-green: #28a745; /* Verde corporativo */
+            --accent-green: #28a745; /* Verde original */
             --accent-green-hover: #218838;
             --text-dark: #1e293b;
             --text-muted: #64748b;
@@ -68,26 +68,46 @@
             padding: 1rem 0;
         }
         .navbar-brand img {
-            height: 50px; /* Un poco más grande */
+            height: 50px;
         }
 
         /* Hero Section Dinámico */
         .hero {
-            /* Gradiente Azul (#0056b3) a Verde (#28a745) de la clínica */
+            /* Gradiente Azul a Verde original */
             background: linear-gradient(135deg, #0056b3 0%, #28a745 100%);
             position: relative;
             overflow: hidden;
-            padding: 100px 0 80px;
+            padding: 120px 0 100px;
             color: white;
             clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+        }
+
+        /* Efecto de brillo/reflejo de luz */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            animation: shine 3s infinite linear; /* Movimiento continuo cada 3 segundos */
+            pointer-events: none;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 200%; }
         }
         
         /* Botones Modernos */
         .btn {
             border-radius: 50px; /* Pill shape */
-            padding: 0.6rem 1.5rem;
+            padding: 0.75rem 2rem;
             font-weight: 600;
             transition: all 0.3s ease;
+            letter-spacing: 0.5px;
         }
         .btn-primary {
             background-color: var(--primary-blue);
