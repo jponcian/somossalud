@@ -306,7 +306,7 @@
                     <ul class="list-group list-group-flush">
                         @php
                             $proximas = \App\Models\Cita::where('especialista_id', $yo->id)
-                                ->orderBy('fecha','asc')
+                                ->orderBy('fecha','desc')
                                 ->take(5)
                                 ->get();
                         @endphp

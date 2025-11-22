@@ -43,16 +43,7 @@ class ResetPasswordNotification extends Notification
 
         return (new MailMessage)
             ->subject('Restablecer contraseña - SaludSonrisa')
-            ->greeting('¡Hola!')
-            ->line('Recibimos una solicitud para restablecer la contraseña de tu cuenta.')
-            ->line('Si no realizaste esta solicitud, puedes ignorar este correo de forma segura.')
-            ->action('Restablecer contraseña', $url)
-            ->line('Este enlace de restablecimiento expirará en 60 minutos.')
-            ->line('Por tu seguridad, te recomendamos usar una contraseña segura que incluya letras, números y símbolos.')
-            ->salutation(new \Illuminate\Support\HtmlString('Saludos cordiales,<br>El equipo de SaludSonrisa'))
-            ->with([
-                'subcopy' => 'Si tienes problemas al hacer clic en el botón "Restablecer contraseña", copia y pega la siguiente URL en tu navegador web:',
-            ]);
+            ->markdown('emails.reset-password', ['url' => $url]);
     }
 
     /**

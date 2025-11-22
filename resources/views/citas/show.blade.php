@@ -1,215 +1,406 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Detalle de la cita</h2>
-    </x-slot>
+@extends('layouts.adminlte')
 
-    <div class="container py-4">
-    <h1 class="h4 mb-4 d-flex align-items-center gap-2"><i class="fa-solid fa-calendar-check text-primary"></i> Detalle de la cita</h1>
+@section('title', 'Detalle de Cita | SomosSalud')
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="text-muted small">Fecha y hora</div>
-                        <div class="fw-semibold">{{ \Illuminate\Support\Carbon::parse($cita->fecha)->format('d/m/Y H:i') }}</div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="text-muted small">Estado</div>
-                        <div><span class="badge text-bg-secondary">{{ ucfirst($cita->estado) }}</span></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="text-muted small">Clínica</div>
-                        <div class="fw-medium">{{ optional($cita->clinica)->nombre ?? '—' }}</div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="text-muted small">Especialista</div>
-                        <div class="fw-medium">{{ optional($cita->especialista)->name ?? '—' }}</div>
+@section('sidebar')
+    @include('panel.partials.sidebar')
+@endsection
+
+@push('styles')
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Outfit', sans-serif !important;
+        background-color: #f8fafc;
+    }
+    .content-wrapper {
+        background-color: #f8fafc !important;
+    }
+    .card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        transition: all 0.3s ease;
+        background: white;
+        overflow: hidden;
+    }
+    .card:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .card-header {
+        background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%);
+        border-bottom: 1px solid #cbd5e1;
+        padding: 1.25rem 1.5rem;
+    }
+    .info-item {
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        border-left: 4px solid #0ea5e9;
+    }
+    .info-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    .info-value {
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 1rem;
+    }
+    .medicamento-item {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem;
+        position: relative;
+        transition: all 0.2s ease;
+    }
+    .medicamento-item:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .form-control {
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+    .form-control:focus {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+    .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        border: none;
+        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+    }
+    .badge {
+        padding: 0.5em 0.8em;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+</style>
+@endpush
+
+@section('content')
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <div class="mb-4">
+        <a href="{{ route('citas.index') }}" class="text-muted text-decoration-none">
+            <i class="fas fa-arrow-left mr-2"></i>Volver a mis citas
+        </a>
+    </div>
+
+    <!-- Información de la cita -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title mb-0 font-weight-bold text-primary">
+                <i class="fas fa-calendar-check mr-2"></i>Detalle de la cita
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="info-item">
+                        <div class="info-label">Fecha y hora</div>
+                        <div class="info-value">
+                            <i class="far fa-calendar-alt mr-2 text-primary"></i>
+                            {{ \Illuminate\Support\Carbon::parse($cita->fecha)->format('d/m/Y H:i') }}
+                        </div>
                     </div>
                 </div>
-                <div class="mt-3 d-flex justify-content-between">
-                    <a href="{{ route('citas.index') }}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Volver</a>
-                    <form action="{{ route('citas.cancelar', $cita) }}" method="POST" class="form-cancelar-cita">
-                        @csrf
-                        <button class="btn btn-outline-danger btn-sm" @disabled($cita->estado==='cancelada' || $cita->estado==='concluida') title="Cancelar"><i class="fa-solid fa-ban"></i></button>
-                    </form>
+                <div class="col-md-3 mb-3">
+                    <div class="info-item">
+                        <div class="info-label">Estado</div>
+                        <div class="info-value">
+                            @php
+                                $badgeClass = match($cita->estado) {
+                                    'pendiente' => 'badge-warning',
+                                    'confirmada' => 'badge-info',
+                                    'concluida' => 'badge-success',
+                                    'cancelada' => 'badge-danger',
+                                    default => 'badge-secondary'
+                                };
+                            @endphp
+                            <span class="badge {{ $badgeClass }}">{{ ucfirst($cita->estado) }}</span>
+                        </div>
+                    </div>
                 </div>
+                <div class="col-md-3 mb-3">
+                    <div class="info-item">
+                        <div class="info-label">Clínica</div>
+                        <div class="info-value">
+                            <i class="fas fa-hospital mr-2 text-success"></i>
+                            {{ optional($cita->clinica)->nombre ?? '—' }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="info-item">
+                        <div class="info-label">Especialista</div>
+                        <div class="info-value">
+                            <i class="fas fa-user-md mr-2 text-info"></i>
+                            {{ optional($cita->especialista)->name ?? '—' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-3 d-flex justify-content-end">
+                <form action="{{ route('citas.cancelar', $cita) }}" method="POST" class="form-cancelar-cita">
+                    @csrf
+                    <button class="btn btn-outline-danger btn-sm" @disabled($cita->estado==='cancelada' || $cita->estado==='concluida')>
+                        <i class="fas fa-ban mr-1"></i>Cancelar cita
+                    </button>
+                </form>
             </div>
         </div>
+    </div>
 
-        @php($yo = auth()->user())
-        @if(($yo->id === $cita->especialista_id) || $yo->hasRole(['super-admin','admin_clinica']))
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="h6 mb-3 d-flex align-items-center gap-2"><i class="fa-solid fa-stethoscope text-primary"></i> Gestión de la consulta</h2>
-                    @if(session('success'))
-                        <div class="alert alert-success small py-2 mb-3">{{ session('success') }}</div>
-                    @endif
-                    @php($bloqueada = in_array($cita->estado,['cancelada','concluida']))
-                    @if($bloqueada)
-                        <div class="alert alert-warning small py-2">Esta cita está {{ $cita->estado==='cancelada' ? 'cancelada' : 'concluida' }}. No es posible modificar la gestión.</div>
-                    @endif
-                    <form action="{{ route('citas.gestion', $cita) }}" method="POST" enctype="multipart/form-data" class="small" id="form-gestion-cita">
-                        @csrf
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Diagnóstico *</label>
-                            <textarea name="diagnostico" class="form-control form-control-sm" rows="2" required {{ $bloqueada ? 'disabled' : '' }}>{{ old('diagnostico', $cita->diagnostico) }}</textarea>
-                            @error('diagnostico')<div class="text-danger small">{{ $message }}</div>@enderror
-                        </div>
-                        {{-- Tratamiento explícito removido: se infiere de los medicamentos registrados --}}
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold d-flex align-items-center gap-2">Medicamentos estructurados <span class="badge text-bg-light">Máx 10</span></label>
-                            <div id="medicamentos-wrapper" class="d-grid gap-3">
-                                @php($oldMeds = old('medicamentos', $cita->medicamentos->map(fn($m)=>[
-                                    'nombre_generico'=>$m->nombre_generico,
-                                    'presentacion'=>$m->presentacion,
-                                    'posologia'=>$m->posologia,
-                                    'frecuencia'=>$m->frecuencia,
-                                    'duracion'=>$m->duracion,
-                                ])->toArray()))
-                                @forelse($oldMeds as $idx => $med)
-                                    <div class="border rounded p-2 position-relative bg-light medicamento-item">
-                                        <button type="button" class="btn-close position-absolute top-0 end-0 small text-danger remove-med" aria-label="Eliminar" style="font-size:.6rem"></button>
-                                        <div class="row g-2">
-                                            <div class="col-md-6">
-                                                <input type="text" name="medicamentos[{{ $idx }}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)" value="{{ trim(($med['nombre_generico'] ?? '') . ' ' . ($med['presentacion'] ?? '')) }}" {{ $bloqueada ? 'disabled' : '' }}>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <input type="text" name="medicamentos[{{ $idx }}][posologia]" class="form-control form-control-sm" placeholder="Posología" value="{{ $med['posologia'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <input type="text" name="medicamentos[{{ $idx }}][frecuencia]" class="form-control form-control-sm" placeholder="Frecuencia" value="{{ $med['frecuencia'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
-                                            </div>
-                                            <div class="col-md-1">
-                                                <input type="text" name="medicamentos[{{ $idx }}][duracion]" class="form-control form-control-sm" placeholder="Duración" value="{{ $med['duracion'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
-                                            </div>
+    @php($yo = auth()->user())
+    @if(($yo->id === $cita->especialista_id) || $yo->hasRole(['super-admin','admin_clinica']))
+        <!-- Gestión de la consulta -->
+        <div class="card" id="gestion">
+            <div class="card-header">
+                <h3 class="card-title mb-0 font-weight-bold text-primary">
+                    <i class="fas fa-stethoscope mr-2"></i>Gestión de la consulta
+                </h3>
+            </div>
+            <div class="card-body">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                @endif
+                
+                @php($bloqueada = in_array($cita->estado,['cancelada','concluida']))
+                @if($bloqueada)
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Esta cita está {{ $cita->estado==='cancelada' ? 'cancelada' : 'concluida' }}. No es posible modificar la gestión.
+                    </div>
+                @endif
+                
+                <form action="{{ route('citas.gestion', $cita) }}" method="POST" enctype="multipart/form-data" id="form-gestion-cita">
+                    @csrf
+                    
+                    <!-- Diagnóstico -->
+                    <div class="form-group">
+                        <label class="font-weight-bold text-uppercase small text-muted">Diagnóstico *</label>
+                        <textarea name="diagnostico" class="form-control" rows="3" required {{ $bloqueada ? 'disabled' : '' }} placeholder="Describe el diagnóstico del paciente...">{{ old('diagnostico', $cita->diagnostico) }}</textarea>
+                        @error('diagnostico')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                    </div>
+
+                    <!-- Medicamentos -->
+                    <div class="form-group">
+                        <label class="font-weight-bold text-uppercase small text-muted d-flex align-items-center justify-content-between">
+                            <span>Medicamentos estructurados</span>
+                            <span class="badge badge-light">Máx 10</span>
+                        </label>
+                        <div id="medicamentos-wrapper" class="mb-3">
+                            @php($oldMeds = old('medicamentos', $cita->medicamentos->map(fn($m)=>[
+                                'nombre_generico'=>$m->nombre_generico,
+                                'presentacion'=>$m->presentacion,
+                                'posologia'=>$m->posologia,
+                                'frecuencia'=>$m->frecuencia,
+                                'duracion'=>$m->duracion,
+                            ])->toArray()))
+                            @forelse($oldMeds as $idx => $med)
+                                <div class="medicamento-item mb-3">
+                                    <button type="button" class="btn btn-sm btn-danger position-absolute remove-med" style="top: 0.5rem; right: 0.5rem; z-index: 10;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-2">
+                                            <input type="text" name="medicamentos[{{ $idx }}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)" value="{{ trim(($med['nombre_generico'] ?? '') . ' ' . ($med['presentacion'] ?? '')) }}" {{ $bloqueada ? 'disabled' : '' }}>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <input type="text" name="medicamentos[{{ $idx }}][posologia]" class="form-control form-control-sm" placeholder="Posología" value="{{ $med['posologia'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <input type="text" name="medicamentos[{{ $idx }}][frecuencia]" class="form-control form-control-sm" placeholder="Frecuencia" value="{{ $med['frecuencia'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
+                                        </div>
+                                        <div class="col-md-1 mb-2">
+                                            <input type="text" name="medicamentos[{{ $idx }}][duracion]" class="form-control form-control-sm" placeholder="Duración" value="{{ $med['duracion'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
                                         </div>
                                     </div>
-                                @empty
-                                @endforelse
-                            </div>
-                            <div class="mt-2">
-                                @unless($bloqueada)
-                                    <button type="button" class="btn btn-outline-primary btn-sm" id="btn-add-med"><i class="fa-solid fa-plus me-1"></i> Añadir medicamento</button>
-                                @endunless
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Observaciones</label>
-                            <textarea name="observaciones" class="form-control form-control-sm" rows="2" {{ $bloqueada ? 'disabled' : '' }}>{{ old('observaciones', $cita->observaciones) }}</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Adjuntos (imágenes / PDF)</label>
-                            <input type="file" name="adjuntos[]" class="form-control form-control-sm" accept="image/*,application/pdf" multiple {{ $bloqueada ? 'disabled' : '' }}>
-                            <div class="form-text">Máx 6 archivos, 5MB c/u.</div>
-                        </div>
-                        @if($cita->adjuntos()->exists())
-                            <div class="mb-3">
-                                <div class="text-muted small mb-1">Archivos existentes</div>
-                                <div class="d-flex flex-wrap gap-2">
-                                    @foreach($cita->adjuntos as $adj)
-                                        <a href="{{ Storage::disk('public')->url($adj->ruta) }}" target="_blank" class="badge text-bg-light text-decoration-none">{{ $adj->nombre_original ?? basename($adj->ruta) }}</a>
-                                    @endforeach
                                 </div>
+                            @empty
+                            @endforelse
+                        </div>
+                        @unless($bloqueada)
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btn-add-med">
+                                <i class="fas fa-plus mr-1"></i>Añadir medicamento
+                            </button>
+                        @endunless
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div class="form-group">
+                        <label class="font-weight-bold text-uppercase small text-muted">Observaciones</label>
+                        <textarea name="observaciones" class="form-control" rows="2" {{ $bloqueada ? 'disabled' : '' }} placeholder="Observaciones adicionales...">{{ old('observaciones', $cita->observaciones) }}</textarea>
+                    </div>
+
+                    <!-- Adjuntos -->
+                    <div class="form-group">
+                        <label class="font-weight-bold text-uppercase small text-muted">Adjuntos (imágenes / PDF)</label>
+                        <input type="file" name="adjuntos[]" class="form-control" accept="image/*,application/pdf" multiple {{ $bloqueada ? 'disabled' : '' }}>
+                        <small class="form-text text-muted">Máx 6 archivos, 5MB c/u.</small>
+                    </div>
+                    
+                    @if($cita->adjuntos()->exists())
+                        <div class="mb-3">
+                            <div class="text-muted small mb-2">Archivos existentes:</div>
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach($cita->adjuntos as $adj)
+                                    <a href="{{ Storage::disk('public')->url($adj->ruta) }}" target="_blank" class="badge badge-light text-decoration-none">
+                                        <i class="fas fa-file mr-1"></i>{{ $adj->nombre_original ?? basename($adj->ruta) }}
+                                    </a>
+                                @endforeach
                             </div>
+                        </div>
+                    @endif
+
+                    <!-- Concluir cita -->
+                    <div class="custom-control custom-switch mb-4">
+                        <input class="custom-control-input" type="checkbox" id="concluirSwitch" name="concluir" value="1" @checked($cita->estado==='concluida') {{ $bloqueada ? 'disabled' : '' }}>
+                        <label class="custom-control-label font-weight-bold" for="concluirSwitch">Marcar cita como concluida</label>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-flex justify-content-end gap-2">
+                        @unless($bloqueada)
+                            <button class="btn btn-primary shadow-sm">
+                                <i class="fas fa-save mr-1"></i>Guardar gestión
+                            </button>
+                        @endunless
+                        @if($cita->medicamentos()->exists())
+                            <a href="{{ route('citas.receta', $cita) }}" class="btn btn-outline-primary shadow-sm ml-2">
+                                <i class="fas fa-prescription-bottle-medical mr-1"></i>Ver receta
+                            </a>
                         @endif
-                        <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" role="switch" id="concluirSwitch" name="concluir" value="1" @checked($cita->estado==='concluida') {{ $bloqueada ? 'disabled' : '' }}>
-                            <label class="form-check-label small" for="concluirSwitch">Marcar cita como concluida</label>
-                        </div>
-                        <div class="d-flex justify-content-end gap-2">
-                            @unless($bloqueada)
-                                <button class="btn btn-primary btn-sm"><i class="fa-solid fa-floppy-disk me-1"></i> Guardar gestión</button>
-                            @endunless
-                            @if($cita->medicamentos()->exists())
-                                <a href="{{ route('citas.receta', $cita) }}" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-prescription-bottle-medical me-1"></i> Ver receta</a>
-                            @endif
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
-        @else
-            @if($cita->medicamentos()->exists())
-                <div class="mt-4">
-                    <a href="{{ route('citas.receta', $cita) }}" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-prescription-bottle-medical me-1"></i> Ver receta</a>
-                </div>
-            @endif
+        </div>
+    @else
+        @if($cita->medicamentos()->exists())
+            <div class="text-center mt-4">
+                <a href="{{ route('citas.receta', $cita) }}" class="btn btn-outline-primary">
+                    <i class="fas fa-prescription-bottle-medical mr-1"></i>Ver receta
+                </a>
+            </div>
         @endif
-    </div>
-</x-app-layout>
+    @endif
+</div>
+@endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 (function(){
     const wrapper = document.getElementById('medicamentos-wrapper');
     if(!wrapper) return;
     const btnAdd = document.getElementById('btn-add-med');
     function currentCount(){ return wrapper.querySelectorAll('.medicamento-item').length; }
-    btnAdd.addEventListener('click', () => {
-        if(currentCount() >= 10) return alert('Máximo 10 medicamentos');
-        const idx = Date.now();
-        const div = document.createElement('div');
-            div.className = 'border rounded p-2 position-relative bg-light medicamento-item';
-            div.innerHTML = \`
-                <button type="button" class="btn-close position-absolute top-0 end-0 small text-danger remove-med" aria-label="Eliminar" style="font-size:.6rem"></button>
-                <div class="row g-2">
-                    <div class="col-md-6">
+    
+    if(btnAdd) {
+        btnAdd.addEventListener('click', () => {
+            if(currentCount() >= 10) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Límite alcanzado',
+                    text: 'Máximo 10 medicamentos permitidos',
+                    confirmButtonColor: '#0ea5e9'
+                });
+                return;
+            }
+            const idx = Date.now();
+            const div = document.createElement('div');
+            div.className = 'medicamento-item mb-3';
+            div.innerHTML = `
+                <button type="button" class="btn btn-sm btn-danger position-absolute remove-med" style="top: 0.5rem; right: 0.5rem; z-index: 10;">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
                         <input type="text" name="medicamentos[\${idx}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 mb-2">
                         <input type="text" name="medicamentos[\${idx}][posologia]" class="form-control form-control-sm" placeholder="Posología">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 mb-2">
                         <input type="text" name="medicamentos[\${idx}][frecuencia]" class="form-control form-control-sm" placeholder="Frecuencia">
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-1 mb-2">
                         <input type="text" name="medicamentos[\${idx}][duracion]" class="form-control form-control-sm" placeholder="Duración">
                     </div>
-                </div>\`;
-        wrapper.appendChild(div);
-    });
+                </div>`;
+            wrapper.appendChild(div);
+        });
+    }
+    
     wrapper.addEventListener('click', e => {
-        if(e.target.classList.contains('remove-med')){
+        if(e.target.closest('.remove-med')){
             e.target.closest('.medicamento-item').remove();
         }
     });
 })();
 
-// SweetAlert2: confirmar cancelar y concluir cita (vista paciente)
+// Confirmaciones con SweetAlert2
 (function(){
-    function ensureSwal(cb){ if(window.Swal) return cb(); const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/sweetalert2@11'; s.onload=cb; document.head.appendChild(s); }
     const fCancel = document.querySelector('.form-cancelar-cita');
     if(fCancel){
         fCancel.addEventListener('submit', function(e){
             e.preventDefault();
-            ensureSwal(()=>{
-                Swal.fire({
-                    title: 'Cancelar cita',
-                    text: '¿Confirmas que deseas cancelar esta cita?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, cancelar',
-                    cancelButtonText: 'Volver',
-                    confirmButtonColor: '#d33'
-                }).then(r=>{ if(r.isConfirmed) this.submit(); });
-            });
+            Swal.fire({
+                title: 'Cancelar cita',
+                text: '¿Confirmas que deseas cancelar esta cita?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cancelar',
+                cancelButtonText: 'Volver',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d'
+            }).then(r=> { if(r.isConfirmed) this.submit(); });
         });
     }
+    
     const formGestion = document.getElementById('form-gestion-cita');
     if(formGestion){
         const chk = formGestion.querySelector('#concluirSwitch');
         formGestion.addEventListener('submit', function(e){
             if(!chk || !chk.checked || formGestion.dataset.confirmed==='1') return;
             e.preventDefault();
-            ensureSwal(()=>{
-                Swal.fire({
-                    title: 'Concluir cita',
-                    text: '¿Confirmas que deseas concluir esta cita? Luego no podrás modificarla.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, concluir',
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonColor: '#d33'
-                }).then(r=>{ if(r.isConfirmed){ formGestion.dataset.confirmed='1'; formGestion.submit(); } });
+            Swal.fire({
+                title: 'Concluir cita',
+                text: '¿Confirmas que deseas concluir esta cita? Luego no podrás modificarla.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, concluir',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#0ea5e9',
+                cancelButtonColor: '#6c757d'
+            }).then(r=> { 
+                if(r.isConfirmed){ 
+                    formGestion.dataset.confirmed='1'; 
+                    formGestion.submit(); 
+                } 
             });
         });
     }
