@@ -222,21 +222,27 @@
                             ])->toArray()))
                             @forelse($oldMeds as $idx => $med)
                                 <div class="medicamento-item mb-3">
-                                    <button type="button" class="btn btn-sm btn-danger position-absolute remove-med" style="top: 0.5rem; right: 0.5rem; z-index: 10;">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-2">
-                                            <input type="text" name="medicamentos[{{ $idx }}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)" value="{{ trim(($med['nombre_generico'] ?? '') . ' ' . ($med['presentacion'] ?? '')) }}" {{ $bloqueada ? 'disabled' : '' }}>
-                                        </div>
-                                        <div class="col-md-3 mb-2">
-                                            <input type="text" name="medicamentos[{{ $idx }}][posologia]" class="form-control form-control-sm" placeholder="Posología" value="{{ $med['posologia'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
+                                    <div class="row align-items-center">
+                                        <div class="col-md-5 mb-2">
+                                            <input type="text" name="medicamentos[{{ $idx }}][nombre_generico]" class="form-control form-control-sm" placeholder="Ej: Ibuprofeno 800mg" value="{{ trim(($med['nombre_generico'] ?? '') . ' ' . ($med['presentacion'] ?? '')) }}" {{ $bloqueada ? 'disabled' : '' }}>
+                                            <small class="text-muted d-block mt-1">Medicamento (nombre + presentación)</small>
                                         </div>
                                         <div class="col-md-2 mb-2">
-                                            <input type="text" name="medicamentos[{{ $idx }}][frecuencia]" class="form-control form-control-sm" placeholder="Frecuencia" value="{{ $med['frecuencia'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
+                                            <input type="text" name="medicamentos[{{ $idx }}][posologia]" class="form-control form-control-sm" placeholder="Ej: 1 tableta" value="{{ $med['posologia'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
+                                            <small class="text-muted d-block mt-1">Posología</small>
                                         </div>
-                                        <div class="col-md-1 mb-2">
-                                            <input type="text" name="medicamentos[{{ $idx }}][duracion]" class="form-control form-control-sm" placeholder="Duración" value="{{ $med['duracion'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
+                                        <div class="col-md-2 mb-2">
+                                            <input type="text" name="medicamentos[{{ $idx }}][frecuencia]" class="form-control form-control-sm" placeholder="Ej: Cada 12 horas" value="{{ $med['frecuencia'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
+                                            <small class="text-muted d-block mt-1">Frecuencia</small>
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <input type="text" name="medicamentos[{{ $idx }}][duracion]" class="form-control form-control-sm" placeholder="Ej: 7 días" value="{{ $med['duracion'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
+                                            <small class="text-muted d-block mt-1">Duración</small>
+                                        </div>
+                                        <div class="col-md-1 mb-2 text-center">
+                                            <button type="button" class="btn btn-sm btn-danger remove-med" title="Eliminar medicamento" {{ $bloqueada ? 'disabled' : '' }}>
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -334,21 +340,27 @@
             const div = document.createElement('div');
             div.className = 'medicamento-item mb-3';
             div.innerHTML = `
-                <button type="button" class="btn btn-sm btn-danger position-absolute remove-med" style="top: 0.5rem; right: 0.5rem; z-index: 10;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <input type="text" name="medicamentos[\${idx}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)">
-                    </div>
-                    <div class="col-md-3 mb-2">
-                        <input type="text" name="medicamentos[\${idx}][posologia]" class="form-control form-control-sm" placeholder="Posología">
+                <div class="row align-items-center">
+                    <div class="col-md-5 mb-2">
+                        <input type="text" name="medicamentos[\${idx}][nombre_generico]" class="form-control form-control-sm" placeholder="Ej: Ibuprofeno 800mg">
+                        <small class="text-muted d-block mt-1">Medicamento (nombre + presentación)</small>
                     </div>
                     <div class="col-md-2 mb-2">
-                        <input type="text" name="medicamentos[\${idx}][frecuencia]" class="form-control form-control-sm" placeholder="Frecuencia">
+                        <input type="text" name="medicamentos[\${idx}][posologia]" class="form-control form-control-sm" placeholder="Ej: 1 tableta">
+                        <small class="text-muted d-block mt-1">Posología</small>
                     </div>
-                    <div class="col-md-1 mb-2">
-                        <input type="text" name="medicamentos[\${idx}][duracion]" class="form-control form-control-sm" placeholder="Duración">
+                    <div class="col-md-2 mb-2">
+                        <input type="text" name="medicamentos[\${idx}][frecuencia]" class="form-control form-control-sm" placeholder="Ej: Cada 12 horas">
+                        <small class="text-muted d-block mt-1">Frecuencia</small>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input type="text" name="medicamentos[\${idx}][duracion]" class="form-control form-control-sm" placeholder="Ej: 7 días">
+                        <small class="text-muted d-block mt-1">Duración</small>
+                    </div>
+                    <div class="col-md-1 mb-2 text-center">
+                        <button type="button" class="btn btn-sm btn-danger remove-med" title="Eliminar medicamento">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                 </div>`;
             wrapper.appendChild(div);
