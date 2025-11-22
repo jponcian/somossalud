@@ -10,16 +10,29 @@
                 <a class="navbar-brand fw-bold text-primary d-flex align-items-center gap-2" href="#">
                     <img src="{{ asset('images/logo.png') }}" alt="SomosSalud" style="height:48px">
                 </a>
-                <div class="d-lg-none">
+                <div class="d-lg-none d-flex align-items-center gap-2">
                     <a href="{{ route('login', ['perfil' => 'pacientes']) }}"
-                        class="btn btn-outline-primary me-2">Pacientes</a>
-                    <a href="{{ route('login', ['perfil' => 'empleados']) }}" class="btn btn-success">Clinica</a>
+                        class="btn btn-outline-primary btn-sm fw-bold px-3" aria-label="Pacientes"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Accede a tus resultados y citas">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+                    <a href="{{ route('login', ['perfil' => 'empleados']) }}" 
+                        class="btn btn-success btn-sm fw-bold px-3" aria-label="Clínica"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Acceso para personal médico y administrativo">
+                        <i class="fa-solid fa-hospital"></i>
+                    </a>
                 </div>
             </div>
             <div class="d-none d-lg-flex align-items-center ms-auto gap-4">
                 <a href="#contacto" class="text-decoration-none text-primary fw-semibold">Contacto</a>
-                <a href="{{ route('login', ['perfil' => 'pacientes']) }}" class="btn btn-outline-primary">Pacientes</a>
-                <a href="{{ route('login', ['perfil' => 'empleados']) }}" class="btn btn-success">Clinica</a>
+                <a href="{{ route('login', ['perfil' => 'pacientes']) }}" class="btn btn-outline-primary fw-bold"
+                   data-bs-toggle="tooltip" data-bs-placement="bottom" title="Accede a tus resultados y citas">
+                    Pacientes
+                </a>
+                <a href="{{ route('login', ['perfil' => 'empleados']) }}" class="btn btn-success fw-bold"
+                   data-bs-toggle="tooltip" data-bs-placement="bottom" title="Acceso para personal médico y administrativo">
+                    Clínica
+                </a>
             </div>
         </div>
     </nav>
@@ -171,3 +184,14 @@
         </div>
     </footer>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        });
+    </script>
+@endpush

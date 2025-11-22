@@ -20,6 +20,60 @@
         @media (min-width: 768px) {
             .content-wrapper > .content { padding-top: 1rem; }
         }
+
+        /* Navbar Premium */
+        .main-header {
+            border-bottom: none !important;
+            box-shadow: 0 4px 20px rgba(0, 86, 179, 0.25);
+            background: linear-gradient(135deg, #0056b3 0%, #28a745 100%) !important;
+            color: white !important;
+        }
+        .main-header .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+        }
+        .main-header .nav-link:hover {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Sidebar Premium */
+        .main-sidebar {
+            background: #0f172a !important; /* Slate 900 */
+            box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+            border-right: none;
+        }
+        .brand-link {
+            border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+            background: #0f172a !important;
+        }
+        .nav-sidebar .nav-item {
+            margin-bottom: 4px;
+        }
+        .nav-sidebar .nav-link {
+            border-radius: 8px !important;
+            color: #94a3b8 !important;
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .nav-sidebar .nav-link:hover {
+            background-color: rgba(255,255,255,0.05) !important;
+            color: #fff !important;
+        }
+        .nav-sidebar .nav-item > .nav-link.active {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+            color: #fff !important;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            font-weight: 600;
+        }
+        .nav-sidebar .nav-icon {
+            font-size: 1.1rem;
+            margin-right: 0.5rem;
+            width: 1.5rem;
+            text-align: center;
+        }
     </style>
 
     @stack('styles')
@@ -28,7 +82,7 @@
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-white navbar-light border-bottom">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>

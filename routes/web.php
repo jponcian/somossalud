@@ -102,6 +102,13 @@ Route::middleware('auth')->group(function () {
         ->name('citas.receta');
     // Rutas para citas (resource). El controlador protegerá creación/almacenamiento con verificar.suscripcion.
     Route::resource('citas', \App\Http\Controllers\CitaController::class);
+
+    // Ruta temporal para prueba de envío de correo de bienvenida
+    Route::post('/test/send-welcome-email', function () {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\WelcomeEmail($user));
+        return response()->json(['success' => true]);
+    })->name('test.send-welcome-email');
 });
 
 Route::middleware(['auth', 'verified', 'role:recepcionista|admin_clinica|super-admin'])
