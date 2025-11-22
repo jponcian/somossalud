@@ -4,25 +4,42 @@
 
 {{-- Breadcrumb removido para ahorrar espacio vertical --}}
 
+@push('styles')
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body { font-family: 'Outfit', sans-serif !important; background-color: #f8fafc; }
+    .content-wrapper { background-color: #f8fafc !important; }
+    .card { border: none; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); transition: all 0.3s ease; background: white; overflow: hidden; }
+    .card:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+    .card-header { background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%); border-bottom: 1px solid #cbd5e1; padding: 1.25rem 1.5rem; }
+    .card-title { font-weight: 600; color: #1e293b; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .table thead th { border-bottom: 2px solid #e2e8f0; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; padding: 1rem; background: #f8fafc; border-top: none; }
+    .table tbody td { padding: 1rem; vertical-align: middle; border-top: 1px solid #f1f5f9; }
+    .badge { padding: 0.5em 0.8em; border-radius: 6px; font-weight: 500; }
+    .btn-sm { border-radius: 6px; padding: 0.25rem 0.5rem; font-size: 0.875rem; }
+</style>
+@endpush
+
 @section('content')
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
-            <h3 class="card-title"><i class="fas fa-calendar-alt mr-2 text-primary"></i> Listado de citas</h3>
+            <h3 class="card-title mb-0"><i class="fas fa-calendar-alt text-primary"></i> Listado de citas</h3>
             @if(auth()->user()->hasRole('paciente'))
-                <a href="{{ route('citas.create') }}" class="btn btn-primary btn-sm"><i class="fas fa-calendar-plus mr-1"></i> Nueva cita</a>
+                <a href="{{ route('citas.create') }}" class="btn btn-primary btn-sm shadow-sm"><i class="fas fa-calendar-plus mr-1"></i> Nueva cita</a>
             @endif
         </div>
         <div class="card-body p-0">
-            <table class="table table-striped table-hover table-sm mb-0">
-                <thead class="thead-light">
-                <tr class="text-uppercase small text-muted">
-                    <th>Fecha / Hora</th>
-                    <th>Estado</th>
-                    <th>Paciente</th>
-                    <th>Especialista</th>
-                    <th class="text-right">Acciones</th>
-                </tr>
-                </thead>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                    <tr>
+                        <th>Fecha / Hora</th>
+                        <th>Estado</th>
+                        <th>Paciente</th>
+                        <th>Especialista</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                    </thead>
                 <tbody>
                 @forelse($citas as $cita)
                     <tr class="align-middle">

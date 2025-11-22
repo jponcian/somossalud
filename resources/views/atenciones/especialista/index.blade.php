@@ -4,19 +4,19 @@
 
 @section('content')
 <div class="card shadow-sm">
-    <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center py-2" style="background:linear-gradient(90deg,#f8fafc,#eef6ff);">
-        <h5 class="mb-2 mb-md-0 d-flex align-items-center" style="font-weight:600;">
-            <i class="fas fa-briefcase-medical text-primary mr-2"></i>
+    <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <h5 class="card-title mb-2 mb-md-0">
+            <i class="fas fa-briefcase-medical text-primary"></i>
             Mis atenciones asignadas
         </h5>
         <form method="GET" action="{{ route('atenciones.index') }}" class="form-inline small">
-            <select name="estado" class="form-control form-control-sm mr-1" onchange="this.form.submit()">
+            <select name="estado" class="form-control form-control-sm mr-1" onchange="this.form.submit()" style="border-radius: 6px;">
                 <option value="">Estado</option>
                 @foreach(['validado'=>'Validada','en_consulta'=>'En proceso','cerrado'=>'Cerrada'] as $estado => $label)
                     <option value="{{ $estado }}" {{ request('estado')===$estado?'selected':'' }}>{{ $label }}</option>
                 @endforeach
             </select>
-            <button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-filter mr-1"></i> Filtrar</button>
+            <button class="btn btn-primary btn-sm shadow-sm" type="submit"><i class="fas fa-filter mr-1"></i> Filtrar</button>
         </form>
     </div>
     @php
@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-sm table-striped">
+            <table class="table table-hover mb-0">
                 <thead>
                     <tr>
                         <th style="width:55px">#</th>
@@ -106,12 +106,18 @@
 @endsection
 
 @push('styles')
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-    .table-striped tbody tr:hover { background:#f5faff; }
+    body { font-family: 'Outfit', sans-serif !important; background-color: #f8fafc; }
+    .content-wrapper { background-color: #f8fafc !important; }
+    .card { border: none; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); transition: all 0.3s ease; background: white; overflow: hidden; }
+    .card:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+    .card-header { background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%); border-bottom: 1px solid #cbd5e1; padding: 1.25rem 1.5rem; }
+    .card-title { font-weight: 600; color: #1e293b; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .table thead th { border-bottom: 2px solid #e2e8f0; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; padding: 1rem; background: #f8fafc; border-top: none; }
+    .table tbody td { padding: 1rem; vertical-align: middle; border-top: 1px solid #f1f5f9; }
+    .badge { padding: 0.5em 0.8em; border-radius: 6px; font-weight: 500; }
+    .btn-sm { border-radius: 6px; padding: 0.25rem 0.5rem; font-size: 0.875rem; }
     .font-weight-semibold{ font-weight:600; }
-    .badge-info{ background:#17a2b8; }
-    .badge-warning{ background:#ffc107; color:#4a3d00; }
-    .badge-success{ background:#28a745; }
-    .badge-light{ background:#e9ecef; color:#555; }
 </style>
 @endpush

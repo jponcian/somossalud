@@ -6,7 +6,7 @@
 <style>
 /* Diseño personalizado para la gestión de atención */
 .atencion-form-card { border:0; }
-.atencion-header-bar { background:linear-gradient(90deg,#0062cc,#6610f2); color:#fff; padding:.75rem 1rem; border-radius:.65rem .65rem 0 0; font-size:.95rem; font-weight:600; box-shadow:0 2px 4px rgba(0,0,0,.08); }
+.atencion-header-bar { background:linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%); color:#1e293b; padding:.75rem 1rem; border-radius:.65rem .65rem 0 0; font-size:.95rem; font-weight:600; box-shadow:0 2px 4px rgba(0,0,0,.08); border-bottom: 1px solid #cbd5e1; }
 .atencion-header-bar .estado-badge { background:rgba(255,255,255,.15); backdrop-filter:blur(2px); }
 .atencion-form-section { background:#f8f9fb; border:1px solid #e2e6ea; border-top:0; border-radius:0 0 .65rem .65rem; padding:1.25rem 1.35rem 1.35rem; position:relative; }
 .atencion-form-section:before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:#17a2b8; border-radius:0 0 0 .65rem; }
@@ -49,14 +49,9 @@
                         'duracion'=>$m->duracion,
                     ])->toArray()))
                     @forelse($oldMeds as $idx => $med)
-                        <div class="border rounded p-2 pr-4 position-relative bg-light medicamento-item">
-                            @unless($bloqueada)
-                                <button type="button" class="btn btn-link text-danger btn-sm p-0 position-absolute btn-remove-med" style="top:6px;right:6px;z-index:10;" title="Eliminar" aria-label="Eliminar">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            @endunless
+                        <div class="border rounded p-2 bg-light medicamento-item">
                             <div class="row g-2">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <input type="text" name="medicamentos[{{ $idx }}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)" value="{{ $med['nombre_generico'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
                                         <small class="form-text text-muted">Ej.: Ibuprofeno 800 mg</small>
                                 </div>
@@ -68,9 +63,16 @@
                                     <input type="text" name="medicamentos[{{ $idx }}][frecuencia]" class="form-control form-control-sm" placeholder="Frecuencia" value="{{ $med['frecuencia'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
                                         <small class="form-text text-muted">Ej.: Cada 8 horas</small>
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <input type="text" name="medicamentos[{{ $idx }}][duracion]" class="form-control form-control-sm" placeholder="Duración" value="{{ $med['duracion'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
                                         <small class="form-text text-muted">Ej.: 5 días</small>
+                                </div>
+                                <div class="col-md-1 d-flex align-items-start justify-content-center pt-1">
+                                    @unless($bloqueada)
+                                        <button type="button" class="btn btn-outline-danger btn-sm btn-remove-med" title="Eliminar" aria-label="Eliminar">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    @endunless
                                 </div>
                             </div>
                         </div>
@@ -248,25 +250,29 @@
         if(wrapper.querySelectorAll('.medicamento-item').length >= 10) return alert('Máximo 10 medicamentos');
         const idx = Date.now();
         const div = document.createElement('div');
-        div.className = 'border rounded p-2 pr-4 position-relative bg-light medicamento-item';
+        div.className = 'border rounded p-2 bg-light medicamento-item';
         div.innerHTML = `
-            <button type=\"button\" class=\"btn btn-link text-danger btn-sm p-0 position-absolute btn-remove-med\" style=\"top:6px;right:6px;z-index:10;\" title=\"Eliminar\" aria-label=\"Eliminar\">\n                <i class=\"fas fa-times\"></i>\n            </button>
-            <div class=\"row g-2\">
-                <div class=\"col-md-6\">
-                    <input type=\"text\" name=\"medicamentos[${idx}][nombre_generico]\" class=\"form-control form-control-sm\" placeholder=\"Medicamento (nombre + presentación)\">
-                        <small class=\"form-text text-muted\">Ej.: Ibuprofeno 800 mg</small>
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <input type="text" name="medicamentos[${idx}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)">
+                        <small class="form-text text-muted">Ej.: Ibuprofeno 800 mg</small>
                 </div>
-                <div class=\"col-md-3\">
-                    <input type=\"text\" name=\"medicamentos[${idx}][posologia]\" class=\"form-control form-control-sm\" placeholder=\"Posología\">
-                        <small class=\"form-text text-muted\">Ej.: Tomar 1 pastilla</small>
+                <div class="col-md-3">
+                    <input type="text" name="medicamentos[${idx}][posologia]" class="form-control form-control-sm" placeholder="Posología">
+                        <small class="form-text text-muted">Ej.: Tomar 1 pastilla</small>
                 </div>
-                <div class=\"col-md-2\">
-                    <input type=\"text\" name=\"medicamentos[${idx}][frecuencia]\" class=\"form-control form-control-sm\" placeholder=\"Frecuencia\">
-                        <small class=\"form-text text-muted\">Ej.: Cada 8 horas</small>
+                <div class="col-md-2">
+                    <input type="text" name="medicamentos[${idx}][frecuencia]" class="form-control form-control-sm" placeholder="Frecuencia">
+                        <small class="form-text text-muted">Ej.: Cada 8 horas</small>
                 </div>
-                <div class=\"col-md-1\">
-                    <input type=\"text\" name=\"medicamentos[${idx}][duracion]\" class=\"form-control form-control-sm\" placeholder=\"Duración\">
-                        <small class=\"form-text text-muted\">Ej.: 5 días</small>
+                <div class="col-md-2">
+                    <input type="text" name="medicamentos[${idx}][duracion]" class="form-control form-control-sm" placeholder="Duración">
+                        <small class="form-text text-muted">Ej.: 5 días</small>
+                </div>
+                <div class="col-md-1 d-flex align-items-start justify-content-center pt-1">
+                    <button type="button" class="btn btn-outline-danger btn-sm btn-remove-med" title="Eliminar" aria-label="Eliminar">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             </div>`;
         wrapper.appendChild(div);

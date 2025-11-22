@@ -8,12 +8,32 @@
 
 {{-- Breadcrumb removido para disponibilidad de especialista --}}
 
+@push('styles')
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body { font-family: 'Outfit', sans-serif !important; background-color: #f8fafc; }
+    .content-wrapper { background-color: #f8fafc !important; }
+    .card { border: none; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); transition: all 0.3s ease; background: white; overflow: hidden; }
+    .card:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+    .card-header { background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%); border-bottom: 1px solid #cbd5e1; padding: 1.25rem 1.5rem; }
+    .card-title { font-weight: 600; color: #1e293b; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .form-control { border-radius: 8px; border: 2px solid #e2e8f0; padding: 0.5rem 1rem; }
+    .form-control:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+    .btn { border-radius: 8px; font-weight: 500; padding: 0.5rem 1.5rem; transition: all 0.2s ease; }
+    .btn-primary { background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border: none; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4); }
+    .table thead th { border-bottom: 2px solid #e2e8f0; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; padding: 1rem; background: #f8fafc; border-top: none; }
+    .table tbody td { padding: 1rem; vertical-align: middle; border-top: 1px solid #f1f5f9; }
+    .badge { padding: 0.5em 0.8em; border-radius: 6px; font-weight: 500; }
+</style>
+@endpush
+
 @section('content')
     <div class="row">
         <div class="col-lg-5">
-            <div class="card card-primary card-outline">
+            <div class="card mb-4">
                 <div class="card-header">
-                    <h3 class="card-title mb-0">Agregar horario</h3>
+                    <h3 class="card-title mb-0"><i class="fas fa-clock text-primary"></i> Agregar horario</h3>
                 </div>
                 <form action="{{ route('especialista.horarios.store') }}" method="POST">
                     @csrf
@@ -71,7 +91,7 @@
         <div class="col-lg-7">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title mb-0">Horarios cargados</h3>
+                    <h3 class="card-title mb-0"><i class="fas fa-calendar-week text-success"></i> Horarios cargados</h3>
                     @if (session('status'))
                         <span class="badge badge-success">{{ session('status') }}</span>
                     @endif
@@ -91,8 +111,8 @@
                                 @forelse ($disponibilidades as $disponibilidad)
                                     <tr>
                                         <td>{{ $diasSemana[$disponibilidad->dia_semana] ?? ucfirst($disponibilidad->dia_semana) }}</td>
-                                        <td>{{ \Carbon\Carbon::createFromFormat('H:i:s', $disponibilidad->hora_inicio)->format('H:i') }}</td>
-                                        <td>{{ \Carbon\Carbon::createFromFormat('H:i:s', $disponibilidad->hora_fin)->format('H:i') }}</td>
+                                        <td>{{ \Carbon\Carbon::createFromFormat('H:i:s', $disponibilidad->hora_inicio)->format('h:i a') }}</td>
+                                        <td>{{ \Carbon\Carbon::createFromFormat('H:i:s', $disponibilidad->hora_fin)->format('h:i a') }}</td>
                                         <td class="text-right">
                                             <form action="{{ route('especialista.horarios.destroy', $disponibilidad) }}" method="POST"
                                                 onsubmit="return confirm('¿Eliminar este horario?');">

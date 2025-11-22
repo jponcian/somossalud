@@ -32,6 +32,14 @@
         border-bottom: 1px solid #cbd5e1;
         padding: 1.25rem 1.5rem;
     }
+    .card-title {
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
     .table {
         margin-bottom: 0;
     }
@@ -121,8 +129,8 @@
     <!-- Citas Table -->
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title mb-0 font-weight-bold text-primary">
-                <i class="fas fa-list mr-2"></i>Listado de Citas
+            <h3 class="card-title mb-0">
+                <i class="fas fa-list text-primary"></i> Listado de Citas
             </h3>
         </div>
         <div class="card-body p-0">

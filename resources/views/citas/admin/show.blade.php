@@ -5,6 +5,22 @@
 {{-- Breadcrumb removido para vista show de cita --}}
 
 @section('content')
+<style>
+/* Diseño personalizado para la gestión (Premium) */
+.atencion-form-card { border:0; }
+.atencion-header-bar { background:linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%); color:#1e293b; padding:.75rem 1rem; border-radius:.65rem .65rem 0 0; font-size:.95rem; font-weight:600; box-shadow:0 2px 4px rgba(0,0,0,.08); border-bottom: 1px solid #cbd5e1; }
+.atencion-header-bar .estado-badge { background:rgba(255,255,255,.15); backdrop-filter:blur(2px); }
+.atencion-form-section { background:#f8f9fb; border:1px solid #e2e6ea; border-top:0; border-radius:0 0 .65rem .65rem; padding:1.25rem 1.35rem 1.35rem; position:relative; }
+.atencion-form-section:before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:#17a2b8; border-radius:0 0 0 .65rem; }
+.atencion-form-section h5 { font-weight:600; font-size:1rem; }
+.atencion-form-section label.form-label { font-weight:600; font-size:.75rem; letter-spacing:.5px; text-transform:uppercase; color:#495057; }
+.medicamento-item { transition:background .2s,border-color .2s; }
+.medicamento-item:hover { background:#eef4ff !important; border-color:#c8d9f6 !important; }
+.btn-remove-med i { pointer-events:none; }
+.atencion-form-section .badge-light { background:#eef4ff; }
+.gradient-divider { height:3px; background:linear-gradient(90deg,#6610f2,#17a2b8); border-radius:2px; margin:-.25rem 0 1rem; }
+@media (min-width:768px){ .atencion-header-bar { font-size:1rem; } }
+</style>
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <div class="row g-3">
@@ -39,10 +55,11 @@
 
 @php($yo = auth()->user())
 @if(($yo->id === $cita->especialista_id) || $yo->hasRole(['super-admin', 'admin_clinica']))
-<div class="card shadow-sm" id="gestion">
-    <div class="card-body">
-        <h2 class="h6 mb-3 d-flex align-items-center gap-2"><i class="fas fa-stethoscope text-primary mr-2"></i> Gestión
-            de la consulta</h2>
+<div class="card atencion-form-card shadow-sm mb-4" id="gestion">
+    <div class="atencion-header-bar d-flex align-items-center justify-content-between">
+        <div><i class="fas fa-stethoscope mr-2"></i> Gestión de la consulta</div>
+    </div>
+    <div class="atencion-form-section">
         @if(session('success'))
             <div class="alert alert-success small py-2 mb-3">{{ session('success') }}</div>
         @endif
@@ -144,8 +161,10 @@
             <div class="alert alert-warning small mb-3"><i class="fa fa-ban me-1"></i> La cita fue cancelada. No se puede
                 gestionar.</div>
         @endif
-        <form action="{{ route('citas.gestion', $cita) }}" method="POST" enctype="multipart/form-data" class="small"
-            id="form-gestion-cita">
+        <h5 class="mb-3"><i class="fas fa-notes-medical text-primary mr-1"></i> Datos clínicos</h5>
+        <div class="gradient-divider"></div>
+
+        <form action="{{ route('citas.gestion', $cita) }}" method="POST" enctype="multipart/form-data" class="small" id="form-gestion-cita">
             @csrf
             <div class="mb-3">
                 <label class="form-label fw-semibold">Diagnóstico *</label>
@@ -167,34 +186,41 @@
                                                 'duracion' => $m->duracion,
                                             ])->toArray()))
                                             @forelse($oldMeds as $idx => $med)
-                                                <div class="border rounded p-2 position-relative bg-light medicamento-item">
-                                                    <button type="button" class="btn-close position-absolute"
-                                                        style="top:4px;right:4px;font-size:.6rem" aria-label="Eliminar"></button>
+                                                <div class="border rounded p-2 bg-light medicamento-item">
                                                     <div class="row g-2">
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-4">
                                                             <input type="text" name="medicamentos[{{ $idx }}][nombre_generico]"
                                                                 class="form-control form-control-sm"
                                                                 placeholder="Medicamento (nombre + presentación)"
                                                                 value="{{ trim(($med['nombre_generico'] ?? '') . ' ' . ($med['presentacion'] ?? '')) }}"
                                                                 @disabled(in_array($cita->estado, ['cancelada', 'concluida']))>
+                                                            <small class="form-text text-muted">Ej.: Ibuprofeno 800 mg</small>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <input type="text" name="medicamentos[{{ $idx }}][posologia]"
                                                                 class="form-control form-control-sm" placeholder="Posología"
                                                                 value="{{ $med['posologia'] ?? '' }}"
                                                                 @disabled(in_array($cita->estado, ['cancelada', 'concluida']))>
+                                                            <small class="form-text text-muted">Ej.: Tomar 1 pastilla</small>
                                                         </div>
                                                         <div class="col-md-2">
                                                             <input type="text" name="medicamentos[{{ $idx }}][frecuencia]"
                                                                 class="form-control form-control-sm" placeholder="Frecuencia"
                                                                 value="{{ $med['frecuencia'] ?? '' }}"
                                                                 @disabled(in_array($cita->estado, ['cancelada', 'concluida']))>
+                                                            <small class="form-text text-muted">Ej.: Cada 8 horas</small>
                                                         </div>
-                                                        <div class="col-md-1">
+                                                        <div class="col-md-2">
                                                             <input type="text" name="medicamentos[{{ $idx }}][duracion]"
                                                                 class="form-control form-control-sm" placeholder="Duración"
                                                                 value="{{ $med['duracion'] ?? '' }}"
                                                                 @disabled(in_array($cita->estado, ['cancelada', 'concluida']))>
+                                                            <small class="form-text text-muted">Ej.: 5 días</small>
+                                                        </div>
+                                                        <div class="col-md-1 d-flex align-items-start justify-content-center pt-1">
+                                                            <button type="button" class="btn btn-outline-danger btn-sm btn-close-custom" aria-label="Eliminar" title="Eliminar">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -237,7 +263,7 @@
                                             @disabled(in_array($cita->estado, ['cancelada', 'concluida']))>
                                         <label class="form-check-label small" for="concluirSwitch">Marcar cita como concluida</label>
                                     </div>
-                                    <div class="d-flex justify-content-end gap-2">
+                                    <div class="d-flex justify-content-end gap-2 mt-3">
                                         @if(!in_array($cita->estado, ['cancelada', 'concluida']))
                                             <button class="btn btn-primary btn-sm"><i class="fas fa-save mr-1"></i> Guardar gestión</button>
                                         @endif
@@ -404,29 +430,38 @@
                     if (count() >= 10) return alert('Máximo 10 medicamentos');
                     const idx = Date.now();
                     const div = document.createElement('div');
-                    div.className = 'border rounded p-2 position-relative bg-light medicamento-item';
+                    div.className = 'border rounded p-2 bg-light medicamento-item';
                     div.innerHTML = `
-                    <button type="button" class="btn-close position-absolute" style="top:4px;right:4px;font-size:.6rem" aria-label="Eliminar"></button>
                     <div class="row g-2">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <input type="text" name="medicamentos[${idx}][nombre_generico]" class="form-control form-control-sm" placeholder="Medicamento (nombre + presentación)">
+                            <small class="form-text text-muted">Ej.: Ibuprofeno 800 mg</small>
                         </div>
                         <div class="col-md-3">
                             <input type="text" name="medicamentos[${idx}][posologia]" class="form-control form-control-sm" placeholder="Posología">
+                            <small class="form-text text-muted">Ej.: Tomar 1 pastilla</small>
                         </div>
                         <div class="col-md-2">
                             <input type="text" name="medicamentos[${idx}][frecuencia]" class="form-control form-control-sm" placeholder="Frecuencia">
+                            <small class="form-text text-muted">Ej.: Cada 8 horas</small>
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-2">
                             <input type="text" name="medicamentos[${idx}][duracion]" class="form-control form-control-sm" placeholder="Duración">
+                            <small class="form-text text-muted">Ej.: 5 días</small>
+                        </div>
+                        <div class="col-md-1 d-flex align-items-start justify-content-center pt-1">
+                            <button type="button" class="btn btn-outline-danger btn-sm btn-close-custom" aria-label="Eliminar" title="Eliminar">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>`;
                     wrapper.appendChild(div);
                 });
             }
             wrapper.addEventListener('click', e => {
-                if (e.target.classList.contains('btn-close')) {
-                    e.target.closest('.medicamento-item').remove();
+                const btn = e.target.closest('.btn-close-custom');
+                if (btn) {
+                    btn.closest('.medicamento-item').remove();
                 }
             });
         })();

@@ -175,7 +175,7 @@
         <div class="card" id="gestion">
             <div class="card-header">
                 <h3 class="card-title mb-0 font-weight-bold text-primary">
-                    <i class="fas fa-stethoscope mr-2"></i>Gestión de la consulta
+                    <i class="fas fa-stethoscope mr-2"></i>Gestión de la consulta xxxx
                 </h3>
             </div>
             <div class="card-body">
@@ -209,7 +209,7 @@
                     <!-- Medicamentos -->
                     <div class="form-group">
                         <label class="font-weight-bold text-uppercase small text-muted d-flex align-items-center justify-content-between">
-                            <span>Medicamentos estructurados</span>
+                            <span>Medicamentos estructurados sdsdsdsdsd</span>
                             <span class="badge badge-light">Máx 10</span>
                         </label>
                         <div id="medicamentos-wrapper" class="mb-3">
@@ -223,11 +223,11 @@
                             @forelse($oldMeds as $idx => $med)
                                 <div class="medicamento-item mb-3">
                                     <div class="row align-items-center">
-                                        <div class="col-md-5 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <input type="text" name="medicamentos[{{ $idx }}][nombre_generico]" class="form-control form-control-sm" placeholder="Ej: Ibuprofeno 800mg" value="{{ trim(($med['nombre_generico'] ?? '') . ' ' . ($med['presentacion'] ?? '')) }}" {{ $bloqueada ? 'disabled' : '' }}>
                                             <small class="text-muted d-block mt-1">Medicamento (nombre + presentación)</small>
                                         </div>
-                                        <div class="col-md-2 mb-2">
+                                        <div class="col-md-3 mb-2">
                                             <input type="text" name="medicamentos[{{ $idx }}][posologia]" class="form-control form-control-sm" placeholder="Ej: 1 tableta" value="{{ $med['posologia'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
                                             <small class="text-muted d-block mt-1">Posología</small>
                                         </div>
@@ -239,8 +239,8 @@
                                             <input type="text" name="medicamentos[{{ $idx }}][duracion]" class="form-control form-control-sm" placeholder="Ej: 7 días" value="{{ $med['duracion'] ?? '' }}" {{ $bloqueada ? 'disabled' : '' }}>
                                             <small class="text-muted d-block mt-1">Duración</small>
                                         </div>
-                                        <div class="col-md-1 mb-2 text-center">
-                                            <button type="button" class="btn btn-sm btn-danger remove-med" title="Eliminar medicamento" {{ $bloqueada ? 'disabled' : '' }}>
+                                        <div class="col-md-1 mb-2 d-flex align-items-center justify-content-center">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-med" title="Eliminar medicamento" {{ $bloqueada ? 'disabled' : '' }}>
                                                 <i class="fas fa-times"></i>
                                             </button>
                                         </div>
@@ -341,11 +341,11 @@
             div.className = 'medicamento-item mb-3';
             div.innerHTML = `
                 <div class="row align-items-center">
-                    <div class="col-md-5 mb-2">
+                    <div class="col-md-4 mb-2">
                         <input type="text" name="medicamentos[\${idx}][nombre_generico]" class="form-control form-control-sm" placeholder="Ej: Ibuprofeno 800mg">
                         <small class="text-muted d-block mt-1">Medicamento (nombre + presentación)</small>
                     </div>
-                    <div class="col-md-2 mb-2">
+                    <div class="col-md-3 mb-2">
                         <input type="text" name="medicamentos[\${idx}][posologia]" class="form-control form-control-sm" placeholder="Ej: 1 tableta">
                         <small class="text-muted d-block mt-1">Posología</small>
                     </div>
@@ -357,8 +357,8 @@
                         <input type="text" name="medicamentos[\${idx}][duracion]" class="form-control form-control-sm" placeholder="Ej: 7 días">
                         <small class="text-muted d-block mt-1">Duración</small>
                     </div>
-                    <div class="col-md-1 mb-2 text-center">
-                        <button type="button" class="btn btn-sm btn-danger remove-med" title="Eliminar medicamento">
+                    <div class="col-md-1 mb-2 d-flex align-items-center justify-content-center">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-med" title="Eliminar medicamento">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
