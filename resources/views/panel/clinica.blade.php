@@ -348,38 +348,6 @@
         $(document).ready(function() {
             $('#modalBienvenida').modal('show');
             
-            // Enviar correo de bienvenida
-            $.ajax({
-                url: '{{ route('test.send-welcome-email') }}',
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if(response.success) {
-                        // Mostrar notificación de éxito
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'bottom-end',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer)
-                                toast.addEventListener('mouseleave', Swal.resumeTimer)
-                            }
-                        });
-
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Correo de bienvenida enviado exitosamente'
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    console.error('Error enviando correo:', xhr);
-                }
-            });
             
             // Iniciar animación de la barra de progreso
             setTimeout(function(){

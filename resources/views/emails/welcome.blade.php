@@ -73,11 +73,29 @@
         </div>
         <div class="content">
             <p>Hola <strong>{{ $user->name }}</strong>,</p>
-            <p>Estamos encantados de darte la bienvenida a nuestro panel de gestión clínica. Esperamos que esta herramienta te sea de gran utilidad para agilizar tus tareas diarias.</p>
-            <p>Si tienes alguna duda o necesitas asistencia, no dudes en contactar con el equipo de soporte.</p>
+            
+            <p>¡Bienvenido a <strong>SaludSonrisa</strong>! Nos complace enormemente que hayas decidido unirte a nuestra familia.</p>
+            
+            <p>Tu cuenta ha sido creada exitosamente y ya puedes disfrutar de todos nuestros servicios:</p>
+            
+            <ul style="line-height: 1.8; color: #475569;">
+                <li>📅 Agendar citas médicas con nuestros especialistas</li>
+                <li>📋 Consultar tu historial médico</li>
+                <li>💊 Acceder a tus recetas y tratamientos</li>
+                <li>🏥 Gestionar tu suscripción y beneficios</li>
+            </ul>
+            
+            <p>Estamos aquí para cuidar de tu salud y la de tu familia. Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>
+            
             <div style="text-align: center;">
-                <a href="{{ route('panel.clinica') }}" class="btn">Ir al Panel</a>
+                <a href="{{ route('dashboard') }}" class="btn">Acceder a mi cuenta</a>
             </div>
+            
+            <p style="margin-top: 30px; font-size: 14px; color: #64748b;">
+                <strong>Datos de tu cuenta:</strong><br>
+                Usuario: {{ $user->email }}<br>
+                Cédula: {{ $user->cedula ?? 'No especificada' }}
+            </p>
         </div>
         <div class="footer">
             &copy; {{ date('Y') }} SaludSonrisa. Todos los derechos reservados.

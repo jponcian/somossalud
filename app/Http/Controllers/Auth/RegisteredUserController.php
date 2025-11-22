@@ -54,6 +54,9 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        // Enviar correo de bienvenida
+        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\WelcomeEmail($user));
+
         Auth::login($user);
 
         // Redirigir a la zona de pacientes tras el registro
