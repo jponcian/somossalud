@@ -27,9 +27,39 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cedula' => ['required', 'string'],
+            'cedula' => ['required', 'string', 'regex:/^[VEJGP]-\d{6,8}$/i'],
             'password' => ['required', 'string'],
         ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function messages(): array
+    {
+        return [
+            'cedula.regex' => 'El formato de la cédula debe ser: V-12345678 (6 a 8 dígitos). Letras permitidas: V, E, J, G, P',
+        ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        // Normalizar la cédula: convertir a mayúsculas y agregar guión si no lo tiene
+        if ($this->has('cedula')) {
+            $cedula = strtoupper(trim($this->cedula));
+            
+            // Si no tiene guión, agregarlo después de la primera letra
+            if (preg_match('/^([VEJGP])(\d{6,8})$/i', $cedula, $matches)) {
+                $cedula = $matches[1] . '-' . $matches[2];
+            }
+            
+            $this->merge([
+                'cedula' => $cedula
+            ]);
+        }
     }
 
     /**

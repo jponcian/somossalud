@@ -68,17 +68,33 @@ class UserManagementController extends Controller
             $request->merge(['roles' => ['paciente'], 'especialidad_id' => null]);
         }
 
+        // Normalizar cédula antes de validar
+        $cedula = strtoupper(trim($request->cedula));
+        if (preg_match('/^([VEJGP])(\d{6,8})$/i', $cedula, $matches)) {
+            $cedula = $matches[1] . '-' . $matches[2];
+        }
+        $request->merge(['cedula' => $cedula]);
+
         $roles = Role::pluck('name');
         $roleNames = $roles->toArray();
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'cedula' => ['required', 'string', 'max:50', 'unique:usuarios,cedula'],
+            'cedula' => [
+                'required', 
+                'string', 
+                'max:50', 
+                'unique:usuarios,cedula',
+                'regex:/^[VEJGP]-\d{6,8}$/i'
+            ],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'roles' => ['required', 'array', 'min:1'],
             'roles.*' => ['string', 'in:' . implode(',', $roleNames)],
             // 'especialidad_id' => ['nullable', 'exists:especialidades,id'], // legacy, no exigir
+        ], [
+            'cedula.regex' => 'El formato de la cédula debe ser: V-12345678 (6 a 8 dígitos). Letras permitidas: V, E, J, G, P',
+            'cedula.unique' => 'Esta cédula ya está registrada en el sistema',
         ]);
 
         $esEspecialista = collect($validated['roles'])->contains('especialista');
@@ -92,7 +108,7 @@ class UserManagementController extends Controller
 
         $usuario = User::create([
             'name' => $validated['name'],
-            'cedula' => Str::upper($validated['cedula']),
+            'cedula' => $cedula,
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'especialidad_id' => $esEspecialista ? $validated['especialidad_id'] : null,
@@ -143,17 +159,33 @@ class UserManagementController extends Controller
             $request->merge(['roles' => ['paciente'], 'especialidad_id' => null]);
         }
 
+        // Normalizar cédula antes de validar
+        $cedula = strtoupper(trim($request->cedula));
+        if (preg_match('/^([VEJGP])(\d{6,8})$/i', $cedula, $matches)) {
+            $cedula = $matches[1] . '-' . $matches[2];
+        }
+        $request->merge(['cedula' => $cedula]);
+
         $roles = Role::pluck('name');
         $roleNames = $roles->toArray();
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'cedula' => ['required', 'string', 'max:50', 'unique:usuarios,cedula,' . $user->id],
+            'cedula' => [
+                'required', 
+                'string', 
+                'max:50', 
+                'unique:usuarios,cedula,' . $user->id,
+                'regex:/^[VEJGP]-\d{6,8}$/i'
+            ],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email,' . $user->id],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'roles' => ['required', 'array', 'min:1'],
             'roles.*' => ['string', 'in:' . implode(',', $roleNames)],
             // 'especialidad_id' => ['nullable', 'exists:especialidades,id'], // legacy, no exigir
+        ], [
+            'cedula.regex' => 'El formato de la cédula debe ser: V-12345678 (6 a 8 dígitos). Letras permitidas: V, E, J, G, P',
+            'cedula.unique' => 'Esta cédula ya está registrada en el sistema',
         ]);
 
         $esEspecialista = collect($validated['roles'])->contains('especialista');
@@ -166,7 +198,7 @@ class UserManagementController extends Controller
         }
 
         $user->name = $validated['name'];
-        $user->cedula = Str::upper($validated['cedula']);
+        $user->cedula = $cedula;
         $user->email = $validated['email'];
         $user->especialidad_id = $esEspecialista ? ($validated['especialidad_id'] ?? null) : null;
 

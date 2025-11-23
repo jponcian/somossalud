@@ -29,11 +29,27 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Normalizar cédula antes de validar
+        $cedula = strtoupper(trim($request->cedula));
+        if (preg_match('/^([VEJGP])(\d{6,8})$/i', $cedula, $matches)) {
+            $cedula = $matches[1] . '-' . $matches[2];
+        }
+        $request->merge(['cedula' => $cedula]);
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email'],
-            'cedula' => ['required', 'string', 'max:50', 'unique:usuarios,cedula'],
+            'cedula' => [
+                'required', 
+                'string', 
+                'max:50', 
+                'unique:usuarios,cedula',
+                'regex:/^[VEJGP]-\d{6,8}$/i'
+            ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'cedula.regex' => 'El formato de la cédula debe ser: V-12345678 (6 a 8 dígitos). Letras permitidas: V, E, J, G, P',
+            'cedula.unique' => 'Esta cédula ya está registrada en el sistema',
         ]);
 
         // Asignar a la clínica por defecto (SaludSonrisa) si existe
@@ -42,7 +58,7 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'cedula' => $request->cedula,
+            'cedula' => $cedula,
             'password' => Hash::make($request->password),
             'clinica_id' => $clinicaId,
         ]);

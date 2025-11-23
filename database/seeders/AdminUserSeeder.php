@@ -11,11 +11,11 @@ class AdminUserSeeder extends Seeder
     public function run()
     {
         $user = User::firstOrCreate(
-            ['email' => 'admin@saludsonrisa.test'],
+            ['email' => 'admin@saludsonrisa.com'],
             [
-                'name' => 'Admin SaludSonrisa',
-                'cedula' => '12345678',
-                'password' => Hash::make('password'),
+                'name' => 'Super Administrador',
+                'cedula' => 'V-12345678', // Formato actualizado con letra al inicio
+                'password' => Hash::make('admin123'),
             ]
         );
 

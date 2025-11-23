@@ -77,7 +77,12 @@
                     required 
                     autocomplete="username"
                     placeholder="Ej: V-12345678"
+                    maxlength="12"
                 >
+                <small class="form-text text-muted">
+                    <i class="fa-solid fa-info-circle me-1"></i>
+                    Escribe tu cédula. Si empiezas con un número, se asume V- automáticamente. Ej: 12345678 → V-12345678
+                </small>
                 @error('cedula')
                     <div class="invalid-feedback">
                         <i class="fa-solid fa-circle-exclamation me-1"></i>{{ $message }}
@@ -150,6 +155,7 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/cedula-validator.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // Toggle password visibility
@@ -174,12 +180,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Validación y formateo de cédula con el nuevo validador
+    const cedulaValidator = new CedulaValidator('cedula');
+
     // Prevent double submission
     const registerForm = document.getElementById('registerForm');
     const registerBtn = document.getElementById('registerBtn');
+    let isSubmitting = false;
 
     if (registerForm && registerBtn) {
         registerForm.addEventListener('submit', (e) => {
+            // Prevenir doble envío
+            if (isSubmitting) {
+                e.preventDefault();
+                return false;
+            }
+
+            // Validar formato de cédula antes de enviar
+            if (!cedulaValidator.isValid()) {
+                e.preventDefault();
+                return false;
+            }
+
+            isSubmitting = true;
+
             // Disable button
             registerBtn.disabled = true;
             
@@ -190,10 +214,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 Procesando...
             `;
             
-            // Note: Since the form has novalidate, we assume server-side validation or that the user wants to submit anyway.
-            // However, if there are client-side validation errors caught by browser (if novalidate wasn't there), 
-            // the submit event wouldn't fire or we'd need to re-enable.
-            // Since 'novalidate' is present, the form WILL submit.
+            // Re-habilitar después de 10 segundos por seguridad
+            setTimeout(() => {
+                if (isSubmitting) {
+                    isSubmitting = false;
+                    registerBtn.disabled = false;
+                    registerBtn.innerHTML = originalContent;
+                }
+            }, 10000);
         });
     }
 });

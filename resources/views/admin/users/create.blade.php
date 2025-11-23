@@ -75,7 +75,7 @@
                                             class="form-control border-left-0 @error('cedula') is-invalid @enderror" 
                                             placeholder="Ej: V-12345678" required>
                                     </div>
-                                    <small class="form-text text-muted mt-1"><i class="fas fa-info-circle mr-1"></i>Se registrará en mayúsculas.</small>
+                                    <small class="form-text text-muted mt-1"><i class="fas fa-info-circle mr-1"></i>Si empiezas con un número, se asume V- automáticamente.</small>
                                     @error('cedula')
                                         <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
                                     @enderror
@@ -239,6 +239,7 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{{ asset('js/cedula-validator.js') }}"></script>
 <script>
 $(document).ready(function() {
     $('#especialidades').select2({
@@ -246,6 +247,9 @@ $(document).ready(function() {
         allowClear: true,
         width: '100%'
     });
+    
+    // Inicializar validador de cédula
+    new CedulaValidator('cedula');
 });
 </script>
 <script>

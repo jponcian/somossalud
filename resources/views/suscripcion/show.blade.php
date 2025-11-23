@@ -201,4 +201,17 @@
 
         {{-- Sección sandbox eliminada para entorno productivo --}}
     </div>
+
+    @push('scripts')
+    <script src="{{ asset('js/cedula-validator.js') }}"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Inicializar validador de cédula del pagador
+        const cedulaPagadorInput = document.getElementById('cedula_pagador');
+        if (cedulaPagadorInput) {
+            new CedulaValidator('cedula_pagador');
+        }
+    });
+    </script>
+    @endpush
 </x-app-layout>

@@ -39,7 +39,12 @@
                     autocomplete="username" 
                     autofocus 
                     placeholder="Ej: V-12345678"
+                    maxlength="12"
                 >
+                <small class="form-text text-muted">
+                    <i class="fa-solid fa-info-circle me-1"></i>
+                    Escribe tu cédula. Si empiezas con un número, se asume V- automáticamente. Ej: 12345678 → V-12345678
+                </small>
                 @error('cedula')
                     <div class="invalid-feedback">
                         <i class="fa-solid fa-circle-exclamation me-1"></i>{{ $message }}
@@ -87,9 +92,15 @@
             </div>
 
             <div class="d-grid mb-4">
-                <button class="btn btn-primary" type="submit">
-                    <i class="fa-solid fa-right-to-bracket me-2"></i>
-                    Ingresar
+                <button class="btn btn-primary" type="submit" id="loginBtn">
+                    <span id="btnContent">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i>
+                        Ingresar
+                    </span>
+                    <span id="btnLoading" style="display: none;">
+                        <i class="fa-solid fa-spinner fa-spin me-2"></i>
+                        Ingresando...
+                    </span>
                 </button>
             </div>
 
@@ -104,14 +115,74 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/cedula-validator.js') }}"></script>
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
-    const btn = document.getElementById('togglePass');
-    const pass = document.getElementById('password');
-    btn.addEventListener('click',()=>{
-        const visible = pass.type === 'text';
-        pass.type = visible ? 'password' : 'text';
-        btn.innerHTML = visible ? '<i class="fa-regular fa-eye"></i>' : '<i class="fa-regular fa-eye-slash"></i>';
+document.addEventListener('DOMContentLoaded', () => {
+    // Toggle de contraseña
+    const toggleBtn = document.getElementById('togglePass');
+    const passInput = document.getElementById('password');
+    
+    toggleBtn.addEventListener('click', () => {
+        const visible = passInput.type === 'text';
+        passInput.type = visible ? 'password' : 'text';
+        toggleBtn.innerHTML = visible ? '<i class="fa-regular fa-eye"></i>' : '<i class="fa-regular fa-eye-slash"></i>';
+    });
+
+    // Validación y formateo de cédula con el nuevo validador
+    const cedulaValidator = new CedulaValidator('cedula');
+
+    // Prevención de múltiples clics en el login
+    const loginForm = document.querySelector('form');
+    const loginBtn = document.getElementById('loginBtn');
+    const btnContent = document.getElementById('btnContent');
+    const btnLoading = document.getElementById('btnLoading');
+    let isSubmitting = false;
+
+    loginForm.addEventListener('submit', function(e) {
+        // Si ya se está enviando, prevenir
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Validación básica antes de deshabilitar
+        const cedula = cedulaValidator.getValue().trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!cedula || !password) {
+            // Dejar que la validación HTML5 funcione
+            return true;
+        }
+
+        // Validar formato de cédula antes de enviar
+        if (!cedulaValidator.isValid()) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Marcar como enviando
+        isSubmitting = true;
+
+        // Deshabilitar el botón
+        loginBtn.disabled = true;
+        loginBtn.style.cursor = 'not-allowed';
+        loginBtn.style.opacity = '0.7';
+
+        // Cambiar el contenido del botón
+        btnContent.style.display = 'none';
+        btnLoading.style.display = 'inline';
+
+        // Por seguridad, re-habilitar después de 10 segundos en caso de error de red
+        setTimeout(() => {
+            if (isSubmitting) {
+                isSubmitting = false;
+                loginBtn.disabled = false;
+                loginBtn.style.cursor = 'pointer';
+                loginBtn.style.opacity = '1';
+                btnContent.style.display = 'inline';
+                btnLoading.style.display = 'none';
+            }
+        }, 10000);
     });
 });
 </script>
