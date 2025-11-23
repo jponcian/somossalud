@@ -22,10 +22,43 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" crossorigin="anonymous">
 
     @stack('head')
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+            background-attachment: fixed;
+        }
+        .decorative-icon {
+            position: fixed;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .icon-1 {
+            top: 10%;
+            left: 5%;
+            font-size: 150px;
+            color: #0ea5e9;
+            transform: rotate(-15deg);
+        }
+        .icon-2 {
+            bottom: 15%;
+            right: 5%;
+            font-size: 180px;
+            color: #10b981;
+            transform: rotate(15deg);
+        }
+        /* Ensure content is above icons */
+        .min-h-screen {
+            position: relative;
+            background-color: transparent !important;
+        }
+    </style>
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100 d-flex flex-column">
+    <div class="min-h-screen d-flex flex-column relative">
+        <i class="fas fa-heartbeat decorative-icon icon-1"></i>
+        <i class="fas fa-stethoscope decorative-icon icon-2"></i>
         @include('layouts.navigation')
 
         <!-- Page Heading -->

@@ -91,6 +91,10 @@
             background-color: #fef9c3;
             color: #854d0e;
         }
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 @endpush
 
@@ -108,16 +112,16 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content border-0 shadow-lg overflow-hidden" style="border-radius: 16px;">
                     <div class="modal-body p-0">
-                        <div class="position-relative p-5 text-center" style="background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);">
-                            <div class="position-absolute" style="right: -20px; top: -20px; opacity: 0.05; font-size: 10rem; transform: rotate(15deg); color: #0ea5e9;">
-                                <i class="fas fa-heart-pulse"></i>
+                        <div class="position-relative p-5 text-center" style="background: linear-gradient(135deg, #f0f9ff 0%, #dcfce7 100%);">
+                            <div class="position-absolute" style="right: -30px; top: -30px; opacity: 0.15; font-size: 12rem; color: #f59e0b; animation: spin-slow 20s linear infinite;">
+                                <i class="fas fa-sun"></i>
                             </div>
-                            <div class="bg-white rounded-circle mx-auto mb-3 shadow-sm d-flex align-items-center justify-content-center overflow-hidden" style="width: 80px; height: 80px;">
+                            <div class="bg-white rounded-circle mx-auto mb-3 shadow-sm d-flex align-items-center justify-content-center overflow-hidden" style="width: 80px; height: 80px; position: relative; z-index: 1;">
                                 <img src="{{ asset('images/saludsonrisa.jpg') }}" alt="Logo SaludSonrisa" class="img-fluid" style="max-height: 60px;">
                             </div>
-                            <h3 class="font-weight-bold mb-2 text-dark">¡Hola, {{ auth()->user()->name }}!</h3>
-                            <p class="mb-4 text-muted" style="font-size: 1.1rem;">Bienvenido al panel de gestión clínica de SomosSalud.</p>
-                            <button type="button" class="btn btn-primary font-weight-bold px-4 rounded-pill shadow-sm" data-dismiss="modal">
+                            <h3 class="font-weight-bold mb-2 text-dark position-relative" style="z-index: 1;">¡Hola, {{ auth()->user()->name }}!</h3>
+                            <p class="mb-4 text-muted position-relative" style="font-size: 1.1rem; z-index: 1;">Bienvenido al panel de gestión clínica de SomosSalud.</p>
+                            <button type="button" class="btn btn-primary font-weight-bold px-4 rounded-pill shadow-sm position-relative" style="z-index: 1;" data-dismiss="modal">
                                 Comenzar
                             </button>
                         </div>

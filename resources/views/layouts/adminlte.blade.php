@@ -150,19 +150,27 @@
         @php
             $__rateAdmin = optional(\App\Models\ExchangeRate::latestEffective()->first());
         @endphp
-        <footer class="main-footer text-sm d-flex justify-content-between align-items-center flex-wrap">
+        <footer class="main-footer text-sm d-flex justify-content-between align-items-center flex-wrap bg-light py-2">
             <div>
                 <strong>© {{ date('Y') }} SomosSalud.</strong>
-                <span class="d-none d-sm-inline-block"> Gestión interna.</span>
+                <span class="d-none d-sm-inline-block text-muted"> Gestión interna.</span>
             </div>
-            <div class="text-muted small my-1">
+            <div class="my-0">
                 @if($__rateAdmin && $__rateAdmin->rate)
-                    Tasa BCV: <strong>{{ number_format((float)$__rateAdmin->rate, 2, ',', '.') }} Bs</strong> • {{ $__rateAdmin->date?->format('d/m/Y') }}
+                    <span class="px-3 py-1 rounded-pill bg-white shadow-sm border d-inline-flex align-items-center">
+                        <i class="fas fa-coins text-success mr-2"></i>
+                        <span class="font-weight-bold text-dark" style="font-size: 1.1em;">
+                            Tasa BCV: {{ number_format((float)$__rateAdmin->rate, 2, ',', '.') }} Bs
+                        </span>
+                        <span class="text-muted ml-2 small border-left pl-2">
+                            {{ $__rateAdmin->date?->format('d/m/Y') }}
+                        </span>
+                    </span>
                 @else
-                    Tasa no disponible
+                    <span class="text-muted font-italic">Tasa no disponible</span>
                 @endif
             </div>
-            <div class="float-right d-none d-sm-inline">Versión 1.0.0</div>
+            <div class="float-right d-none d-sm-inline text-muted">Versión 1.0.0</div>
         </footer>
     </div>
 

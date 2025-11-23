@@ -192,7 +192,7 @@
         
         .decorative-icon {
             position: absolute;
-            opacity: 0.05;
+            opacity: 0.1;
             pointer-events: none;
         }
         
@@ -226,5 +226,6 @@
             {{ $slot }}
         </div>
     </div>
+    @stack('scripts')
 </body>
 </html>

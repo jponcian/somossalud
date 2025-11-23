@@ -152,7 +152,7 @@
                                 <li class="d-flex align-items-center"><i
                                         class="fa-solid fa-envelope text-primary me-3"></i><span>alianzas@clinicasaludsonrisa.com</span></li>
                             </ul>
-                            <p class="small text-muted mb-0">Horario de atención: lunes a viernes · 8:00 a. m. - 6:00 p. m.
+                            <p class="small text-muted mb-0">Horario de atención: 24 horas / 7 días a la semana
                             </p>
                         </div>
                     </div>

@@ -12,7 +12,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('password.email') }}">
+    <form method="POST" action="{{ route('password.email') }}" id="forgotPasswordForm">
         @csrf
 
         <!-- Email Address -->
@@ -36,9 +36,9 @@
             @enderror
         </div>
 
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary" id="forgotPasswordBtn">
             <i class="fas fa-paper-plane"></i>
-            Enviar enlace de restablecimiento
+            <span class="btn-text">Enviar enlace de restablecimiento</span>
         </button>
     </form>
 
@@ -48,4 +48,26 @@
             Volver al inicio de sesión
         </a>
     </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const forgotForm = document.getElementById('forgotPasswordForm');
+            const forgotBtn = document.getElementById('forgotPasswordBtn');
+
+            if (forgotForm && forgotBtn) {
+                forgotForm.addEventListener('submit', (e) => {
+                    // Disable button
+                    forgotBtn.disabled = true;
+                    
+                    // Change text and add spinner
+                    forgotBtn.innerHTML = `
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Enviando...
+                    `;
+                });
+            }
+        });
+    </script>
+    @endpush
 </x-guest-layout>

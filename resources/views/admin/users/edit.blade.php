@@ -9,129 +9,228 @@
 {{-- Breadcrumb removido para edición de usuario --}}
 
 @section('content')
-    <div class="row">
+    <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card card-primary card-outline">
-                <div class="card-header">
-                    <h3 class="card-title mb-0">Datos del usuario</h3>
+            <div class="card border-0 shadow-lg rounded-lg overflow-hidden">
+                <div class="card-header text-white p-4" style="background: linear-gradient(to right, #0ea5e9, #10b981);">
+                    <div class="d-flex align-items-center">
+                        <h3 class="card-title mb-0 font-weight-bold text-white">
+                            <i class="fas fa-user-edit mr-2"></i>Editar Usuario
+                        </h3>
+                        <span class="mx-3 text-white-50">|</span>
+                        <p class="mb-0 small text-white-50">Actualiza la información del usuario en el sistema</p>
+                    </div>
                 </div>
+                
                 <form action="{{ route('admin.users.update', $usuario) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="card-body">
+                    
+                    <div class="card-body p-4">
                         @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <p class="mb-2 font-weight-bold">Revisa los errores antes de continuar:</p>
-                                <ul class="mb-0 pl-3">
+                            <div class="alert alert-danger border-left-danger shadow-sm rounded-lg mb-4" role="alert">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-exclamation-circle mr-2 text-lg"></i>
+                                    <h5 class="alert-heading mb-0 font-weight-bold">Por favor corrige los siguientes errores:</h5>
+                                </div>
+                                <ul class="mb-0 pl-4 small">
                                     @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
                                     @endforeach
                                 </ul>
                             </div>
                         @endif
-                        <div class="form-group">
-                            <label for="name">Nombre completo</label>
-                            <input type="text" name="name" id="name" value="{{ old('name', $usuario->name) }}"
-                                class="form-control @error('name') is-invalid @enderror" required autofocus>
-                            @error('name')
-                                <span class="invalid-feedback" role="alert">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="cedula">Cédula</label>
-                            <input type="text" name="cedula" id="cedula" value="{{ old('cedula', $usuario->cedula) }}"
-                                class="form-control @error('cedula') is-invalid @enderror" required>
-                            <small class="form-text text-muted">Se almacena en mayúsculas para evitar duplicados por formato.</small>
-                            @error('cedula')
-                                <span class="invalid-feedback" role="alert">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Correo electrónico</label>
-                            <input type="email" name="email" id="email" value="{{ old('email', $usuario->email) }}"
-                                class="form-control @error('email') is-invalid @enderror" required>
-                            @error('email')
-                                <span class="invalid-feedback" role="alert">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="password">Contraseña</label>
-                                <input type="password" name="password" id="password"
-                                    class="form-control @error('password') is-invalid @enderror" autocomplete="new-password">
-                                <small class="form-text text-muted">Déjalo en blanco para mantener la contraseña actual.</small>
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">{{ $message }}</span>
-                                @enderror
+
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <h5 class="text-muted font-weight-bold text-uppercase small border-bottom pb-2 mb-3">
+                                    <i class="fas fa-info-circle mr-1"></i> Información Personal
+                                </h5>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="password_confirmation">Confirmar contraseña</label>
-                                <input type="password" name="password_confirmation" id="password_confirmation"
-                                    class="form-control" autocomplete="new-password">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Roles</label>
-                            @if (auth()->user()->hasRole('recepcionista'))
-                                <p class="mb-2">
-                                    <span class="badge badge-info">Paciente</span>
-                                </p>
-                                <input type="hidden" name="roles[]" value="paciente">
-                                <small class="form-text text-muted">Como recepcionista, solo puedes editar usuarios con rol Paciente.</small>
-                            @else
-                                <p class="text-muted small mb-2">Selecciona uno o varios roles que aplican al usuario.</p>
-                                <div class="d-flex flex-wrap">
-                                    @php
-                                        $selectedRoles = old('roles', $assignedRoles ?? []);
-                                    @endphp
-                                    @foreach ($roles as $role)
-                                        @php
-                                            $roleId = 'role-' . \Illuminate\Support\Str::slug($role);
-                                            $isChecked = in_array($role, $selectedRoles, true);
-                                        @endphp
-                                        <div class="custom-control custom-checkbox mr-4 mb-2">
-                                            <input type="checkbox" class="custom-control-input role-checkbox" id="{{ $roleId }}"
-                                                name="roles[]" value="{{ $role }}" {{ $isChecked ? 'checked' : '' }}>
-                                            <label class="custom-control-label text-capitalize"
-                                                for="{{ $roleId }}">{{ str_replace('_', ' ', $role) }}</label>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name" class="font-weight-bold text-dark small text-uppercase">Nombre completo <span class="text-danger">*</span></label>
+                                    <div class="input-group shadow-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white border-right-0"><i class="fas fa-user text-muted"></i></span>
                                         </div>
-                                    @endforeach
+                                        <input type="text" name="name" id="name" value="{{ old('name', $usuario->name) }}"
+                                            class="form-control border-left-0 @error('name') is-invalid @enderror" 
+                                            placeholder="Ej: Juan Pérez" required autofocus>
+                                    </div>
+                                    @error('name')
+                                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
                                 </div>
-                                @error('roles')
-                                    <span class="text-danger d-block mt-1">{{ $message }}</span>
-                                @enderror
-                                @error('roles.*')
-                                    <span class="text-danger d-block mt-1">{{ $message }}</span>
-                                @enderror
-                            @endif
-                        </div>
-                        <div class="form-group">
-                            <label for="especialidades">Especialidades (múltiples, solo especialistas)</label>
-                            <select name="especialidades[]" id="especialidades" class="form-control @error('especialidades') is-invalid @enderror" multiple {{ auth()->user()->hasRole('recepcionista') ? 'disabled' : '' }}>
-                                @php
-                                    $selectedEspecialidades = old('especialidades', $usuario->especialidades->pluck('id')->toArray() ?? []);
-                                @endphp
-                                @foreach ($especialidades as $especialidad)
-                                    <option value="{{ $especialidad->id }}" {{ in_array($especialidad->id, $selectedEspecialidades) ? 'selected' : '' }}>
-                                        {{ $especialidad->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-muted">
-                                @if (auth()->user()->hasRole('recepcionista'))
-                                    Campo no disponible para recepcionistas.
-                                @else
-                                    Se habilita automáticamente cuando el rol "especialista" esté seleccionado. Usa Ctrl o Shift para seleccionar varias.
-                                @endif
-                            </small>
-                            @error('especialidades')
-                                <span class="invalid-feedback" role="alert">{{ $message }}</span>
-                            @enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="cedula" class="font-weight-bold text-dark small text-uppercase">Cédula <span class="text-danger">*</span></label>
+                                    <div class="input-group shadow-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white border-right-0"><i class="fas fa-id-card text-muted"></i></span>
+                                        </div>
+                                        <input type="text" name="cedula" id="cedula" value="{{ old('cedula', $usuario->cedula) }}"
+                                            class="form-control border-left-0 @error('cedula') is-invalid @enderror" 
+                                            placeholder="Ej: V-12345678" required>
+                                    </div>
+                                    <small class="form-text text-muted mt-1"><i class="fas fa-info-circle mr-1"></i>Se almacena en mayúsculas.</small>
+                                    @error('cedula')
+                                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="email" class="font-weight-bold text-dark small text-uppercase">Correo electrónico <span class="text-danger">*</span></label>
+                                    <div class="input-group shadow-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white border-right-0"><i class="fas fa-envelope text-muted"></i></span>
+                                        </div>
+                                        <input type="email" name="email" id="email" value="{{ old('email', $usuario->email) }}"
+                                            class="form-control border-left-0 @error('email') is-invalid @enderror" 
+                                            placeholder="correo@ejemplo.com" required>
+                                    </div>
+                                    @error('email')
+                                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mt-3 mb-4">
+                                <h5 class="text-muted font-weight-bold text-uppercase small border-bottom pb-2 mb-3">
+                                    <i class="fas fa-lock mr-1"></i> Seguridad
+                                </h5>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="password" class="font-weight-bold text-dark small text-uppercase">Nueva Contraseña</label>
+                                    <div class="input-group shadow-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white border-right-0"><i class="fas fa-key text-muted"></i></span>
+                                        </div>
+                                        <input type="password" name="password" id="password"
+                                            class="form-control border-left-0 @error('password') is-invalid @enderror" 
+                                            placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+                                    </div>
+                                    <small class="form-text text-muted mt-1"><i class="fas fa-info-circle mr-1"></i>Dejar en blanco para mantener la actual.</small>
+                                    @error('password')
+                                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="password_confirmation" class="font-weight-bold text-dark small text-uppercase">Confirmar Contraseña</label>
+                                    <div class="input-group shadow-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white border-right-0"><i class="fas fa-check-double text-muted"></i></span>
+                                        </div>
+                                        <input type="password" name="password_confirmation" id="password_confirmation"
+                                            class="form-control border-left-0" 
+                                            placeholder="Repite la contraseña" autocomplete="new-password">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mt-3 mb-4">
+                                <h5 class="text-muted font-weight-bold text-uppercase small border-bottom pb-2 mb-3">
+                                    <i class="fas fa-user-tag mr-1"></i> Roles y Permisos
+                                </h5>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="font-weight-bold text-dark small text-uppercase mb-3">Roles Asignados</label>
+                                    @if (auth()->user()->hasRole('recepcionista'))
+                                        <div class="alert alert-info shadow-sm border-0">
+                                            <i class="fas fa-info-circle mr-2"></i>
+                                            <span class="font-weight-bold">Rol: Paciente</span>
+                                            <input type="hidden" name="roles[]" value="paciente">
+                                            <div class="mt-1 small">Como recepcionista, solo puedes gestionar usuarios con rol de Paciente.</div>
+                                        </div>
+                                    @else
+                                        <div class="bg-light p-3 rounded border">
+                                            <div class="d-flex flex-wrap gap-3">
+                                                @php
+                                                    $selectedRoles = old('roles', $assignedRoles ?? []);
+                                                @endphp
+                                                @foreach ($roles as $role)
+                                                    @php
+                                                        $roleId = 'role-' . \Illuminate\Support\Str::slug($role);
+                                                        $isChecked = in_array($role, $selectedRoles, true);
+                                                        $badgeClass = match($role) {
+                                                            'admin' => 'danger',
+                                                            'especialista' => 'success',
+                                                            'recepcionista' => 'warning',
+                                                            'paciente' => 'info',
+                                                            default => 'secondary'
+                                                        };
+                                                    @endphp
+                                                    <div class="custom-control custom-checkbox mr-4 mb-2">
+                                                        <input type="checkbox" class="custom-control-input role-checkbox" id="{{ $roleId }}"
+                                                            name="roles[]" value="{{ $role }}" {{ $isChecked ? 'checked' : '' }}>
+                                                        <label class="custom-control-label font-weight-bold text-{{ $badgeClass }}" for="{{ $roleId }}">
+                                                            {{ ucfirst(str_replace('_', ' ', $role)) }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        @error('roles')
+                                            <span class="text-danger d-block mt-2 small font-weight-bold"><i class="fas fa-exclamation-triangle mr-1"></i>{{ $message }}</span>
+                                        @enderror
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="especialidades" class="font-weight-bold text-dark small text-uppercase">Especialidades <span class="text-muted font-weight-normal text-lowercase">(Solo para especialistas)</span></label>
+                                    <div class="d-flex align-items-stretch shadow-sm border rounded overflow-hidden bg-white">
+                                        <div class="d-flex align-items-center px-3 bg-white border-right">
+                                            <i class="fas fa-stethoscope text-muted"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <select name="especialidades[]" id="especialidades" class="form-control border-0 @error('especialidades') is-invalid @enderror" multiple {{ auth()->user()->hasRole('recepcionista') ? 'disabled' : '' }} style="width: 100%;">
+                                                @php
+                                                    $selectedEspecialidades = old('especialidades', $usuario->especialidades->pluck('id')->toArray() ?? []);
+                                                @endphp
+                                                @foreach ($especialidades as $especialidad)
+                                                    <option value="{{ $especialidad->id }}" {{ in_array($especialidad->id, $selectedEspecialidades) ? 'selected' : '' }}>
+                                                        {{ $especialidad->nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <small class="form-text text-muted mt-1">
+                                        @if (auth()->user()->hasRole('recepcionista'))
+                                            <i class="fas fa-lock mr-1"></i>Campo no disponible para recepcionistas.
+                                        @else
+                                            <i class="fas fa-info-circle mr-1"></i>Se habilita cuando el rol "Especialista" está seleccionado.
+                                        @endif
+                                    </small>
+                                    @error('especialidades')
+                                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-footer d-flex justify-content-between">
-                        <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Cancelar</a>
-                        <button type="submit" class="btn btn-primary">Actualizar usuario</button>
+
+                    <div class="card-footer bg-light p-4 d-flex justify-content-between align-items-center">
+                        <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary font-weight-bold px-4">
+                            <i class="fas fa-arrow-left mr-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary font-weight-bold px-5 shadow-sm">
+                            <i class="fas fa-save mr-2"></i>Guardar Cambios
+                        </button>
                     </div>
                 </form>
             </div>
@@ -157,7 +256,7 @@ $(document).ready(function() {
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const roleCheckboxes = Array.from(document.querySelectorAll('.role-checkbox'));
-        const especialidadSelect = document.getElementById('especialidad_id');
+        const especialidadSelect = document.getElementById('especialidades'); // ID corrected to match the select element
 
         if (!especialidadSelect) {
             return;
@@ -169,17 +268,19 @@ $(document).ready(function() {
             });
 
             especialidadSelect.disabled = !specialistSelected;
-            especialidadSelect.classList.toggle('disabled', !specialistSelected);
-
-            if (!specialistSelected) {
-                especialidadSelect.value = '';
-            }
+            // If using Select2, we might need to trigger an update or re-init, 
+            // but standard disabled attribute usually works if Select2 respects it.
+            // If Select2 is used, we can also disable the underlying select.
+            
+            // Also toggle the disabled class for visual feedback if needed, 
+            // though standard disabled attribute handles this for native inputs.
         }
 
         roleCheckboxes.forEach(function (checkbox) {
             checkbox.addEventListener('change', toggleEspecialidad);
         });
 
+        // Run on load to set initial state
         toggleEspecialidad();
     });
 </script>

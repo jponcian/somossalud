@@ -15,7 +15,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('register') }}" novalidate>
+        <form method="POST" action="{{ route('register') }}" novalidate id="registerForm">
             @csrf
 
             <!-- Nombre -->
@@ -133,9 +133,9 @@
             </div>
 
             <div class="d-grid mb-4">
-                <button class="btn btn-primary" type="submit">
+                <button class="btn btn-primary" type="submit" id="registerBtn">
                     <i class="fa-solid fa-user-plus me-2"></i>
-                    Crear cuenta
+                    <span class="btn-text">Crear cuenta</span>
                 </button>
             </div>
 
@@ -171,6 +171,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const visible = passwordConfirm.type === 'text';
             passwordConfirm.type = visible ? 'password' : 'text';
             togglePassConfirm.innerHTML = visible ? '<i class="fa-regular fa-eye"></i>' : '<i class="fa-regular fa-eye-slash"></i>';
+        });
+    }
+
+    // Prevent double submission
+    const registerForm = document.getElementById('registerForm');
+    const registerBtn = document.getElementById('registerBtn');
+
+    if (registerForm && registerBtn) {
+        registerForm.addEventListener('submit', (e) => {
+            // Disable button
+            registerBtn.disabled = true;
+            
+            // Change text and add spinner
+            const originalContent = registerBtn.innerHTML;
+            registerBtn.innerHTML = `
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Procesando...
+            `;
+            
+            // Note: Since the form has novalidate, we assume server-side validation or that the user wants to submit anyway.
+            // However, if there are client-side validation errors caught by browser (if novalidate wasn't there), 
+            // the submit event wouldn't fire or we'd need to re-enable.
+            // Since 'novalidate' is present, the form WILL submit.
         });
     }
 });
