@@ -154,7 +154,7 @@
                         <p class="text-sm text-gray-600 mb-4">
                             Consulta informes, descarga tus resultados y comparte con especialistas cuando lo necesites.
                         </p>
-                        <a href="#"
+                        <a href="{{ route('paciente.resultados') }}"
                             class="inline-flex items-center text-sky-600 font-semibold text-sm">Ver mis resultados<span
                                 class="ml-2">→</span></a>
                     </div>

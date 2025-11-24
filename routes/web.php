@@ -30,7 +30,13 @@ Route::get('/dashboard', function () {
         ->whereHas('medicamentos')
         ->orderByRaw('COALESCE(concluida_at, updated_at) DESC')
         ->first();
-    return view('panel.pacientes', compact('suscripcionActiva','reportePendiente','ultimoRechazado','ultimaReceta'));
+    // Resultados de laboratorio del paciente
+    $resultadosLaboratorio = \App\Models\ResultadoLaboratorio::with(['clinica'])
+        ->where('paciente_id', $user->id)
+        ->orderBy('fecha_resultado', 'desc')
+        ->limit(5)
+        ->get();
+    return view('panel.pacientes', compact('suscripcionActiva','reportePendiente','ultimoRechazado','ultimaReceta','resultadosLaboratorio'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // El panel de pacientes es accesible por cualquier usuario autenticado (pacientes y personal)
@@ -102,7 +108,33 @@ Route::middleware('auth')->group(function () {
         ->name('citas.receta');
     // Rutas para citas (resource). El controlador protegerá creación/almacenamiento con verificar.suscripcion.
     Route::resource('citas', \App\Http\Controllers\CitaController::class);
+
+    // Resultados de laboratorio para pacientes
+    Route::get('mis-resultados', function() {
+        $resultados = \App\Models\ResultadoLaboratorio::with(['clinica'])
+            ->where('paciente_id', auth()->id())
+            ->orderBy('fecha_resultado', 'desc')
+            ->paginate(10);
+        return view('paciente.resultados', compact('resultados'));
+    })->name('paciente.resultados');
 });
+
+// Rutas de laboratorio (personal autorizado)
+Route::middleware(['auth', 'verified', 'role:laboratorio|admin_clinica|super-admin'])
+    ->prefix('laboratorio')
+    ->name('laboratorio.')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'index'])->name('index');
+        Route::get('crear', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'store'])->name('store');
+        Route::post('crear-paciente-rapido', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'crearPacienteRapido'])->name('crear-paciente-rapido');
+        Route::get('{resultado}', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'show'])->name('show');
+        Route::get('{resultado}/pdf', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'imprimirPDF'])->name('pdf');
+        Route::get('ajax/pacientes', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'buscarPacientes'])->name('ajax.pacientes');
+    });
+
+// Ruta pública de verificación de resultados (sin autenticación)
+Route::get('verificar-resultado/{codigo}', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'verificar'])->name('laboratorio.verificar');
 
 Route::middleware(['auth', 'verified', 'role:recepcionista|admin_clinica|super-admin'])
     ->prefix('recepcion')

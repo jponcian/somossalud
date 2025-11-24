@@ -90,6 +90,31 @@
                 @enderror
             </div>
 
+            <!-- Fecha de Nacimiento -->
+            <div class="mb-4">
+                <label for="fecha_nacimiento" class="form-label">
+                    <i class="fa-solid fa-calendar me-1"></i> Fecha de Nacimiento
+                </label>
+                <input 
+                    id="fecha_nacimiento" 
+                    type="date" 
+                    name="fecha_nacimiento" 
+                    value="{{ old('fecha_nacimiento') }}" 
+                    class="form-control @error('fecha_nacimiento') is-invalid @enderror" 
+                    required 
+                    max="{{ date('Y-m-d') }}"
+                >
+                <small class="form-text text-muted">
+                    <i class="fa-solid fa-info-circle me-1"></i>
+                    Este dato es importante para tu historial médico
+                </small>
+                @error('fecha_nacimiento')
+                    <div class="invalid-feedback">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i>{{ $message }}
+                    </div>
+                @enderror
+            </div>
+
             <!-- Contraseña -->
             <div class="mb-4">
                 <label for="password" class="form-label">

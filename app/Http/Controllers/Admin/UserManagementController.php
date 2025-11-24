@@ -88,6 +88,7 @@ class UserManagementController extends Controller
                 'regex:/^[VEJGP]-\d{6,8}$/i'
             ],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email'],
+            'fecha_nacimiento' => ['required', 'date', 'before:today'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'roles' => ['required', 'array', 'min:1'],
             'roles.*' => ['string', 'in:' . implode(',', $roleNames)],
@@ -95,6 +96,9 @@ class UserManagementController extends Controller
         ], [
             'cedula.regex' => 'El formato de la cédula debe ser: V-12345678 (6 a 8 dígitos). Letras permitidas: V, E, J, G, P',
             'cedula.unique' => 'Esta cédula ya está registrada en el sistema',
+            'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
+            'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida',
+            'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy',
         ]);
 
         $esEspecialista = collect($validated['roles'])->contains('especialista');
@@ -110,6 +114,7 @@ class UserManagementController extends Controller
             'name' => $validated['name'],
             'cedula' => $cedula,
             'email' => $validated['email'],
+            'fecha_nacimiento' => $validated['fecha_nacimiento'],
             'password' => Hash::make($validated['password']),
             'especialidad_id' => $esEspecialista ? $validated['especialidad_id'] : null,
         ]);
@@ -179,6 +184,7 @@ class UserManagementController extends Controller
                 'regex:/^[VEJGP]-\d{6,8}$/i'
             ],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email,' . $user->id],
+            'fecha_nacimiento' => ['required', 'date', 'before:today'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'roles' => ['required', 'array', 'min:1'],
             'roles.*' => ['string', 'in:' . implode(',', $roleNames)],
@@ -186,6 +192,9 @@ class UserManagementController extends Controller
         ], [
             'cedula.regex' => 'El formato de la cédula debe ser: V-12345678 (6 a 8 dígitos). Letras permitidas: V, E, J, G, P',
             'cedula.unique' => 'Esta cédula ya está registrada en el sistema',
+            'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
+            'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida',
+            'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy',
         ]);
 
         $esEspecialista = collect($validated['roles'])->contains('especialista');
@@ -200,6 +209,7 @@ class UserManagementController extends Controller
         $user->name = $validated['name'];
         $user->cedula = $cedula;
         $user->email = $validated['email'];
+        $user->fecha_nacimiento = $validated['fecha_nacimiento'];
         $user->especialidad_id = $esEspecialista ? ($validated['especialidad_id'] ?? null) : null;
 
         if (!empty($validated['password'])) {

@@ -100,6 +100,24 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="fecha_nacimiento" class="font-weight-bold text-dark small text-uppercase">Fecha de Nacimiento <span class="text-danger">*</span></label>
+                                    <div class="input-group shadow-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white border-right-0"><i class="fas fa-calendar text-muted"></i></span>
+                                        </div>
+                                        <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" value="{{ old('fecha_nacimiento', $usuario->fecha_nacimiento) }}"
+                                            class="form-control border-left-0 @error('fecha_nacimiento') is-invalid @enderror" 
+                                            max="{{ date('Y-m-d') }}" required>
+                                    </div>
+                                    <small class="form-text text-muted mt-1"><i class="fas fa-info-circle mr-1"></i>Importante para el historial médico del paciente.</small>
+                                    @error('fecha_nacimiento')
+                                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="col-md-12 mt-3 mb-4">
                                 <h5 class="text-muted font-weight-bold text-uppercase small border-bottom pb-2 mb-3">
                                     <i class="fas fa-lock mr-1"></i> Seguridad

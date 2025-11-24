@@ -32,6 +32,15 @@
             </a>
         </li>
         @endhasanyrole
+        @hasanyrole('laboratorio|admin_clinica|super-admin')
+        <li class="nav-item">
+            <a href="{{ route('laboratorio.index') }}"
+                class="nav-link {{ request()->routeIs('laboratorio.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-flask"></i>
+                <p>Laboratorio</p>
+            </a>
+        </li>
+        @endhasanyrole
         @hasanyrole('super-admin|admin_clinica')
         <li class="nav-item">
             <a href="{{ route('admin.settings.pagos') }}"

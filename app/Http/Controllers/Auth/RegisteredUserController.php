@@ -36,6 +36,50 @@ class RegisteredUserController extends Controller
         }
         $request->merge(['cedula' => $cedula]);
 
+        // Verificar si existe usuario con esa cédula
+        $usuarioExistente = User::where('cedula', $cedula)->first();
+
+        if ($usuarioExistente) {
+            // Si tiene email temporal, permitir actualización (auto-vinculación)
+            if (str_ends_with($usuarioExistente->email, '@paciente.temp')) {
+                // Validar solo email y contraseña (la cédula ya existe)
+                $request->validate([
+                    'name' => ['required', 'string', 'max:255'],
+                    'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email'],
+                    'fecha_nacimiento' => ['required', 'date', 'before:today'],
+                    'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                ], [
+                    'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
+                    'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida',
+                    'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy',
+                ]);
+
+                // Actualizar cuenta existente con datos reales
+                $usuarioExistente->update([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'fecha_nacimiento' => $request->fecha_nacimiento,
+                    'password' => Hash::make($request->password),
+                ]);
+
+                event(new Registered($usuarioExistente));
+
+                // Enviar correo de bienvenida
+                \Illuminate\Support\Facades\Mail::to($usuarioExistente->email)->send(new \App\Mail\WelcomeEmail($usuarioExistente));
+
+                Auth::login($usuarioExistente);
+
+                return redirect()->route('panel.pacientes')
+                    ->with('success', '¡Cuenta activada exitosamente! Tus datos han sido actualizados y ahora puedes acceder a todos tus resultados.');
+            } else {
+                // Ya tiene cuenta real, mostrar error con sugerencia
+                return back()->withErrors([
+                    'cedula' => 'Esta cédula ya está registrada. Si olvidaste tu contraseña, usa la opción "¿Olvidaste tu contraseña?"'
+                ])->withInput($request->except('password', 'password_confirmation'));
+            }
+        }
+
+        // No existe, proceder con registro normal
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email'],
@@ -46,10 +90,14 @@ class RegisteredUserController extends Controller
                 'unique:usuarios,cedula',
                 'regex:/^[VEJGP]-\d{6,8}$/i'
             ],
+            'fecha_nacimiento' => ['required', 'date', 'before:today'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
             'cedula.regex' => 'El formato de la cédula debe ser: V-12345678 (6 a 8 dígitos). Letras permitidas: V, E, J, G, P',
             'cedula.unique' => 'Esta cédula ya está registrada en el sistema',
+            'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
+            'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida',
+            'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy',
         ]);
 
         // Asignar a la clínica por defecto (SaludSonrisa) si existe
@@ -59,6 +107,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'cedula' => $cedula,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
             'password' => Hash::make($request->password),
             'clinica_id' => $clinicaId,
         ]);
