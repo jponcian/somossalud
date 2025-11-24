@@ -50,6 +50,36 @@
             </a>
         </li>
         @endhasanyrole
+        @role('super-admin')
+        <li class="nav-item">
+            <a href="{{ route('admin.settings.cache.clear') }}" class="nav-link text-warning" id="btn-limpiar-cache">
+                <i class="nav-icon fas fa-broom"></i>
+                <p>Limpiar Caché</p>
+            </a>
+        </li>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('btn-limpiar-cache').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = this.href;
+                    Swal.fire({
+                        title: '¿Limpiar caché del sistema?',
+                        text: "Esto puede afectar el rendimiento temporalmente mientras se reconstruye.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#f59e0b',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Sí, limpiar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = url;
+                        }
+                    });
+                });
+            });
+        </script>
+        @endrole
         @role('especialista')
         <li class="nav-item">
             <a href="{{ route('citas.index') }}" class="nav-link {{ request()->routeIs('citas.*') ? 'active' : '' }}">

@@ -172,9 +172,14 @@
         <div style="font-size: 9px; color: #666; margin-top: 5px;">Escanear para verificar</div>
     </div>
 
-    <!-- Encabezado -->
+    <!-- Logo SomosSalud (Superior Izquierda) -->
+    <div style="position: absolute; top: 20px; left: 20px;">
+        <img src="{{ public_path('images/logo.png') }}" alt="SomosSalud" style="max-height: 60px;">
+    </div>
+
+    <!-- Encabezado Central -->
     <div class="header">
-        <h1>CLÍNICA SALUDSONRISA</h1>
+        <img src="{{ public_path('images/saludsonrisa.jpg') }}" alt="SaludSonrisa Logo" style="max-height: 80px; margin-bottom: 10px;">
         <h2>Resultado de Laboratorio</h2>
     </div>
 

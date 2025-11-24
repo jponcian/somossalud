@@ -73,6 +73,40 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica'])
     ->group(function () {
         Route::get('settings/pagos', [\App\Http\Controllers\Admin\SettingsController::class, 'pagos'])->name('settings.pagos');
         Route::post('settings/pagos', [\App\Http\Controllers\Admin\SettingsController::class, 'guardarPagos'])->name('settings.pagos.guardar');
+        
+        // Ruta de mantenimiento para limpiar caché
+        // Ruta de mantenimiento para limpiar caché (Manual sin Artisan)
+        Route::get('settings/limpiar-cache', function() {
+            try {
+                $basePath = base_path();
+                
+                // 1. Limpiar caché de configuración y rutas (bootstrap/cache)
+                $files = glob($basePath . '/bootstrap/cache/*.php');
+                foreach ($files as $file) {
+                    if (is_file($file) && basename($file) !== '.gitignore') {
+                        @unlink($file);
+                    }
+                }
+
+                // 2. Limpiar vistas compiladas (storage/framework/views)
+                $viewFiles = glob($basePath . '/storage/framework/views/*');
+                foreach ($viewFiles as $file) {
+                    if (is_file($file) && basename($file) !== '.gitignore') {
+                        @unlink($file);
+                    }
+                }
+
+                // 3. Limpiar caché de aplicación (storage/framework/cache/data) - Solo si es file driver
+                // Nota: Borrar recursivamente es peligroso en una ruta web simple, 
+                // pero podemos intentar borrar la carpeta data si existe.
+                // Por seguridad, solo borraremos archivos directos en cache/data si existen
+                // Para una limpieza profunda de cache de archivos, se requeriría un iterador recursivo.
+                
+                return back()->with('status', 'Archivos de caché (config, rutas, vistas) eliminados manualmente.');
+            } catch (\Exception $e) {
+                return back()->with('error', 'Error limpiando caché manualmente: ' . $e->getMessage());
+            }
+        })->name('settings.cache.clear');
     });
 
 Route::middleware('auth')->group(function () {

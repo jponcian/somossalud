@@ -156,7 +156,10 @@ class ResultadoLaboratorioController extends Controller
 
         $pdf = Pdf::loadView('laboratorio.pdf', compact('resultado', 'qrCode'));
         
-        return $pdf->download('resultado_laboratorio_' . $resultado->codigo_verificacion . '.pdf');
+        // Limpiar cédula para nombre de archivo (solo números y letras)
+        $cedula = preg_replace('/[^A-Za-z0-9]/', '', $resultado->paciente->cedula);
+        
+        return $pdf->download('resultado_lab_' . $cedula . '_' . $resultado->codigo_verificacion . '.pdf');
     }
 
     /**
