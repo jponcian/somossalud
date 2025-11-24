@@ -18,9 +18,12 @@ class UserManagementController extends Controller
     public function index(): View
     {
         $usuarioActual = Auth::user();
-        $roles = \Spatie\Permission\Models\Role::orderBy('name')->pluck('name');
+        $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'super-admin')->orderBy('name')->pluck('name');
         $filtroRol = request('rol');
-        $usuariosQuery = User::with(['roles', 'especialidad']);
+        $usuariosQuery = User::with(['roles', 'especialidad'])
+            ->whereDoesntHave('roles', function ($q) {
+                $q->where('name', 'super-admin');
+            });
 
         // Si es recepcionista: solo puede ver pacientes
         if ($usuarioActual && $usuarioActual->hasRole('recepcionista')) {
@@ -52,7 +55,7 @@ class UserManagementController extends Controller
     {
         $roles = Auth::user()->hasRole('recepcionista')
             ? collect(['paciente'])
-            : Role::orderBy('name')->pluck('name');
+            : Role::where('name', '!=', 'super-admin')->orderBy('name')->pluck('name');
         $especialidades = Especialidad::orderBy('nombre')->get();
 
         return view('admin.users.create', [
@@ -75,7 +78,7 @@ class UserManagementController extends Controller
         }
         $request->merge(['cedula' => $cedula]);
 
-        $roles = Role::pluck('name');
+        $roles = Role::where('name', '!=', 'super-admin')->pluck('name');
         $roleNames = $roles->toArray();
 
         $validated = $request->validate([
@@ -142,7 +145,7 @@ class UserManagementController extends Controller
 
         $roles = Auth::user()->hasRole('recepcionista')
             ? collect(['paciente'])
-            : Role::orderBy('name')->pluck('name');
+            : Role::where('name', '!=', 'super-admin')->orderBy('name')->pluck('name');
         $especialidades = Especialidad::orderBy('nombre')->get();
         $assignedRoles = $user->roles->pluck('name')->toArray();
 
@@ -171,7 +174,7 @@ class UserManagementController extends Controller
         }
         $request->merge(['cedula' => $cedula]);
 
-        $roles = Role::pluck('name');
+        $roles = Role::where('name', '!=', 'super-admin')->pluck('name');
         $roleNames = $roles->toArray();
 
         $validated = $request->validate([

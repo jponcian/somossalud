@@ -128,9 +128,16 @@ Route::middleware(['auth', 'verified', 'role:laboratorio|admin_clinica|super-adm
         Route::get('crear', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'store'])->name('store');
         Route::post('crear-paciente-rapido', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'crearPacienteRapido'])->name('crear-paciente-rapido');
+        Route::get('ajax/pacientes', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'buscarPacientes'])->name('ajax.pacientes');
+    });
+
+// Rutas de visualización de resultados (accesibles para pacientes y personal)
+Route::middleware(['auth', 'verified'])
+    ->prefix('laboratorio')
+    ->name('laboratorio.')
+    ->group(function () {
         Route::get('{resultado}', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'show'])->name('show');
         Route::get('{resultado}/pdf', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'imprimirPDF'])->name('pdf');
-        Route::get('ajax/pacientes', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'buscarPacientes'])->name('ajax.pacientes');
     });
 
 // Ruta pública de verificación de resultados (sin autenticación)

@@ -125,6 +125,12 @@ class ResultadoLaboratorioController extends Controller
      */
     public function show(ResultadoLaboratorio $resultado)
     {
+        // Verificar acceso: Dueño del resultado o personal autorizado
+        $user = Auth::user();
+        if ($user->hasRole('paciente') && $resultado->paciente_id !== $user->id) {
+            abort(403, 'No tiene permiso para ver este resultado.');
+        }
+
         $resultado->load(['paciente', 'clinica', 'registradoPor']);
         
         return view('laboratorio.show', compact('resultado'));
@@ -135,6 +141,12 @@ class ResultadoLaboratorioController extends Controller
      */
     public function imprimirPDF(ResultadoLaboratorio $resultado)
     {
+        // Verificar acceso: Dueño del resultado o personal autorizado
+        $user = Auth::user();
+        if ($user->hasRole('paciente') && $resultado->paciente_id !== $user->id) {
+            abort(403, 'No tiene permiso para descargar este resultado.');
+        }
+
         $resultado->load(['paciente', 'clinica', 'registradoPor']);
         
         // Generar QR code
