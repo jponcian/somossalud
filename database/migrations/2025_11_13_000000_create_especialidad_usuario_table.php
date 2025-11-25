@@ -7,13 +7,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('especialidad_usuario', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('usuario_id')->constrained('usuarios')->cascadeOnDelete();
-            $table->foreignId('especialidad_id')->constrained('especialidades')->cascadeOnDelete();
-            $table->timestamps();
-            $table->unique(['usuario_id','especialidad_id']);
-        });
+        if (!Schema::hasTable('especialidad_usuario')) {
+            Schema::create('especialidad_usuario', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('usuario_id')->constrained('usuarios')->cascadeOnDelete();
+                $table->foreignId('especialidad_id')->constrained('especialidades')->cascadeOnDelete();
+                $table->timestamps();
+                $table->unique(['usuario_id','especialidad_id']);
+            });
+        }
     }
 
     public function down(): void

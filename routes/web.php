@@ -10,7 +10,7 @@ Route::get('/', function () {
     try {
         app(\App\Services\BcvRateService::class)->syncIfMissing();
     } catch (\Throwable $e) {
-        Log::warning('BCV sync failed: '.$e->getMessage());
+        Log::warning('BCV sync failed: ' . $e->getMessage());
     }
     return view('landing');
 });
@@ -18,14 +18,14 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = \Illuminate\Support\Facades\Auth::user();
     // Si el usuario tiene rol de personal clínico distinto a paciente, podría ir a panel.clinica
-    if ($user->hasRole(['super-admin','admin_clinica','recepcionista','especialista','laboratorio','almacen']) && !$user->hasRole('paciente')) {
+    if ($user->hasRole(['super-admin', 'admin_clinica', 'recepcionista', 'especialista', 'laboratorio', 'almacen']) && !$user->hasRole('paciente')) {
         return redirect()->route('panel.clinica');
     }
     // Panel de paciente unificado
-    $suscripcionActiva = \App\Models\Suscripcion::where('usuario_id', $user->id)->where('estado','activo')->latest()->first();
-    $reportePendiente = \App\Models\ReportePago::where('usuario_id', $user->id)->where('estado','pendiente')->latest()->first();
-    $ultimoRechazado = \App\Models\ReportePago::where('usuario_id', $user->id)->where('estado','rechazado')->latest()->first();
-    $ultimaReceta = \App\Models\Cita::with(['medicamentos','especialista','clinica'])
+    $suscripcionActiva = \App\Models\Suscripcion::where('usuario_id', $user->id)->where('estado', 'activo')->latest()->first();
+    $reportePendiente = \App\Models\ReportePago::where('usuario_id', $user->id)->where('estado', 'pendiente')->latest()->first();
+    $ultimoRechazado = \App\Models\ReportePago::where('usuario_id', $user->id)->where('estado', 'rechazado')->latest()->first();
+    $ultimaReceta = \App\Models\Cita::with(['medicamentos', 'especialista', 'clinica'])
         ->where('usuario_id', $user->id)
         ->whereHas('medicamentos')
         ->orderByRaw('COALESCE(concluida_at, updated_at) DESC')
@@ -36,10 +36,31 @@ Route::get('/dashboard', function () {
         ->orderBy('fecha_resultado', 'desc')
         ->limit(5)
         ->get();
-    return view('panel.pacientes', compact('suscripcionActiva','reportePendiente','ultimoRechazado','ultimaReceta','resultadosLaboratorio'));
+    return view('panel.pacientes', compact('suscripcionActiva', 'reportePendiente', 'ultimoRechazado', 'ultimaReceta', 'resultadosLaboratorio'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// El panel de pacientes es accesible por cualquier usuario autenticado (pacientes y personal)
+// Rutas de órdenes de laboratorio (personal autorizado)
+Route::middleware(['auth', 'verified', 'role:laboratorio|admin_clinica|super-admin|recepcionista'])
+    ->prefix('lab/orders')
+    ->name('lab.orders.')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\LabOrderController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\LabOrderController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\LabOrderController::class, 'store'])->name('store');
+        Route::get('/{id}', [\App\Http\Controllers\LabOrderController::class, 'show'])->name('show');
+        Route::get('/{id}/load-results', [\App\Http\Controllers\LabOrderController::class, 'loadResults'])->name('load-results');
+        Route::post('/{id}/results', [\App\Http\Controllers\LabOrderController::class, 'storeResults'])->name('store-results');
+        Route::get('/ajax/search-patients', [\App\Http\Controllers\LabOrderController::class, 'searchPatients'])->name('search-patients');
+    });
+
+// Ruta de descarga de PDF accesible para pacientes y personal (validación en controlador)
+Route::middleware(['auth', 'verified'])
+    ->get('lab/orders/{id}/pdf', [\App\Http\Controllers\LabOrderController::class, 'downloadPDF'])
+    ->name('lab.orders.pdf');
+
+// Ruta pública de verificación de órdenes de laboratorio (sin autenticación)
+Route::get('verificar-orden-laboratorio/{code}', [\App\Http\Controllers\LabOrderController::class, 'verify'])->name('lab.orders.verify');
+
 // Mantener ruta antigua pero redirigir al nuevo dashboard unificado
 Route::middleware(['auth', 'verified'])->get('/panel/pacientes', function () {
     return redirect()->route('dashboard');
@@ -73,13 +94,13 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica'])
     ->group(function () {
         Route::get('settings/pagos', [\App\Http\Controllers\Admin\SettingsController::class, 'pagos'])->name('settings.pagos');
         Route::post('settings/pagos', [\App\Http\Controllers\Admin\SettingsController::class, 'guardarPagos'])->name('settings.pagos.guardar');
-        
+
         // Ruta de mantenimiento para limpiar caché
         // Ruta de mantenimiento para limpiar caché (Manual sin Artisan)
-        Route::get('settings/limpiar-cache', function() {
+        Route::get('settings/limpiar-cache', function () {
             try {
                 $basePath = base_path();
-                
+
                 // 1. Limpiar caché de configuración y rutas (bootstrap/cache)
                 $files = glob($basePath . '/bootstrap/cache/*.php');
                 foreach ($files as $file) {
@@ -101,7 +122,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica'])
                 // pero podemos intentar borrar la carpeta data si existe.
                 // Por seguridad, solo borraremos archivos directos en cache/data si existen
                 // Para una limpieza profunda de cache de archivos, se requeriría un iterador recursivo.
-                
+    
                 return back()->with('status', 'Archivos de caché (config, rutas, vistas) eliminados manualmente.');
             } catch (\Exception $e) {
                 return back()->with('error', 'Error limpiando caché manualmente: ' . $e->getMessage());
@@ -144,12 +165,21 @@ Route::middleware('auth')->group(function () {
     Route::resource('citas', \App\Http\Controllers\CitaController::class);
 
     // Resultados de laboratorio para pacientes
-    Route::get('mis-resultados', function() {
-        $resultados = \App\Models\ResultadoLaboratorio::with(['clinica'])
+    Route::get('mis-resultados', function () {
+        // Resultados antiguos
+        $resultadosAntiguos = \App\Models\ResultadoLaboratorio::with(['clinica'])
             ->where('paciente_id', auth()->id())
             ->orderBy('fecha_resultado', 'desc')
-            ->paginate(10);
-        return view('paciente.resultados', compact('resultados'));
+            ->get();
+
+        // Nuevas órdenes completadas
+        $nuevasOrdenes = \App\Models\LabOrder::with(['clinica', 'details.exam', 'details.results.examItem'])
+            ->where('patient_id', auth()->id())
+            ->where('status', 'completed')
+            ->orderBy('result_date', 'desc')
+            ->get();
+
+        return view('paciente.resultados', compact('resultadosAntiguos', 'nuevasOrdenes'));
     })->name('paciente.resultados');
 });
 
@@ -187,31 +217,32 @@ Route::middleware(['auth', 'verified', 'role:recepcionista|admin_clinica|super-a
     });
 
 // Atenciones (seguro / guardia)
-Route::middleware(['auth','verified'])
-    ->group(function(){
+Route::middleware(['auth', 'verified'])
+    ->group(function () {
         // Listados por rol
         Route::get('atenciones', [\App\Http\Controllers\AtencionController::class, 'index'])->name('atenciones.index');
         // Recepción
         Route::post('atenciones', [\App\Http\Controllers\AtencionController::class, 'store'])->name('atenciones.store');
         Route::post('atenciones/{atencion}/asignar', [\App\Http\Controllers\AtencionController::class, 'asignarMedico'])->name('atenciones.asignar');
         Route::post('atenciones/{atencion}/cerrar', [\App\Http\Controllers\AtencionController::class, 'cerrar'])->name('atenciones.cerrar');
-    // Buscadores AJAX recepción
-    Route::get('ajax/pacientes', [\App\Http\Controllers\AtencionController::class, 'buscarPacientes'])->name('ajax.pacientes');
-    Route::get('ajax/clinicas', [\App\Http\Controllers\AtencionController::class, 'buscarClinicas'])->name('ajax.clinicas');
-    Route::get('ajax/medicos', [\App\Http\Controllers\AtencionController::class, 'buscarMedicos'])->name('ajax.medicos');
+        // Buscadores AJAX recepción
+        Route::get('ajax/pacientes', [\App\Http\Controllers\AtencionController::class, 'buscarPacientes'])->name('ajax.pacientes');
+        Route::get('ajax/clinicas', [\App\Http\Controllers\AtencionController::class, 'buscarClinicas'])->name('ajax.clinicas');
+        Route::get('ajax/medicos', [\App\Http\Controllers\AtencionController::class, 'buscarMedicos'])->name('ajax.medicos');
         // Especialista gestionar
-    Route::get('atenciones/{atencion}/gestion', function(\App\Models\Atencion $atencion){
+        Route::get('atenciones/{atencion}/gestion', function (\App\Models\Atencion $atencion) {
             // Reusar layout admin para especialistas
             $user = \Illuminate\Support\Facades\Auth::user();
-            if(!$user->hasRole(['especialista','super-admin','admin_clinica'])) abort(403);
+            if (!$user->hasRole(['especialista', 'super-admin', 'admin_clinica']))
+                abort(403);
             // Historial del paciente para apoyo clínico
             $historial = collect();
             if ($atencion->paciente_id) {
                 $pacienteId = $atencion->paciente_id;
-                $citas = \App\Models\Cita::with(['especialista','medicamentos'])
+                $citas = \App\Models\Cita::with(['especialista', 'medicamentos'])
                     ->where('usuario_id', $pacienteId)
-                    ->orderBy('fecha','desc')->limit(10)->get();
-                $ats = \App\Models\Atencion::with(['medico','medicamentos'])
+                    ->orderBy('fecha', 'desc')->limit(10)->get();
+                $ats = \App\Models\Atencion::with(['medico', 'medicamentos'])
                     ->where('paciente_id', $pacienteId)
                     ->orderByRaw('COALESCE(cerrada_at, updated_at, created_at) DESC')
                     ->limit(10)->get();
@@ -223,7 +254,7 @@ Route::middleware(['auth','verified'])
                         'especialista' => optional($c->especialista)->name,
                         'diagnostico' => $c->diagnostico,
                         'observaciones' => $c->observaciones,
-                        'meds_list' => $c->medicamentos->map(fn($m)=>[
+                        'meds_list' => $c->medicamentos->map(fn($m) => [
                             'nombre' => $m->nombre_generico,
                             'presentacion' => $m->presentacion,
                             'posologia' => $m->posologia,
@@ -240,7 +271,7 @@ Route::middleware(['auth','verified'])
                         'especialista' => optional($a->medico)->name,
                         'diagnostico' => $a->diagnostico,
                         'observaciones' => $a->observaciones,
-                        'meds_list' => $a->medicamentos->map(fn($m)=>[
+                        'meds_list' => $a->medicamentos->map(fn($m) => [
                             'nombre' => $m->nombre_generico,
                             'presentacion' => $m->presentacion,
                             'posologia' => $m->posologia,
@@ -251,7 +282,7 @@ Route::middleware(['auth','verified'])
                 }
                 $historial = $historial->sortByDesc('momento')->take(10)->values();
             }
-            return view('atenciones.especialista.gestion', compact('atencion','historial'));
+            return view('atenciones.especialista.gestion', compact('atencion', 'historial'));
         })->name('atenciones.gestion');
         Route::post('atenciones/{atencion}/gestion', [\App\Http\Controllers\AtencionController::class, 'gestionar'])->name('atenciones.gestion.post');
         // Detalle paciente (solo lectura) - reutiliza controlador para ver una atención propia
@@ -269,34 +300,34 @@ Route::middleware(['auth', 'verified'])
             Route::get('/', [\App\Http\Controllers\SolicitudInventarioController::class, 'index'])
                 ->name('index')
                 ->middleware('role:super-admin|admin_clinica|almacen');
-            
+
             Route::get('/crear', [\App\Http\Controllers\SolicitudInventarioController::class, 'create'])
                 ->name('create')
-                ->middleware('role:almacen');
-            
+                ->middleware('role:super-admin|almacen');
+
             Route::post('/', [\App\Http\Controllers\SolicitudInventarioController::class, 'store'])
                 ->name('store')
                 ->middleware('role:almacen');
-            
+
             Route::get('/buscar-materiales', [\App\Http\Controllers\SolicitudInventarioController::class, 'buscarMateriales'])
                 ->name('buscar-materiales'); // AJAX para autocompletado
-            
+    
             Route::get('/{solicitud}', [\App\Http\Controllers\SolicitudInventarioController::class, 'show'])
                 ->name('show')
                 ->middleware('role:super-admin|admin_clinica|almacen');
-            
+
             Route::get('/{solicitud}/editar', [\App\Http\Controllers\SolicitudInventarioController::class, 'edit'])
                 ->name('edit')
                 ->middleware('role:super-admin|admin_clinica');
-            
+
             Route::post('/{solicitud}/aprobar', [\App\Http\Controllers\SolicitudInventarioController::class, 'aprobar'])
                 ->name('aprobar')
                 ->middleware('role:super-admin|admin_clinica');
-            
+
             Route::post('/{solicitud}/despachar', [\App\Http\Controllers\SolicitudInventarioController::class, 'despachar'])
                 ->name('despachar')
                 ->middleware('role:super-admin|admin_clinica');
-            
+
             Route::delete('/{solicitud}', [\App\Http\Controllers\SolicitudInventarioController::class, 'destroy'])
                 ->name('destroy')
                 ->middleware('role:super-admin|admin_clinica|almacen');

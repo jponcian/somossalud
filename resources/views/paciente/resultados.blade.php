@@ -7,143 +7,151 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if($resultados->count() > 0)
-            <div class="space-y-4">
-                @foreach($resultados as $resultado)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-l-4 border-purple-500">
-                    <div class="p-6">
-                        <div class="flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <div class="d-flex align-items-center mb-2">
-                                    <h3 class="text-lg font-semibold text-gray-800 mb-0">
-                                        {{ $resultado->nombre_examen }}
-                                    </h3>
-                                    <span class="badge bg-info ms-3">{{ $resultado->tipo_examen }}</span>
+            @if($nuevasOrdenes->count() > 0 || $resultadosAntiguos->count() > 0)
+                <div class="space-y-6">
+                    
+                    <!-- NUEVAS ÓRDENES -->
+                    @foreach($nuevasOrdenes as $order)
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-l-4 border-blue-500">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-grow">
+                                    <div class="flex items-center mb-2">
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-0">
+                                            Orden #{{ $order->order_number }}
+                                        </h3>
+                                        <span class="ml-3 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Completado
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mb-4">
+                                        <div>
+                                            <i class="fas fa-calendar-alt text-blue-500 mr-2"></i>
+                                            <strong>Fecha Orden:</strong> {{ $order->order_date->format('d/m/Y') }}
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-calendar-check text-blue-500 mr-2"></i>
+                                            <strong>Fecha Resultado:</strong> {{ $order->result_date->format('d/m/Y') }}
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-hospital text-blue-500 mr-2"></i>
+                                            <strong>Clínica:</strong> {{ $order->clinica->nombre }}
+                                        </div>
+                                    </div>
+
+                                    <!-- Lista de Exámenes -->
+                                    <div class="mt-4">
+                                        <h4 class="text-sm font-semibold text-gray-700 mb-2 border-b pb-1">Exámenes Realizados:</h4>
+                                        <ul class="list-disc list-inside text-sm text-gray-600 ml-2">
+                                            @foreach($order->details as $detail)
+                                                <li>{{ $detail->exam->name }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+
+                                    @if($order->observations)
+                                    <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+                                        <p class="text-sm text-gray-700 mb-0">
+                                            <strong class="text-blue-800">Observaciones:</strong> {{ $order->observations }}
+                                        </p>
+                                    </div>
+                                    @endif
                                 </div>
                                 
-                                <div class="row text-sm text-gray-600 mb-3">
-                                    <div class="col-md-4">
-                                        <i class="fas fa-calendar-alt text-purple-500 me-2"></i>
-                                        <strong>Fecha Muestra:</strong> {{ $resultado->fecha_muestra->format('d/m/Y') }}
+                                <div class="ml-4 text-right flex-shrink-0">
+                                    <div class="mb-3 flex justify-end">
+                                        {!! QrCode::size(100)->generate(route('lab.orders.verify', $order->verification_code)) !!}
                                     </div>
-                                    <div class="col-md-4">
-                                        <i class="fas fa-calendar-check text-purple-500 me-2"></i>
-                                        <strong>Fecha Resultado:</strong> {{ $resultado->fecha_resultado->format('d/m/Y') }}
+                                    <p class="text-xs text-gray-500 mb-1">Código de verificación:</p>
+                                    <code class="text-xs text-blue-600 block mb-3 font-mono">{{ $order->verification_code }}</code>
+                                    
+                                    <div class="flex flex-col space-y-2">
+                                        <a href="{{ route('lab.orders.pdf', $order->id) }}" 
+                                           class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                            <i class="fas fa-file-pdf mr-2"></i> Descargar PDF
+                                        </a>
+                                        <a href="{{ route('lab.orders.verify', $order->verification_code) }}" 
+                                           target="_blank"
+                                           class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150">
+                                            <i class="fas fa-external-link-alt mr-2"></i> Verificar
+                                        </a>
                                     </div>
-                                    <div class="col-md-4">
-                                        <i class="fas fa-hospital text-purple-500 me-2"></i>
-                                        <strong>Clínica:</strong> {{ $resultado->clinica->nombre }}
-                                    </div>
-                                </div>
-
-                                <!-- Resultados en tabla compacta -->
-                                <div class="mt-3">
-                                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Resultados:</h4>
-                                    <div class="table-responsive">
-                                        <table class="table table-sm table-bordered">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>Parámetro</th>
-                                                    <th>Valor</th>
-                                                    <th>Unidad</th>
-                                                    <th>Rango de Referencia</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($resultado->resultados_json as $item)
-                                                <tr>
-                                                    <td><strong>{{ $item['parametro'] }}</strong></td>
-                                                    <td>{{ $item['valor'] }}</td>
-                                                    <td>{{ $item['unidad'] ?? '-' }}</td>
-                                                    <td>{{ $item['rango_referencia'] ?? '-' }}</td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                @if($resultado->observaciones)
-                                <div class="mt-3 p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
-                                    <p class="text-sm text-gray-700 mb-0">
-                                        <strong class="text-yellow-800">Observaciones:</strong> {{ $resultado->observaciones }}
-                                    </p>
-                                </div>
-                                @endif
-                            </div>
-                            
-                            <div class="ms-4 text-end flex-shrink-0">
-                                <div class="mb-3">
-                                    {!! QrCode::size(120)->generate($resultado->url_verificacion) !!}
-                                </div>
-                                <p class="text-xs text-gray-500 mb-2">Código de verificación:</p>
-                                <code class="text-xs text-purple-600 d-block mb-3">{{ $resultado->codigo_verificacion }}</code>
-                                
-                                <div class="d-grid gap-2">
-                                    <a href="{{ route('laboratorio.pdf', $resultado) }}" 
-                                       class="btn btn-sm btn-success">
-                                        <i class="fas fa-download"></i> Descargar PDF
-                                    </a>
-                                    <a href="{{ $resultado->url_verificacion }}" 
-                                       target="_blank"
-                                       class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-external-link-alt"></i> Verificar
-                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                @endforeach
-            </div>
+                    @endforeach
 
-            <div class="mt-4">
-                {{ $resultados->links() }}
-            </div>
-            @else
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-center">
-                    <div class="mb-4">
-                        <i class="fas fa-flask fa-4x text-gray-300"></i>
+                    <!-- RESULTADOS ANTIGUOS -->
+                    @foreach($resultadosAntiguos as $resultado)
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-l-4 border-gray-400 opacity-90">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-grow">
+                                    <div class="flex items-center mb-2">
+                                        <h3 class="text-lg font-semibold text-gray-700 mb-0">
+                                            {{ $resultado->nombre_examen }}
+                                        </h3>
+                                        <span class="ml-3 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                            Histórico
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mb-3">
+                                        <div>
+                                            <i class="fas fa-calendar-alt text-gray-500 mr-2"></i>
+                                            <strong>Fecha Muestra:</strong> {{ $resultado->fecha_muestra->format('d/m/Y') }}
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-calendar-check text-gray-500 mr-2"></i>
+                                            <strong>Fecha Resultado:</strong> {{ $resultado->fecha_resultado->format('d/m/Y') }}
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-hospital text-gray-500 mr-2"></i>
+                                            <strong>Clínica:</strong> {{ $resultado->clinica->nombre }}
+                                        </div>
+                                    </div>
+
+                                    @if($resultado->observaciones)
+                                    <div class="mt-3 p-3 bg-gray-50 border-l-4 border-gray-300 rounded">
+                                        <p class="text-sm text-gray-600 mb-0">
+                                            <strong>Observaciones:</strong> {{ $resultado->observaciones }}
+                                        </p>
+                                    </div>
+                                    @endif
+                                </div>
+                                
+                                <div class="ml-4 text-right flex-shrink-0">
+                                    <div class="mb-3 flex justify-end">
+                                        {!! QrCode::size(80)->generate($resultado->url_verificacion) !!}
+                                    </div>
+                                    
+                                    <div class="flex flex-col space-y-2">
+                                        <a href="{{ route('laboratorio.pdf', $resultado) }}" 
+                                           class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                            <i class="fas fa-download mr-2"></i> PDF
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">No tienes resultados de laboratorio</h3>
-                    <p class="text-sm text-gray-600">
-                        Cuando se registren resultados de tus exámenes de laboratorio, aparecerán aquí.
-                    </p>
+                    @endforeach
                 </div>
-            </div>
+            @else
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-flask fa-4x text-gray-300"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">No tienes resultados de laboratorio</h3>
+                        <p class="text-sm text-gray-600">
+                            Cuando se registren resultados de tus exámenes de laboratorio, aparecerán aquí.
+                        </p>
+                    </div>
+                </div>
             @endif
         </div>
     </div>
-
-    <style>
-        .border-purple-500 {
-            border-left-color: #9333ea !important;
-        }
-        
-        .text-purple-500 {
-            color: #9333ea;
-        }
-        
-        .text-purple-600 {
-            color: #7c3aed;
-        }
-        
-        .bg-yellow-50 {
-            background-color: #fefce8;
-        }
-        
-        .border-yellow-400 {
-            border-left-color: #facc15 !important;
-        }
-        
-        .text-yellow-800 {
-            color: #854d0e;
-        }
-        
-        .table-sm td, .table-sm th {
-            padding: 0.5rem;
-            font-size: 0.875rem;
-        }
-    </style>
 </x-app-layout>

@@ -1,6 +1,6 @@
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        {{-- Bloque de marca interno eliminado: solo queda la imagen arriba en brand-link --}}
+        <!-- INICIO -->
         <li class="nav-item">
             <a href="{{ route('panel.clinica') }}"
                 class="nav-link {{ request()->routeIs('panel.clinica') ? 'active' : '' }}">
@@ -8,7 +8,10 @@
                 <p>Inicio</p>
             </a>
         </li>
-        @hasanyrole('recepcionista|admin_clinica|super-admin')
+        <!-- SECCIÓN CLÍNICA -->
+        @hasanyrole('super-admin|admin_clinica|especialista')
+        <li class="nav-header">CLÍNICA</li>
+        @hasanyrole('super-admin|admin_clinica')
         <li class="nav-item">
             <a href="{{ route('recepcion.pagos.index') }}"
                 class="nav-link {{ request()->routeIs('recepcion.pagos.*') ? 'active' : '' }}">
@@ -17,31 +20,58 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('atenciones.index') }}" class="nav-link {{ request()->routeIs('atenciones.*') ? 'active' : '' }}">
+            <a href="{{ route('atenciones.index') }}"
+                class="nav-link {{ request()->routeIs('atenciones.*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-briefcase-medical"></i>
                 <p>Atenciones</p>
             </a>
         </li>
         @endhasanyrole
-        @hasanyrole('super-admin|admin_clinica|recepcionista')
+        @role('especialista')
+        <li class="nav-item"></li>
+        <a href="{{ route('citas.index') }}" class="nav-link {{ request()->routeIs('citas.*') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-notes-medical"></i>
+            <p>Mis citas</p>
+        </a>
+        </li>
         <li class="nav-item">
-            <a href="{{ route('admin.users.index') }}"
-                class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-users-cog"></i>
-                <p>Gestión de usuarios</p>
+            <a href="{{ route('atenciones.index') }}"
+                class="nav-link {{ request()->routeIs('atenciones.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-ambulance"></i>
+                <p>Mis atenciones</p>
             </a>
         </li>
+        <li class="nav-item">
+            <a href="{{ route('especialista.horarios.index') }}"
+                class="nav-link {{ request()->routeIs('especialista.horarios.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-calendar-check"></i>
+                <p>Mis horarios</p>
+            </a>
+        </li>
+        @endrole
         @endhasanyrole
-        @hasanyrole('laboratorio|admin_clinica|super-admin')
+        <!-- SECCIÓN LABORATORIO -->
+        @hasanyrole('super-admin|admin_clinica|laboratorio|recepcionista')
+        <li class="nav-header">LABORATORIO</li>
+        <!-- Sistema de Órdenes (Nuevo) -->
+        <li class="nav-item">
+            <a href="{{ route('lab.orders.index') }}"
+                class="nav-link {{ request()->routeIs('lab.orders.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-file-medical"></i>
+                <p>Exámenes</p>
+            </a>
+        </li>
+        <!-- Sistema Anterior (Compatibilidad) -->
         <li class="nav-item">
             <a href="{{ route('laboratorio.index') }}"
-                class="nav-link {{ request()->routeIs('laboratorio.*') ? 'active' : '' }}">
+                class="nav-link {{ request()->routeIs('laboratorio.index') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-flask"></i>
-                <p>Laboratorio</p>
+                <p>Resultados Anteriores</p>
             </a>
         </li>
         @endhasanyrole
-        @hasanyrole('almacen|admin_clinica|super-admin')
+        <!-- SECCIÓN INVENTARIO -->
+        @hasanyrole('super-admin|admin_clinica|almacen')
         <li class="nav-header">INVENTARIO</li>
         <li class="nav-item">
             <a href="{{ route('inventario.solicitudes.index') }}"
@@ -50,7 +80,6 @@
                 <p>Solicitudes</p>
             </a>
         </li>
-        @role('almacen')
         <li class="nav-item">
             <a href="{{ route('inventario.solicitudes.create') }}"
                 class="nav-link {{ request()->routeIs('inventario.solicitudes.create') ? 'active' : '' }}">
@@ -58,18 +87,24 @@
                 <p>Nueva Solicitud</p>
             </a>
         </li>
-        @endrole
         @endhasanyrole
+        <!-- SECCIÓN CONFIGURACIÓN -->
         @hasanyrole('super-admin|admin_clinica')
+        <li class="nav-header">CONFIGURACIÓN</li>
+        <li class="nav-item">
+            <a href="{{ route('admin.users.index') }}"
+                class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-users-cog"></i>
+                <p>Gestión de usuarios</p>
+            </a>
+        </li>
         <li class="nav-item">
             <a href="{{ route('admin.settings.pagos') }}"
                 class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-cog"></i>
-                <p>Configuración</p>
+                <i class="nav-icon fas fa-credit-card"></i>
+                <p>Pago móvil</p>
             </a>
         </li>
-        @endhasanyrole
-        @role('super-admin')
         <li class="nav-item">
             <a href="{{ route('admin.settings.cache.clear') }}" class="nav-link text-warning" id="btn-limpiar-cache">
                 <i class="nav-icon fas fa-broom"></i>
@@ -77,8 +112,8 @@
             </a>
         </li>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                document.getElementById('btn-limpiar-cache').addEventListener('click', function(e) {
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('btn-limpiar-cache').addEventListener('click', function (e) {
                     e.preventDefault();
                     const url = this.href;
                     Swal.fire({
@@ -98,27 +133,6 @@
                 });
             });
         </script>
-        @endrole
-        @role('especialista')
-        <li class="nav-item">
-            <a href="{{ route('citas.index') }}" class="nav-link {{ request()->routeIs('citas.*') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-notes-medical"></i>
-                <p>Mis citas</p>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{{ route('atenciones.index') }}" class="nav-link {{ request()->routeIs('atenciones.*') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-ambulance"></i>
-                <p>Mis atenciones</p>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{{ route('especialista.horarios.index') }}"
-                class="nav-link {{ request()->routeIs('especialista.horarios.*') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-calendar-check"></i>
-                <p>Mis horarios</p>
-            </a>
-        </li>
-        @endrole
+        @endhasanyrole
     </ul>
 </nav>

@@ -71,7 +71,7 @@ class CitaController extends Controller
             if ($items->isEmpty()) {
                 return redirect()->route('citas.create')->with('info', 'Crea tu primera cita.');
             }
-            return view('citas.index', [
+            return view('citas.paciente_index', [
                 'items' => $items,
             ]);
         } else {

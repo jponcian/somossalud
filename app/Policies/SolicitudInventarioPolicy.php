@@ -14,7 +14,7 @@ class SolicitudInventarioPolicy
     {
         return $user->hasAnyRole(['super-admin', 'admin_clinica', 'almacen']);
     }
-    
+
     /**
      * Ver detalle de solicitud
      */
@@ -24,41 +24,41 @@ class SolicitudInventarioPolicy
         if ($user->hasAnyRole(['super-admin', 'admin_clinica'])) {
             return true;
         }
-        
+
         // Usuario de almacén solo puede ver sus propias solicitudes
         if ($user->hasRole('almacen')) {
             return $solicitud->solicitante_id === $user->id;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Crear solicitud
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('almacen');
+        return $user->hasAnyRole(['super-admin', 'almacen']);
     }
-    
+
     /**
      * Aprobar/rechazar solicitud
      */
     public function approve(User $user, SolicitudInventario $solicitud): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin_clinica']) 
+        return $user->hasAnyRole(['super-admin', 'admin_clinica'])
             && $solicitud->isPendiente();
     }
-    
+
     /**
      * Despachar solicitud
      */
     public function dispatch(User $user, SolicitudInventario $solicitud): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin_clinica']) 
+        return $user->hasAnyRole(['super-admin', 'admin_clinica'])
             && $solicitud->isAprobada();
     }
-    
+
     /**
      * Eliminar solicitud
      */
@@ -68,7 +68,7 @@ class SolicitudInventarioPolicy
         if ($user->hasRole('almacen')) {
             return $solicitud->solicitante_id === $user->id && $solicitud->isPendiente();
         }
-        
+
         // Admin puede eliminar cualquiera que esté pendiente
         return $user->hasAnyRole(['super-admin', 'admin_clinica']) && $solicitud->isPendiente();
     }

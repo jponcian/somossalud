@@ -1,13 +1,13 @@
 @extends('layouts.adminlte')
 
-@section('title', 'Resultados de Laboratorio')
+@section('title', 'Órdenes de Laboratorio')
 
 @section('sidebar')
 @include('panel.partials.sidebar')
 @stop
 
 @section('content_header')
-<h1 class="m-0">Resultados de Laboratorio</h1>
+<h1 class="m-0">Órdenes de Laboratorio</h1>
 @stop
 
 @section('content')
@@ -35,48 +35,76 @@
             </a>
         </div>
         <div class="card-body">
-            @if($resultados->count() > 0)
+            @if($orders->count() > 0)
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Código</th>
+                                <th>Nº Orden</th>
+                                <th>Número Diario</th>
                                 <th>Paciente</th>
-                                <th>Tipo de Examen</th>
-                                <th>Nombre del Examen</th>
-                                <th>Fecha Muestra</th>
+                                <th>Exámenes</th>
+                                <th>Fecha Orden</th>
                                 <th>Fecha Resultado</th>
-                                <th>Clínica</th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($resultados as $resultado)
+                            @foreach($orders as $order)
                                 <tr>
                                     <td>
-                                        <code class="text-primary">{{ $resultado->codigo_verificacion }}</code>
+                                        <code class="text-primary">{{ $order->order_number }}</code>
                                     </td>
                                     <td>
-                                        <strong>{{ $resultado->paciente->name }}</strong><br>
-                                        <small class="text-muted">{{ $resultado->paciente->cedula }}</small>
+                                        <span class="badge badge-success">{{ $order->daily_exam_count }}</span>
                                     </td>
                                     <td>
-                                        <span class="badge badge-info">{{ $resultado->tipo_examen }}</span>
+                                        <strong>{{ $order->patient->name }}</strong><br>
+                                        <small class="text-muted">{{ $order->patient->cedula }}</small>
                                     </td>
-                                    <td>{{ $resultado->nombre_examen }}</td>
-                                    <td>{{ $resultado->fecha_muestra->format('d/m/Y') }}</td>
-                                    <td>{{ $resultado->fecha_resultado->format('d/m/Y') }}</td>
-                                    <td>{{ $resultado->clinica->nombre }}</td>
+                                    <td>
+                                        <span class="badge badge-info">{{ $order->details->count() }} examen(es)</span>
+                                    </td>
+                                    <td>{{ $order->order_date->format('d/m/Y') }}</td>
+                                    <td>
+                                        @if($order->result_date)
+                                            {{ $order->result_date->format('d/m/Y') }}
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($order->status == 'pending')
+                                            <span class="badge badge-warning">Pendiente</span>
+                                        @elseif($order->status == 'in_progress')
+                                            <span class="badge badge-info">En Proceso</span>
+                                        @elseif($order->status == 'completed')
+                                            <span class="badge badge-success">Completado</span>
+                                        @else
+                                            <span class="badge badge-danger">Cancelado</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a href="{{ route('laboratorio.show', $resultado) }}" class="btn btn-sm btn-info"
+                                            @if($order->isPending() || $order->isInProgress())
+                                                <a href="{{ route('lab.orders.load-results', $order->id) }}"
+                                                    class="btn btn-sm btn-primary" title="Cargar resultados">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            @endif
+
+                                            <a href="{{ route('lab.orders.show', $order->id) }}" class="btn btn-sm btn-info"
                                                 title="Ver detalle">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('laboratorio.pdf', $resultado) }}" class="btn btn-sm btn-success"
-                                                title="Descargar PDF">
-                                                <i class="fas fa-file-pdf"></i>
-                                            </a>
+
+                                            @if($order->isCompleted())
+                                                <a href="{{ route('lab.orders.pdf', $order->id) }}" class="btn btn-sm btn-danger"
+                                                    title="Descargar PDF">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </a>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -86,12 +114,12 @@
                 </div>
 
                 <div class="mt-3">
-                    {{ $resultados->links() }}
+                    {{ $orders->links() }}
                 </div>
             @else
                 <div class="text-center py-5">
-                    <i class="fas fa-flask fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">No hay resultados de laboratorio registrados.</p>
+                    <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No hay órdenes de laboratorio registradas.</p>
                     <a href="{{ route('lab.orders.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Crear Primera Orden
                     </a>
@@ -116,37 +144,6 @@
 
     .btn-group .btn {
         margin: 0 2px;
-    }
-
-    .btn-nuevo-resultado {
-        background: white;
-        color: #0ea5e9;
-        font-weight: 600;
-        padding: 0.5rem 1.25rem;
-        border-radius: 8px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-    }
-
-    .btn-nuevo-resultado:hover {
-        background: rgba(255, 255, 255, 0.95);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-        color: #0284c7;
-        text-decoration: none;
-    }
-
-    .btn-nuevo-resultado:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    .btn-nuevo-resultado i {
-        font-size: 1.1em;
     }
 </style>
 @stop
