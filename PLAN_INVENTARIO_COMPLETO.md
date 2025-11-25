@@ -649,11 +649,6 @@ CREATE TABLE materiales_hospitalizacion (
 - Historial completo
 - Alertas de vencimiento
 
-#### Calibraciones:
-- Programación de calibraciones
-- Certificados de calibración
-- Trazabilidad metrológica
-
 ---
 
 ### 5. Control de Instrumental Quirúrgico
