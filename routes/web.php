@@ -18,7 +18,7 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = \Illuminate\Support\Facades\Auth::user();
     // Si el usuario tiene rol de personal clínico distinto a paciente, podría ir a panel.clinica
-    if ($user->hasRole(['super-admin','admin_clinica','recepcionista','especialista','laboratorio']) && !$user->hasRole('paciente')) {
+    if ($user->hasRole(['super-admin','admin_clinica','recepcionista','especialista','laboratorio','almacen']) && !$user->hasRole('paciente')) {
         return redirect()->route('panel.clinica');
     }
     // Panel de paciente unificado
@@ -45,7 +45,7 @@ Route::middleware(['auth', 'verified'])->get('/panel/pacientes', function () {
     return redirect()->route('dashboard');
 })->name('panel.pacientes');
 
-Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcionista|especialista|laboratorio'])->get('/panel/clinica', function () {
+Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcionista|especialista|laboratorio|almacen'])->get('/panel/clinica', function () {
     return view('panel.clinica');
 })->name('panel.clinica');
 
@@ -257,6 +257,50 @@ Route::middleware(['auth','verified'])
         // Detalle paciente (solo lectura) - reutiliza controlador para ver una atención propia
         Route::get('atenciones/paciente/{atencion}', [\App\Http\Controllers\AtencionController::class, 'showPaciente'])->name('atenciones.paciente.show');
         Route::get('atenciones/paciente/{atencion}/receta', [\App\Http\Controllers\AtencionController::class, 'recetaPaciente'])->name('atenciones.paciente.receta');
+    });
+
+// Rutas de Inventario - Solicitudes y Materiales
+Route::middleware(['auth', 'verified'])
+    ->prefix('inventario')
+    ->name('inventario.')
+    ->group(function () {
+        // Rutas de Solicitudes
+        Route::prefix('solicitudes')->name('solicitudes.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\SolicitudInventarioController::class, 'index'])
+                ->name('index')
+                ->middleware('role:super-admin|admin_clinica|almacen');
+            
+            Route::get('/crear', [\App\Http\Controllers\SolicitudInventarioController::class, 'create'])
+                ->name('create')
+                ->middleware('role:almacen');
+            
+            Route::post('/', [\App\Http\Controllers\SolicitudInventarioController::class, 'store'])
+                ->name('store')
+                ->middleware('role:almacen');
+            
+            Route::get('/buscar-materiales', [\App\Http\Controllers\SolicitudInventarioController::class, 'buscarMateriales'])
+                ->name('buscar-materiales'); // AJAX para autocompletado
+            
+            Route::get('/{solicitud}', [\App\Http\Controllers\SolicitudInventarioController::class, 'show'])
+                ->name('show')
+                ->middleware('role:super-admin|admin_clinica|almacen');
+            
+            Route::get('/{solicitud}/editar', [\App\Http\Controllers\SolicitudInventarioController::class, 'edit'])
+                ->name('edit')
+                ->middleware('role:super-admin|admin_clinica');
+            
+            Route::post('/{solicitud}/aprobar', [\App\Http\Controllers\SolicitudInventarioController::class, 'aprobar'])
+                ->name('aprobar')
+                ->middleware('role:super-admin|admin_clinica');
+            
+            Route::post('/{solicitud}/despachar', [\App\Http\Controllers\SolicitudInventarioController::class, 'despachar'])
+                ->name('despachar')
+                ->middleware('role:super-admin|admin_clinica');
+            
+            Route::delete('/{solicitud}', [\App\Http\Controllers\SolicitudInventarioController::class, 'destroy'])
+                ->name('destroy')
+                ->middleware('role:super-admin|admin_clinica|almacen');
+        });
     });
 
 require __DIR__ . '/auth.php';

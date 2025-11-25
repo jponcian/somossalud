@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\EspecialidadSeeder::class,
             \Database\Seeders\AdminUserSeeder::class,
             \Database\Seeders\TestUsersSeeder::class,
+            \Database\Seeders\MaterialesSeeder::class,
         ]);
     }
 }

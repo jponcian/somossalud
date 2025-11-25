@@ -55,6 +55,21 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Boot del modelo para establecer valores por defecto
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        // Asignar clinica_id = 1 por defecto a nuevos usuarios
+        static::creating(function ($user) {
+            if (empty($user->clinica_id)) {
+                $user->clinica_id = 1;
+            }
+        });
+    }
+
     public function clinica()
     {
         return $this->belongsTo(Clinica::class);

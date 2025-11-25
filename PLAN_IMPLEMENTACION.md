@@ -3,215 +3,48 @@
 
 ---
 
-## 📦 MÓDULO 1: Gestión de Inventario
+## 📦 MÓDULO 1: Control de Inventario (Sistema de Solicitudes)
 
-### Base de Datos
+> **⚠️ NUEVO ENFOQUE:** El sistema de inventario ha sido rediseñado para usar un flujo de solicitudes simplificado.
+> 
+> **📄 Ver documentación completa:** [`MODULO_INVENTARIO_SOLICITUDES.md`](./MODULO_INVENTARIO_SOLICITUDES.md)
 
-#### Migración 1: `create_categorias_inventario_table.php`
-```php
-Schema::create('categorias_inventario', function (Blueprint $table) {
-    $table->id();
-    $table->string('nombre', 100);
-    $table->text('descripcion')->nullable();
-    $table->enum('tipo', ['material', 'equipo']); // Tipo de items que contiene
-    $table->timestamps();
-});
-```
+### Resumen del Nuevo Sistema
 
-#### Migración 2: `create_items_inventario_table.php`
-```php
-Schema::create('items_inventario', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('categoria_id')->constrained('categorias_inventario')->cascadeOnDelete();
-    $table->foreignId('clinica_id')->constrained('clinicas')->cascadeOnDelete();
-    $table->string('codigo', 50)->unique(); // Código único del item
-    $table->string('nombre', 150);
-    $table->text('descripcion')->nullable();
-    $table->enum('tipo', ['material', 'equipo']);
-    $table->string('unidad_medida', 50)->nullable(); // ej: unidad, caja, litro
-    $table->integer('stock_actual')->default(0);
-    $table->integer('stock_minimo')->default(0);
-    $table->integer('stock_maximo')->nullable();
-    $table->decimal('precio_unitario', 10, 2)->nullable();
-    $table->string('proveedor', 150)->nullable();
-    $table->date('fecha_vencimiento')->nullable();
-    $table->enum('estado', ['activo', 'inactivo', 'agotado'])->default('activo');
-    $table->timestamps();
-    $table->softDeletes();
-    
-    $table->index(['clinica_id', 'tipo', 'estado']);
-});
-```
+**Flujo de trabajo:**
+1. Personal con rol `almacen` crea solicitudes por categoría
+2. Selecciona categoría: ENFERMERIA, QUIROFANO, UCI, OFICINA
+3. Agrega items y cantidades solicitadas
+4. `admin_clinica` recibe y aprueba/rechaza la solicitud
+5. `admin_clinica` despacha las cantidades aprobadas
 
-#### Migración 3: `create_movimientos_inventario_table.php`
-```php
-Schema::create('movimientos_inventario', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('item_id')->constrained('items_inventario')->cascadeOnDelete();
-    $table->foreignId('usuario_id')->constrained('usuarios')->cascadeOnDelete(); // Quien registra
-    $table->enum('tipo_movimiento', ['entrada', 'salida', 'ajuste']);
-    $table->integer('cantidad');
-    $table->integer('stock_anterior');
-    $table->integer('stock_nuevo');
-    $table->text('motivo')->nullable();
-    $table->string('referencia_tipo', 50)->nullable(); // ej: 'cita', 'atencion', 'compra'
-    $table->unsignedBigInteger('referencia_id')->nullable(); // ID de la cita/atención
-    $table->timestamps();
-    
-    $table->index(['item_id', 'created_at']);
-});
-```
+**Características principales:**
+- ✅ Sistema basado en solicitudes (no seguimiento detallado de stock)
+- ✅ Nuevo rol: `almacen`
+- ✅ 4 categorías predefinidas
+- ✅ Flujo: Solicitud → Aprobación → Despacho
+- ✅ Historial completo de solicitudes
+- ✅ Filtros por estado, categoría y fechas
 
-### Modelos
+**Tablas de base de datos:**
+- `solicitudes_inventario` - Solicitudes principales
+- `items_solicitud_inventario` - Items de cada solicitud
 
-#### `CategoriaInventario.php`
-```php
-class CategoriaInventario extends Model
-{
-    protected $table = 'categorias_inventario';
-    protected $fillable = ['nombre', 'descripcion', 'tipo'];
-    
-    public function items() {
-        return $this->hasMany(ItemInventario::class, 'categoria_id');
-    }
-}
-```
+**Modelos:**
+- `SolicitudInventario`
+- `ItemSolicitudInventario`
 
-#### `ItemInventario.php`
-```php
-class ItemInventario extends Model
-{
-    use SoftDeletes;
-    
-    protected $table = 'items_inventario';
-    protected $fillable = [
-        'categoria_id', 'clinica_id', 'codigo', 'nombre', 'descripcion',
-        'tipo', 'unidad_medida', 'stock_actual', 'stock_minimo', 'stock_maximo',
-        'precio_unitario', 'proveedor', 'fecha_vencimiento', 'estado'
-    ];
-    
-    protected $casts = [
-        'fecha_vencimiento' => 'date',
-        'precio_unitario' => 'decimal:2'
-    ];
-    
-    // Relaciones
-    public function categoria() {
-        return $this->belongsTo(CategoriaInventario::class, 'categoria_id');
-    }
-    
-    public function clinica() {
-        return $this->belongsTo(Clinica::class);
-    }
-    
-    public function movimientos() {
-        return $this->hasMany(MovimientoInventario::class, 'item_id');
-    }
-    
-    // Scopes
-    public function scopeBajoStock($query) {
-        return $query->whereRaw('stock_actual <= stock_minimo');
-    }
-    
-    public function scopeProximosVencer($query, $dias = 30) {
-        return $query->whereNotNull('fecha_vencimiento')
-                    ->whereBetween('fecha_vencimiento', [now(), now()->addDays($dias)]);
-    }
-}
-```
+**Controlador:**
+- `SolicitudInventarioController`
 
-#### `MovimientoInventario.php`
-```php
-class MovimientoInventario extends Model
-{
-    protected $table = 'movimientos_inventario';
-    protected $fillable = [
-        'item_id', 'usuario_id', 'tipo_movimiento', 'cantidad',
-        'stock_anterior', 'stock_nuevo', 'motivo', 'referencia_tipo', 'referencia_id'
-    ];
-    
-    public function item() {
-        return $this->belongsTo(ItemInventario::class, 'item_id');
-    }
-    
-    public function usuario() {
-        return $this->belongsTo(User::class, 'usuario_id');
-    }
-}
-```
+**Policy:**
+- `SolicitudInventarioPolicy`
 
-### Controlador: `InventarioController.php`
-
-```php
-class InventarioController extends Controller
-{
-    public function index() {
-        $items = ItemInventario::with(['categoria', 'clinica'])
-            ->where('clinica_id', auth()->user()->clinica_id)
-            ->paginate(20);
-        
-        $bajoStock = ItemInventario::bajoStock()
-            ->where('clinica_id', auth()->user()->clinica_id)
-            ->count();
-        
-        $proximosVencer = ItemInventario::proximosVencer()
-            ->where('clinica_id', auth()->user()->clinica_id)
-            ->count();
-        
-        return view('inventario.index', compact('items', 'bajoStock', 'proximosVencer'));
-    }
-    
-    public function registrarMovimiento(Request $request, ItemInventario $item) {
-        $validated = $request->validate([
-            'tipo_movimiento' => 'required|in:entrada,salida,ajuste',
-            'cantidad' => 'required|integer|min:1',
-            'motivo' => 'nullable|string'
-        ]);
-        
-        DB::transaction(function() use ($item, $validated) {
-            $stockAnterior = $item->stock_actual;
-            
-            if ($validated['tipo_movimiento'] === 'entrada') {
-                $item->stock_actual += $validated['cantidad'];
-            } else {
-                $item->stock_actual -= $validated['cantidad'];
-            }
-            
-            $item->save();
-            
-            MovimientoInventario::create([
-                'item_id' => $item->id,
-                'usuario_id' => auth()->id(),
-                'tipo_movimiento' => $validated['tipo_movimiento'],
-                'cantidad' => $validated['cantidad'],
-                'stock_anterior' => $stockAnterior,
-                'stock_nuevo' => $item->stock_actual,
-                'motivo' => $validated['motivo']
-            ]);
-        });
-        
-        return redirect()->back()->with('success', 'Movimiento registrado correctamente');
-    }
-}
-```
-
-### Rutas
-
-```php
-Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcionista'])
-    ->prefix('inventario')
-    ->name('inventario.')
-    ->group(function () {
-        Route::get('/', [InventarioController::class, 'index'])->name('index');
-        Route::get('/crear', [InventarioController::class, 'create'])->name('create');
-        Route::post('/', [InventarioController::class, 'store'])->name('store');
-        Route::get('/{item}/editar', [InventarioController::class, 'edit'])->name('edit');
-        Route::put('/{item}', [InventarioController::class, 'update'])->name('update');
-        Route::delete('/{item}', [InventarioController::class, 'destroy'])->name('destroy');
-        Route::post('/{item}/movimiento', [InventarioController::class, 'registrarMovimiento'])->name('movimiento');
-        Route::get('/alertas', [InventarioController::class, 'alertas'])->name('alertas');
-    });
-```
+**Vistas:**
+- `inventario/solicitudes/index.blade.php`
+- `inventario/solicitudes/create.blade.php`
+- `inventario/solicitudes/show.blade.php`
+- `inventario/solicitudes/edit.blade.php`
 
 ---
 
@@ -515,9 +348,9 @@ class EstadisticasController extends Controller
 
 ## 📝 Orden de Implementación Recomendado
 
-1. **Semana 1:** Gestión de Seguros (ya tienen base)
-2. **Semana 2:** Código QR para Laboratorio
-3. **Semana 3:** Gestión de Inventario
+1. **Semana 1:** Control de Inventario (Sistema de Solicitudes) - Ver [`MODULO_INVENTARIO_SOLICITUDES.md`](./MODULO_INVENTARIO_SOLICITUDES.md)
+2. **Semana 2:** Gestión de Seguros (ya tienen base)
+3. **Semana 3:** Código QR para Laboratorio (ya implementado ✅)
 4. **Semana 4:** Estadísticas y Dashboard
 
 ---

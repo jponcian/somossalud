@@ -41,6 +41,25 @@
             </a>
         </li>
         @endhasanyrole
+        @hasanyrole('almacen|admin_clinica|super-admin')
+        <li class="nav-header">INVENTARIO</li>
+        <li class="nav-item">
+            <a href="{{ route('inventario.solicitudes.index') }}"
+                class="nav-link {{ request()->routeIs('inventario.solicitudes.index') || request()->routeIs('inventario.solicitudes.show') || request()->routeIs('inventario.solicitudes.edit') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-boxes"></i>
+                <p>Solicitudes</p>
+            </a>
+        </li>
+        @role('almacen')
+        <li class="nav-item">
+            <a href="{{ route('inventario.solicitudes.create') }}"
+                class="nav-link {{ request()->routeIs('inventario.solicitudes.create') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-plus-circle"></i>
+                <p>Nueva Solicitud</p>
+            </a>
+        </li>
+        @endrole
+        @endhasanyrole
         @hasanyrole('super-admin|admin_clinica')
         <li class="nav-item">
             <a href="{{ route('admin.settings.pagos') }}"

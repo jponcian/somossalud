@@ -242,6 +242,39 @@
     </div>
     @endrole
 
+    @role('almacen')
+    <div class="row">
+        <div class="col-md-6 col-lg-4">
+            <div class="small-box bg-info shadow-sm">
+                <div class="inner">
+                    <h3>Inventario</h3>
+                    <p>Gestión de Solicitudes</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <a href="{{ route('inventario.solicitudes.index') }}" class="small-box-footer">
+                    Ir al módulo <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="small-box bg-success shadow-sm">
+                <div class="inner">
+                    <h3>Nueva</h3>
+                    <p>Crear Solicitud</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <a href="{{ route('inventario.solicitudes.create') }}" class="small-box-footer">
+                    Crear ahora <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    @endrole
+
     @role('especialista')
     @php
         // Conteo y listado breve de atenciones abiertas asignadas al especialista
