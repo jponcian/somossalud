@@ -191,8 +191,6 @@ class LabOrderController extends Controller
         $order = LabOrder::findOrFail($id);
 
         $request->validate([
-            'sample_date' => 'required|date',
-            'result_date' => 'required|date|after_or_equal:sample_date',
             'results' => 'required|array',
             'results.*.value' => 'nullable|string',
             'results.*.observation' => 'nullable|string'
@@ -203,7 +201,6 @@ class LabOrderController extends Controller
 
             // Guardar resultados
             foreach ($request->results as $itemId => $resultData) {
-                // Buscar el detalle correspondiente
                 $detail = $order->details()
                     ->whereHas('exam.items', function ($query) use ($itemId) {
                         $query->where('id', $itemId);
@@ -226,13 +223,12 @@ class LabOrderController extends Controller
 
             // Actualizar fechas y estado de la orden
             $order->update([
-                'sample_date' => $request->sample_date,
-                'result_date' => $request->result_date,
+                // sample_date se conserva
+                'result_date' => now(),
                 'status' => 'completed',
                 'verification_code' => $order->verification_code ?? LabOrder::generateVerificationCode()
             ]);
 
-            // Marcar detalles como completados
             $order->details()->update(['status' => 'completed']);
 
             DB::commit();
@@ -325,5 +321,19 @@ class LabOrderController extends Controller
             ->get(['id', 'name', 'cedula', 'email']);
 
         return response()->json($patients);
+    }
+
+    /**
+     * Eliminar un examen de la orden
+     */
+    public function deleteExamItem(Request $request)
+    {
+        $itemId = $request->input('item_id');
+        $item = \App\Models\LabExamItem::find($itemId);
+        if ($item) {
+            $item->delete();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false], 404);
     }
 }

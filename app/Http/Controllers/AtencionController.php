@@ -46,31 +46,34 @@ class AtencionController extends Controller
         $validated = $request->validate([
             'paciente_id' => ['required','exists:usuarios,id'],
             'aseguradora' => ['nullable','string','max:150'],
-            // Simplificamos: un solo campo libre para póliza / número de seguro
-            'numero_seguro' => ['nullable','string','max:150'],
-            'medico_id' => ['nullable','exists:usuarios,id'],
+            'numero_siniestro' => ['nullable','string','max:150'],
+            'empresa' => ['nullable','string','max:150'],
+            'nombre_operador' => ['nullable','string','max:150'],
             'seguro_validado' => ['required','boolean'],
+            'es_titular' => ['required','in:0,1'],
+            'titular_id' => ['nullable','exists:usuarios,id'],
         ]);
+
+        $titular_id = $validated['es_titular'] == '1' ? $validated['paciente_id'] : ($validated['titular_id'] ?? null);
 
         $atencion = Atencion::create([
             'paciente_id' => $validated['paciente_id'],
-            // Clínica fija (exclusividad contrato): ID 1
             'clinica_id' => 1,
             'recepcionista_id' => Auth::id(),
-            // Especialidad la definirá el médico luego
             'especialidad_id' => null,
-            'medico_id' => $validated['medico_id'] ?? null,
             'aseguradora' => $validated['aseguradora'] ?? null,
-            'poliza' => null,
-            'numero_seguro' => $validated['numero_seguro'] ?? null,
+            'numero_siniestro' => $validated['numero_siniestro'] ?? null,
+            'empresa' => $validated['empresa'] ?? null,
+            'nombre_operador' => $validated['nombre_operador'] ?? null,
             'seguro_validado' => (bool)$validated['seguro_validado'],
             'validado_at' => now(),
             'validado_por' => Auth::id(),
-            'estado' => isset($validated['medico_id']) ? 'en_consulta' : 'validado',
+            'estado' => 'validado',
             'iniciada_at' => now(),
+            'titular_id' => $titular_id,
         ]);
 
-        return redirect()->route('atenciones.index')->with('success', 'Atención creada.');
+        return redirect()->route('atenciones.index')->with('success', 'Atención creada correctamente.');
     }
 
     // Recepción: asignar médico

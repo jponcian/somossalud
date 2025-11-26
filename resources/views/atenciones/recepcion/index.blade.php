@@ -14,17 +14,20 @@
             <div class="card-body">
                 <form method="POST" action="{{ route('atenciones.store') }}">
                     @csrf
-                    <div class="form-group position-relative">
+
+                    <div class="form-group mt-2">
                         <label class="small font-weight-bold text-uppercase text-muted">Paciente</label>
-                        <input type="hidden" name="paciente_id" id="paciente_id" required>
-                        <div class="input-group input-group-sm">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text bg-light border-0"><i class="fas fa-user text-muted"></i></span>
-                            </div>
-                            <input type="text" id="buscar_paciente" class="form-control bg-light border-0" placeholder="Buscar por nombre o correo">
-                        </div>
-                        <div id="lista_pacientes" class="list-group position-absolute w-100"
-                            style="z-index:2000; top:100%; left:0; max-height:240px; overflow-y:auto; display:none; border:1px solid #ddd; border-top:none; box-shadow:0 4px 12px rgba(0,0,0,.08);"></div>
+                        <select name="paciente_id" id="paciente_id" class="form-control form-control-sm select2" required>
+                            <option value="">Seleccione paciente...</option>
+                            @foreach(App\Models\User::role('paciente')->orderBy('name')->get() as $p)
+                                <option value="{{ $p->id }}">{{ $p->name }} ({{ $p->cedula ?? $p->email }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label class="small font-weight-bold text-uppercase text-muted">Empresa donde labora</label>
+                        <input type="text" name="empresa" class="form-control form-control-sm bg-light border-0" placeholder="Empresa habitual del paciente">
                     </div>
 
                     <div class="form-row mt-3">
@@ -33,22 +36,14 @@
                             <input type="text" name="aseguradora" class="form-control form-control-sm bg-light border-0">
                         </div>
                         <div class="form-group col-md-6">
-                            <label class="small font-weight-bold text-uppercase text-muted">Póliza / N° Seguro</label>
-                            <input type="text" name="numero_seguro" class="form-control form-control-sm bg-light border-0" placeholder="Ej: Póliza 123">
+                            <label class="small font-weight-bold text-uppercase text-muted">Nombre del operador que atendió</label>
+                            <input type="text" name="nombre_operador" class="form-control form-control-sm bg-light border-0" placeholder="Nombre del operador">
                         </div>
                     </div>
 
-                    <div class="form-group mt-3 position-relative">
-                        <label class="small font-weight-bold text-uppercase text-muted">Asignar médico (opcional)</label>
-                        <input type="hidden" name="medico_id" id="medico_id">
-                        <div class="input-group input-group-sm">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text bg-light border-0"><i class="fas fa-user-md text-muted"></i></span>
-                            </div>
-                            <input type="text" id="buscar_medico" class="form-control bg-light border-0" placeholder="Buscar por nombre">
-                        </div>
-                        <div id="lista_medicos" class="list-group position-absolute w-100"
-                            style="z-index:2000; top:100%; left:0; max-height:240px; overflow-y:auto; display:none; border:1px solid #ddd; border-top:none; box-shadow:0 4px 12px rgba(0,0,0,.08);"></div>
+                    <div class="form-group mt-3">
+                        <label class="small font-weight-bold text-uppercase text-muted">N° Siniestro</label>
+                        <input type="text" name="numero_siniestro" class="form-control form-control-sm bg-light border-0" placeholder="Ej: Siniestro 123">
                     </div>
 
                     <div class="form-group form-check mt-3">
@@ -63,6 +58,24 @@
                             <i class="fas fa-save mr-2"></i> Crear atención
                         </button>
                     </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            function toggleTitularFields() {
+                                var esTitular = document.querySelector('input[name="es_titular"]:checked').value;
+                                document.getElementById('titular_fields').style.display = esTitular == '0' ? 'block' : 'none';
+                            }
+                            document.querySelectorAll('input[name="es_titular"]').forEach(function(radio) {
+                                radio.addEventListener('change', toggleTitularFields);
+                            });
+                            toggleTitularFields();
+
+                            // Inicializar select2 si está disponible
+                            if (window.$ && $.fn.select2) {
+                                $('#paciente_id').select2({width:'100%',placeholder:'Seleccione paciente...'});
+                                $('#titular_id').select2({width:'100%',placeholder:'Seleccione titular...'});
+                            }
+                        });
+                    </script>
                 </form>
             </div>
         </div>
@@ -99,9 +112,12 @@
                             <tr>
                                 <th class="border-top-0 text-uppercase text-secondary small font-weight-bold pl-4">ID</th>
                                 <th class="border-top-0 text-uppercase text-secondary small font-weight-bold">Paciente</th>
+                                <th class="border-top-0 text-uppercase text-secondary small font-weight-bold">Titular</th>
+                                <th class="border-top-0 text-uppercase text-secondary small font-weight-bold">Empresa</th>
+                                <th class="border-top-0 text-uppercase text-secondary small font-weight-bold">N° Siniestro</th>
+                                <th class="border-top-0 text-uppercase text-secondary small font-weight-bold">Operador</th>
                                 <th class="border-top-0 text-uppercase text-secondary small font-weight-bold">Seguro</th>
                                 <th class="border-top-0 text-uppercase text-secondary small font-weight-bold">Estado</th>
-                                <th class="border-top-0 text-uppercase text-secondary small font-weight-bold">Médico</th>
                                 <th class="border-top-0"></th>
                             </tr>
                         </thead>
@@ -116,6 +132,23 @@
                                         </div>
                                         <div class="font-weight-bold text-dark">{{ optional($a->paciente)->name ?? '—' }}</div>
                                     </div>
+                                </td>
+                                <td>
+                                    @if($a->titular_id && $a->titular_id != $a->paciente_id)
+                                        <span class="font-weight-bold text-info">{{ $a->titular_nombre }}</span><br>
+                                        <span class="text-muted small">Cédula: {{ $a->titular_cedula }}</span>
+                                    @else
+                                        <span class="text-muted small font-italic">El paciente es el titular</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="text-dark">{{ $a->empresa ?? '—' }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-dark">{{ $a->numero_siniestro ?? '—' }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-dark">{{ $a->nombre_operador ?? '—' }}</span>
                                 </td>
                                 <td>
                                     @if($a->seguro_validado)
@@ -143,31 +176,7 @@
                                         {{ $infoEstado['label'] }}
                                     </span>
                                 </td>
-                                <td>
-                                    @if($a->medico)
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-user-md text-info mr-2"></i>
-                                            <span class="small">{{ $a->medico->name }}</span>
-                                        </div>
-                                    @else
-                                        <span class="text-muted small font-italic">Sin asignar</span>
-                                    @endif
-                                </td>
                                 <td class="text-right pr-4">
-                                    @if(!$a->medico_id && $a->estado!=='cerrado')
-                                    <form method="POST" action="{{ route('atenciones.asignar', $a) }}" class="d-inline-flex align-items-center">
-                                        @csrf
-                                        <input type="hidden" name="medico_id" id="medico_id_row_{{ $a->id }}">
-                                        <div class="position-relative mr-2" style="width:160px">
-                                            <input type="text" id="buscar_medico_row_{{ $a->id }}" class="form-control form-control-sm bg-light border-0 rounded-pill px-3" placeholder="Asignar médico...">
-                                            <div id="lista_medicos_row_{{ $a->id }}" class="list-group position-absolute w-100"
-                                                style="z-index:2000; top:100%; left:0; max-height:240px; overflow-y:auto; display:none; border:1px solid #ddd; border-top:none; box-shadow:0 4px 12px rgba(0,0,0,.08);"></div>
-                                        </div>
-                                        <button class="btn btn-light btn-sm rounded-circle shadow-sm text-primary" type="submit" title="Guardar asignación">
-                                            <i class="fas fa-save"></i>
-                                        </button>
-                                    </form>
-                                    @endif
                                     @if($a->estado!=='cerrado')
                                         <form method="POST" action="{{ route('atenciones.cerrar', $a) }}" class="d-inline ml-2">
                                             @csrf

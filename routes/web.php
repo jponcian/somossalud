@@ -52,6 +52,7 @@ Route::middleware(['auth', 'verified', 'role:laboratorio|admin_clinica|super-adm
         Route::get('/{id}/load-results', [\App\Http\Controllers\LabOrderController::class, 'loadResults'])->name('load-results');
         Route::post('/{id}/results', [\App\Http\Controllers\LabOrderController::class, 'storeResults'])->name('store-results');
         Route::get('/ajax/search-patients', [\App\Http\Controllers\LabOrderController::class, 'searchPatients'])->name('search-patients');
+        Route::post('/delete-exam-item', [\App\Http\Controllers\LabOrderController::class, 'deleteExamItem'])->name('delete-exam-item');
     });
 
 // Ruta de descarga de PDF accesible para pacientes y personal (validación en controlador)

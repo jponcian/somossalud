@@ -12,9 +12,10 @@ class Atencion extends Model
     protected $table = 'atenciones';
 
     protected $fillable = [
-        'paciente_id','clinica_id','recepcionista_id','medico_id','especialidad_id',
-        'aseguradora','poliza','numero_seguro','seguro_validado','validado_at','validado_por',
-        'estado','iniciada_at','atendida_at','cerrada_at','diagnostico','observaciones'
+        'paciente_id','clinica_id','recepcionista_id','especialidad_id',
+        'aseguradora','numero_siniestro','seguro_validado','validado_at','validado_por',
+        'estado','iniciada_at','atendida_at','cerrada_at','diagnostico','observaciones',
+        'empresa','titular_id','titular_nombre','titular_cedula','titular_telefono','nombre_operador'
     ];
 
     protected $casts = [
@@ -29,7 +30,8 @@ class Atencion extends Model
     public function paciente(){ return $this->belongsTo(User::class, 'paciente_id'); }
     public function clinica(){ return $this->belongsTo(Clinica::class, 'clinica_id'); }
     public function recepcionista(){ return $this->belongsTo(User::class, 'recepcionista_id'); }
-    public function medico(){ return $this->belongsTo(User::class, 'medico_id'); }
+    // public function medico(){ return $this->belongsTo(User::class, 'medico_id'); }
+    public function titular(){ return $this->belongsTo(User::class, 'titular_id'); }
     public function especialidad(){ return $this->belongsTo(Especialidad::class, 'especialidad_id'); }
     public function medicamentos(){ return $this->hasMany(AtencionMedicamento::class, 'atencion_id'); }
     public function adjuntos(){ return $this->hasMany(AtencionAdjunto::class, 'atencion_id'); }

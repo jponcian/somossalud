@@ -27,14 +27,20 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-4">
-                    <strong>Paciente:</strong> {{ $order->patient->name }}
+                <div class="col-md-2">
+                    <strong>Paciente:</strong><br>{{ $order->patient->name }}
                 </div>
-                <div class="col-md-4">
-                    <strong>Cédula:</strong> {{ $order->patient->cedula }}
+                <div class="col-md-2">
+                    <strong>Cédula:</strong><br>{{ $order->patient->cedula }}
                 </div>
-                <div class="col-md-4">
-                    <strong>Fecha de Orden:</strong> {{ $order->order_date->format('d/m/Y') }}
+                <div class="col-md-2">
+                    <strong>Fecha de Orden:</strong><br>{{ $order->order_date->format('d/m/Y') }}
+                </div>
+                <div class="col-md-2">
+                    <strong>Sexo:</strong><br>{{ $order->patient->sexo == 'M' ? 'Masculino' : ($order->patient->sexo == 'F' ? 'Femenino' : 'No especificado') }}
+                </div>
+                <div class="col-md-2">
+                    <strong>Edad:</strong><br>{{ \Carbon\Carbon::parse($order->patient->fecha_nacimiento)->age ?? 'No disponible' }} años
                 </div>
             </div>
         </div>
@@ -43,38 +49,6 @@
     <form action="{{ route('lab.orders.store-results', $order->id) }}" method="POST">
         @csrf
         
-        <!-- Fechas -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-calendar"></i> Fechas</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label class="form-label">Fecha de Toma de Muestra <span class="text-danger">*</span></label>
-                        <input type="date" 
-                               name="sample_date" 
-                               class="form-control @error('sample_date') is-invalid @enderror" 
-                               value="{{ old('sample_date', $order->sample_date?->format('Y-m-d') ?? $order->order_date->format('Y-m-d')) }}" 
-                               required>
-                        @error('sample_date')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Fecha de Resultados <span class="text-danger">*</span></label>
-                        <input type="date" 
-                               name="result_date" 
-                               class="form-control @error('result_date') is-invalid @enderror" 
-                               value="{{ old('result_date', $order->result_date?->format('Y-m-d') ?? date('Y-m-d')) }}" 
-                               required>
-                        @error('result_date')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Resultados por examen -->
         @foreach($order->details as $detail)
@@ -135,11 +109,16 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <input type="text" 
-                                                       name="results[{{ $item->id }}][observation]" 
-                                                       class="form-control form-control-sm" 
-                                                       value="{{ old('results.'.$item->id.'.observation', $existingResult?->observation) }}"
-                                                       placeholder="Obs.">
+                                                <div class="input-group">
+                                                    <input type="text" 
+                                                           name="results[{{ $item->id }}][observation]" 
+                                                           class="form-control form-control-sm" 
+                                                           value="{{ old('results.'.$item->id.'.observation', $existingResult?->observation) }}"
+                                                           placeholder="Obs.">
+                                                    <button type="button" class="btn btn-danger btn-sm delete-exam-item" title="Borrar parámetro" data-item-id="{{ $item->id }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -171,3 +150,54 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.delete-exam-item').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            Swal.fire({
+                title: '¿Seguro que desea borrar este parámetro?',
+                text: 'Esta acción no se puede deshacer.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, borrar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var itemId = btn.getAttribute('data-item-id');
+                    fetch("{{ route('lab.orders.delete-exam-item') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ item_id: itemId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: '¡Borrado!',
+                                text: 'El parámetro fue eliminado correctamente.',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error', 'No se pudo borrar el parámetro.', 'error');
+                        }
+                    })
+                    .catch(() => Swal.fire('Error', 'Error de red al intentar borrar.', 'error'));
+                }
+            });
+        });
+    });
+});
+</script>
+@endpush
