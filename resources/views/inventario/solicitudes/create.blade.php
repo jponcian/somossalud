@@ -63,32 +63,46 @@
                     </div>
                 </div>
 
-                {{-- Items de la solicitud --}}
+                {{-- Formulario para agregar items --}}
                 <div class="card shadow-lg border-primary">
                     <div class="card-header bg-white">
                         <h3 class="card-title text-primary font-weight-bold"><i class="fas fa-boxes"></i> Items Solicitados</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-success shadow-sm" id="btnAgregarItem">
-                                <i class="fas fa-plus"></i> Agregar Item
-                            </button>
-                        </div>
                     </div>
                     <div class="card-body bg-light">
-                        <div id="contenedorItems">
-                            {{-- Los items se agregarán aquí dinámicamente --}}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="small font-weight-bold text-muted">BUSCAR MATERIAL</label>
+                                <select id="materialSelect" class="form-control" style="width: 100%;">
+                                    <option value="">Buscar material...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label class="small font-weight-bold text-muted">UNIDAD</label>
+                                <select id="unidadInput" class="form-control">
+                                    @foreach($unidadesMedida as $unidad)
+                                        <option value="{{ $unidad }}">{{ $unidad }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label class="small font-weight-bold text-muted">CANTIDAD</label>
+                                <input type="number" id="cantidadInput" class="form-control font-weight-bold text-center" min="1" value="1">
+                            </div>
                         </div>
                         
-                        <div id="emptyState" class="text-center py-5 text-muted">
-                            <i class="fas fa-box-open fa-3x mb-3"></i>
-                            <p>No hay items agregados a la solicitud.</p>
-                            <p class="small">Haga clic en "Agregar Item" para comenzar.</p>
+                        <div class="text-right">
+                            <button type="button" class="btn btn-success shadow-sm" id="btnAgregarAlCarrito">
+                                <i class="fas fa-cart-plus"></i> Agregar al Carrito
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                {{-- Resumen Sticky --}}
+                {{-- Resumen con lista de items --}}
                 <div class="card card-outline card-primary shadow sticky-top" style="top: 20px;">
                     <div class="card-header">
                         <h3 class="card-title font-weight-bold"><i class="fas fa-clipboard-check"></i> Resumen</h3>
@@ -99,7 +113,16 @@
                             <span id="totalItems" class="font-weight-bold h5 text-primary mb-0">0</span>
                         </div>
                         
-                        <div class="alert alert-info small">
+                        <div id="listaItems" class="mb-3" style="max-height: 400px; overflow-y: auto;">
+                            <!-- Los items se mostrarán aquí -->
+                        </div>
+                        
+                        <div id="emptyState" class="text-center py-4 text-muted">
+                            <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                            <p class="small mb-0">No hay items en el carrito</p>
+                        </div>
+                        
+                        <div class="alert alert-info small mb-0">
                             <i class="fas fa-lightbulb"></i> <strong>Tip:</strong>
                             Puede buscar materiales existentes o escribir nombres nuevos si no encuentra lo que busca.
                         </div>
@@ -120,76 +143,16 @@
 
 @push('scripts')
 <script>
+let carrito = []; // Array para almacenar los items del carrito
 let itemCounter = 0;
-const unidadesMedida = @json($unidadesMedida);
 
-// Template de item optimizado
-function getItemTemplate(index) {
-    let opcionesUnidad = unidadesMedida.map(u => `<option value="${u}">${u}</option>`).join('');
-    
-    return `
-        <div class="card item-card mb-3 shadow-sm border-left-primary" data-item-index="${index}" style="border-left: 4px solid #007bff;">
-            <div class="card-body py-3">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="font-weight-bold text-primary m-0">
-                        <i class="fas fa-box-open"></i> Item #${index + 1}
-                    </h6>
-                    <button type="button" class="btn btn-tool text-danger btn-eliminar-item" title="Eliminar item">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-12 mb-2">
-                        <div class="form-group mb-0">
-                            <label class="small font-weight-bold text-muted">BUSCAR MATERIAL O ESCRIBIR NOMBRE</label>
-                            <select name="items[${index}][material_select]" class="form-control material-select" style="width: 100%;">
-                                <option value="">Buscar material...</option>
-                            </select>
-                            <input type="hidden" name="items[${index}][material_id]" class="material-id-input">
-                            <input type="hidden" name="items[${index}][nombre_item]" class="nombre-item-input">
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-8">
-                        <div class="form-group mb-0">
-                            <label class="small font-weight-bold text-muted">DESCRIPCIÓN ADICIONAL</label>
-                            <input type="text" name="items[${index}][descripcion]" class="form-control form-control-sm" placeholder="Detalles adicionales...">
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4">
-                        <div class="row">
-                            <div class="col-6 pr-1">
-                                <div class="form-group mb-0">
-                                    <label class="small font-weight-bold text-muted">UNIDAD</label>
-                                    <select name="items[${index}][unidad_medida]" class="form-control form-control-sm unidad-input">
-                                        ${opcionesUnidad}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-6 pl-1">
-                                <div class="form-group mb-0">
-                                    <label class="small font-weight-bold text-muted">CANTIDAD</label>
-                                    <input type="number" name="items[${index}][cantidad_solicitada]" class="form-control form-control-sm font-weight-bold text-center" min="1" value="1" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-// Inicializar Select2 en un elemento
-function initMaterialSelect(element) {
-    $(element).select2({
+// Inicializar Select2 para el material
+function initMaterialSelect() {
+    $('#materialSelect').select2({
         theme: 'bootstrap4',
         placeholder: 'Escriba para buscar...',
         allowClear: true,
-        tags: true, // Permite crear nuevos términos (texto libre)
-        minimumInputLength: 1, // Reducido a 1 para facilitar búsqueda
+        minimumInputLength: 2,
         ajax: {
             url: '{{ url("inventario/solicitudes/buscar-materiales") }}',
             dataType: 'json',
@@ -197,18 +160,15 @@ function initMaterialSelect(element) {
             data: function (params) {
                 return {
                     q: params.term,
-                    categoria: $('#categoria').val() // Filtrar por categoría seleccionada
+                    categoria: $('#categoria').val()
                 };
             },
             processResults: function (data, params) {
-                // Si hay error en la respuesta
                 if (data.error) {
                     console.error('Error del servidor:', data.error);
                     return { results: [] };
                 }
-                return {
-                    results: data
-                };
+                return { results: data };
             },
             error: function(xhr, status, error) {
                 console.error('Error AJAX:', {
@@ -220,146 +180,127 @@ function initMaterialSelect(element) {
             },
             cache: true
         },
-        createTag: function (params) {
-            // Solo permitir crear tags personalizados si no hay resultados
-            var term = $.trim(params.term);
-            if (term === '') {
-                return null;
-            }
-            
-            // Mostrar opción de crear nuevo solo si el término tiene al menos 2 caracteres
-            if (term.length < 2) {
-                return null;
-            }
-            
-            return {
-                id: 'new:' + term,
-                text: '➕ ' + term + ' (Crear nuevo)',
-                newOption: true,
-                nombre: term // Guardar nombre limpio
-            };
-        },
         language: {
-            searching: function() {
-                return 'Buscando...';
-            },
-            noResults: function() {
-                return 'No se encontraron materiales. Escriba para crear uno nuevo.';
-            },
-            inputTooShort: function() {
-                return 'Escriba al menos 1 carácter para buscar';
-            },
-            errorLoading: function() {
-                return 'No se pudieron cargar los resultados. Verifique la consola del navegador (F12).';
-            }
+            searching: function() { return 'Buscando...'; },
+            noResults: function() { return 'No se encontraron materiales registrados.'; },
+            inputTooShort: function() { return 'Escriba al menos 2 caracteres para buscar'; },
+            errorLoading: function() { return 'No se pudieron cargar los resultados.'; }
         }
     }).on('select2:select', function (e) {
         var data = e.params.data;
-        var $card = $(this).closest('.item-card');
         
-        if (data.newOption) {
-            // Es un texto nuevo
-            $card.find('.material-id-input').val('');
-            $card.find('.nombre-item-input').val(data.nombre);
-        } else {
-            // Es un material existente del catálogo
-            $card.find('.material-id-input').val(data.id);
-            $card.find('.nombre-item-input').val(data.nombre);
-            
-            // Autocompletar unidad si existe
-            if (data.unidad) {
-                $card.find('.unidad-input').val(data.unidad);
-            }
-            
-            // Autocompletar descripción si existe
-            if (data.descripcion) {
-                $card.find('input[name$="[descripcion]"]').val(data.descripcion);
-            }
+        // Autocompletar unidad con datos del material
+        if (data.unidad) {
+            $('#unidadInput').val(data.unidad);
         }
-    }).on('select2:unselecting', function() {
-        var $card = $(this).closest('.item-card');
-        $card.find('.material-id-input').val('');
-        $card.find('.nombre-item-input').val('');
     });
 }
 
-// Agregar item
-$('#btnAgregarItem').click(function() {
-    $('#emptyState').hide();
-    const itemHtml = getItemTemplate(itemCounter);
-    const $newItem = $(itemHtml).appendTo('#contenedorItems');
+// Agregar item al carrito
+$('#btnAgregarAlCarrito').click(function() {
+    const materialData = $('#materialSelect').select2('data')[0];
     
-    // Inicializar select2 en el nuevo item
-    initMaterialSelect($newItem.find('.material-select'));
-    
-    itemCounter++;
-    actualizarResumen();
-});
-
-// Eliminar item
-$(document).on('click', '.btn-eliminar-item', function() {
-    $(this).closest('.item-card').fadeOut(300, function() {
-        $(this).remove();
-        actualizarResumen();
-        renumerarItems();
-        
-        if ($('.item-card').length === 0) {
-            $('#emptyState').fadeIn();
-        }
-    });
-});
-
-// Renumerar items
-function renumerarItems() {
-    $('.item-card').each(function(index) {
-        $(this).find('h6').html(`<i class="fas fa-box-open"></i> Item #${index + 1}`);
-        
-        // Actualizar índices en nombres de inputs
-        $(this).find('input, select').each(function() {
-            const name = $(this).attr('name');
-            if (name) {
-                const newName = name.replace(/items\[\d+\]/, `items[${index}]`);
-                $(this).attr('name', newName);
-            }
+    if (!materialData || !materialData.id) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Material requerido',
+            text: 'Por favor, seleccione un material del catálogo.',
+            confirmButtonText: 'Entendido'
         });
+        return;
+    }
+    
+    const cantidad = parseInt($('#cantidadInput').val()) || 1;
+    const unidad = $('#unidadInput').val();
+    
+    // Crear objeto del item (solo materiales registrados)
+    const item = {
+        index: itemCounter++,
+        material_id: materialData.id,
+        nombre: materialData.text,
+        unidad: unidad,
+        cantidad: cantidad
+    };
+    
+    // Agregar al carrito
+    carrito.push(item);
+    
+    // Actualizar vista
+    renderizarCarrito();
+    limpiarFormulario();
+    
+    // Mostrar feedback
+    toastr.success(`${item.nombre} agregado al carrito`);
+});
+
+// Renderizar el carrito en el resumen
+function renderizarCarrito() {
+    const $listaItems = $('#listaItems');
+    $listaItems.empty();
+    
+    if (carrito.length === 0) {
+        $('#emptyState').show();
+        $('#totalItems').text('0');
+        return;
+    }
+    
+    $('#emptyState').hide();
+    $('#totalItems').text(carrito.length);
+    
+    carrito.forEach((item, index) => {
+        const itemHtml = `
+            <div class="card mb-2 shadow-sm" data-index="${index}">
+                <div class="card-body p-2">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 font-weight-bold text-dark" style="font-size: 0.9rem;">
+                                ${item.nombre}
+                            </h6>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge badge-primary">${item.cantidad} ${item.unidad}</span>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-danger btn-eliminar-item ml-2" data-index="${index}" title="Eliminar">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Hidden inputs para enviar con el formulario -->
+                    <input type="hidden" name="items[${index}][material_id]" value="${item.material_id}">
+                    <input type="hidden" name="items[${index}][nombre_item]" value="${item.nombre}">
+                    <input type="hidden" name="items[${index}][unidad_medida]" value="${item.unidad}">
+                    <input type="hidden" name="items[${index}][cantidad_solicitada]" value="${item.cantidad}">
+                </div>
+            </div>
+        `;
+        $listaItems.append(itemHtml);
     });
 }
 
-// Actualizar resumen
-function actualizarResumen() {
-    $('#totalItems').text($('.item-card').length);
+// Eliminar item del carrito
+$(document).on('click', '.btn-eliminar-item', function() {
+    const index = $(this).data('index');
+    carrito.splice(index, 1);
+    renderizarCarrito();
+    toastr.info('Item eliminado del carrito');
+});
+
+// Limpiar formulario después de agregar
+function limpiarFormulario() {
+    $('#materialSelect').val(null).trigger('change');
+    $('#cantidadInput').val('1');
+    // Mantener la unidad seleccionada por defecto
 }
 
 // Validar formulario antes de enviar
 $('#formSolicitud').submit(function(e) {
-    if ($('.item-card').length === 0) {
+    if (carrito.length === 0) {
         e.preventDefault();
         Swal.fire({
             icon: 'warning',
-            title: 'Solicitud vacía',
+            title: 'Carrito vacío',
             text: 'Debe agregar al menos un item a la solicitud.',
             confirmButtonText: 'Entendido'
-        });
-        return false;
-    }
-    
-    // Verificar que todos los items tengan nombre (select2 seleccionado o texto)
-    let valid = true;
-    $('.material-select').each(function() {
-        if (!$(this).val()) {
-            valid = false;
-            $(this).next('.select2').find('.select2-selection').addClass('is-invalid');
-        } else {
-            $(this).next('.select2').find('.select2-selection').removeClass('is-invalid');
-        }
-    });
-    
-    if (!valid) {
-        e.preventDefault();
-        Swal.fire({
-            icon: 'error',
-            title: 'Datos incompletos',
-            text: 'Por favor, seleccione un material o escriba un nombre para todos los items.',
         });
         return false;
     }
@@ -373,15 +314,25 @@ $(document).ready(function() {
         placeholder: 'Seleccione categoría'
     });
     
-    // Agregar primer item automáticamente
-    $('#btnAgregarItem').click();
+    // Inicializar select2 del material
+    initMaterialSelect();
+    
+    // Mostrar estado vacío inicial
+    $('#emptyState').show();
 });
 </script>
 
-{{-- Estilos adicionales para Select2 validation --}}
+{{-- Estilos adicionales --}}
 <style>
     .select2-selection.is-invalid {
         border-color: #dc3545 !important;
+    }
+    #listaItems .card {
+        transition: all 0.2s;
+    }
+    #listaItems .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
     }
 </style>
 @endpush
