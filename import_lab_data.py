@@ -16,9 +16,9 @@ try:
     conn = mysql.connector.connect(**db_config)
     cursor = conn.cursor()
     
-    print("=== IMPORTANDO CATEGORÍAS DE EXÁMENES ===")
+    print("=== IMPORTANDO CATEGORIAS DE EXAMENES ===")
     # Leer tipos de exámenes (categorías)
-    tipos_table = DBF(r'c:\laragon\www\somossalud\SISCAL03\DBF\LVTTIPO.DBF', encoding='latin1')
+    tipos_table = DBF(r'c:\wamp64\www\somossalud\SISCAL03\DBF\LVTTIPO.DBF', encoding='latin1')
     
     for record in tipos_table:
         code = record['TIP_EXA']
@@ -31,14 +31,14 @@ try:
             ON DUPLICATE KEY UPDATE name = VALUES(name)
         """, (code, name, True, datetime.now(), datetime.now()))
         
-        print(f"  ✓ Categoría: {code} - {name}")
+        print(f"  OK Categoria: {code} - {name}")
     
     conn.commit()
-    print(f"\n✓ Total categorías importadas: {cursor.rowcount}")
+    print(f"\nOK Total categorias importadas: {cursor.rowcount}")
     
-    print("\n=== IMPORTANDO EXÁMENES ===")
+    print("\n=== IMPORTANDO EXAMENES ===")
     # Leer exámenes
-    exams_table = DBF(r'c:\laragon\www\somossalud\SISCAL03\DBF\LVTEXAM.DBF', encoding='latin1')
+    exams_table = DBF(r'c:\wamp64\www\somossalud\SISCAL03\DBF\LVTEXAM.DBF', encoding='latin1')
     
     exam_count = 0
     for record in exams_table:
@@ -68,14 +68,14 @@ try:
         
         exam_count += 1
         if exam_count <= 10:  # Mostrar solo los primeros 10
-            print(f"  ✓ Examen: {code} - {name} (${price})")
+            print(f"  OK Examen: {code} - {name} (${price})")
     
     conn.commit()
-    print(f"\n✓ Total exámenes importados: {exam_count}")
+    print(f"\nOK Total examenes importados: {exam_count}")
     
     print("\n=== IMPORTANDO ÍTEMS DE EXÁMENES ===")
     # Leer ítems/pruebas de exámenes
-    items_table = DBF(r'c:\laragon\www\somossalud\SISCAL03\DBF\LVTPRUE.DBF', encoding='latin1')
+    items_table = DBF(r'c:\wamp64\www\somossalud\SISCAL03\DBF\LVTPRUE.DBF', encoding='latin1')
     
     item_count = 0
     for record in items_table:
@@ -106,15 +106,69 @@ try:
         
         item_count += 1
         if item_count <= 10:  # Mostrar solo los primeros 10
-            print(f"  ✓ Ítem: {cod_exa}/{cod_pru} - {name}")
+            print(f"  OK Item: {cod_exa}/{cod_pru} - {name}")
     
     conn.commit()
-    print(f"\n✓ Total ítems importados: {item_count}")
+    print(f"\nOK Total items importados: {item_count}")
     
-    print("\n✅ IMPORTACIÓN COMPLETADA EXITOSAMENTE")
+    print("\n=== IMPORTANDO VALORES DE REFERENCIA ===")
+    # Leer valores de referencia
+    valref_table = DBF(r'c:\wamp64\www\somossalud\SISCAL03\DBF\VALREF.DBF', encoding='latin1')
+    
+    # Crear un cursor adicional para las actualizaciones
+    cursor2 = conn.cursor()
+    
+    ref_count = 0
+    for record in valref_table:
+        cod_exa = record['COD_EXA']
+        cod_pru = record['COD_PRU']
+        valor_inf = record['VALOR_REFI'] or ''
+        valor_sup = record['VALOR_REFS'] or ''
+        
+        # Construir el rango de referencia
+        if valor_inf and valor_sup:
+            reference_value = f"{valor_inf} - {valor_sup}"
+        elif valor_inf:
+            reference_value = f"> {valor_inf}"
+        elif valor_sup:
+            reference_value = f"< {valor_sup}"
+        else:
+            continue
+        
+        # Buscar el ítem correspondiente
+        cursor.execute("""
+            SELECT lei.id 
+            FROM lab_exam_items lei
+            JOIN lab_exams le ON lei.lab_exam_id = le.id
+            WHERE le.code = %s AND lei.code = %s
+        """, (cod_exa, cod_pru))
+        
+        item_result = cursor.fetchone()
+        if not item_result:
+            continue
+            
+        item_id = item_result[0]
+        
+        # Actualizar el valor de referencia con el segundo cursor
+        cursor2.execute("""
+            UPDATE lab_exam_items 
+            SET reference_value = %s
+            WHERE id = %s
+        """, (reference_value, item_id))
+        
+        ref_count += 1
+        if ref_count <= 10:
+            print(f"  OK Referencia: {cod_exa}/{cod_pru} = {reference_value}")
+    
+    cursor2.close()
+    conn.commit()
+    print(f"\nOK Total valores de referencia importados: {ref_count}")
+    
+    print("\nOK IMPORTACION COMPLETADA EXITOSAMENTE")
+
     
 except Exception as e:
-    print(f"\n❌ Error: {e}")
+    print(f"\nERROR: {e}")
     import traceback
     traceback.print_exc()
 finally:

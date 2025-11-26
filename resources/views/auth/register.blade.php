@@ -115,6 +115,32 @@
                 @enderror
             </div>
 
+            <!-- Sexo -->
+            <div class="mb-4">
+                <label for="sexo" class="form-label">
+                    <i class="fa-solid fa-venus-mars me-1"></i> Sexo
+                </label>
+                <select 
+                    id="sexo" 
+                    name="sexo" 
+                    class="form-control @error('sexo') is-invalid @enderror" 
+                    required
+                >
+                    <option value="">Selecciona tu sexo...</option>
+                    <option value="M" {{ old('sexo') == 'M' ? 'selected' : '' }}>Masculino</option>
+                    <option value="F" {{ old('sexo') == 'F' ? 'selected' : '' }}>Femenino</option>
+                </select>
+                <small class="form-text text-muted">
+                    <i class="fa-solid fa-info-circle me-1"></i>
+                    Necesario para los valores de referencia de laboratorio
+                </small>
+                @error('sexo')
+                    <div class="invalid-feedback">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i>{{ $message }}
+                    </div>
+                @enderror
+            </div>
+
             <!-- Contraseña -->
             <div class="mb-4">
                 <label for="password" class="form-label">

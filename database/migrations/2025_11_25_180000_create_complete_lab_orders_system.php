@@ -12,7 +12,7 @@ return new class extends Migration
         if (!Schema::hasTable('lab_orders')) {
             Schema::create('lab_orders', function (Blueprint $table) {
                 $table->id();
-                $table->string('order_number')->unique(); // Número de orden único
+                $table->string('order_number', 100)->unique(); // Número de orden único, longitud limitada
                 $table->foreignId('patient_id')->constrained('usuarios')->onDelete('cascade');
                 $table->foreignId('doctor_id')->nullable()->constrained('usuarios')->onDelete('set null');
                 $table->foreignId('clinica_id')->nullable()->constrained('clinicas')->onDelete('set null');
@@ -22,7 +22,7 @@ return new class extends Migration
                 $table->enum('status', ['pending', 'in_progress', 'completed', 'cancelled'])->default('pending');
                 $table->decimal('total', 10, 2)->default(0);
                 $table->text('observations')->nullable();
-                $table->string('verification_code', 12)->unique()->nullable(); // Código QR
+                $table->string('verification_code', 50)->unique()->nullable(); // Código QR, longitud limitada
                 $table->foreignId('created_by')->nullable()->constrained('usuarios')->onDelete('set null');
                 $table->timestamps();
             });

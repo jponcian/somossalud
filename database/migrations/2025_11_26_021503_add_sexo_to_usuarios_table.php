@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('lab_orders', function (Blueprint $table) {
-            //
+        Schema::table('usuarios', function (Blueprint $table) {
+            $table->enum('sexo', ['M', 'F'])->nullable()->after('fecha_nacimiento');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('lab_orders', function (Blueprint $table) {
-            //
+        Schema::table('usuarios', function (Blueprint $table) {
+            $table->dropColumn('sexo');
         });
     }
 };

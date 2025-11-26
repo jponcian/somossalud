@@ -120,7 +120,19 @@
                                                 <span class="text-muted">{{ $item->unit ?? 'N/A' }}</span>
                                             </td>
                                             <td>
-                                                <span class="text-muted">{{ $item->reference_value ?? 'N/A' }}</span>
+                                                @php
+                                                    $rango = $item->getReferenceRangeForPatient($order->patient);
+                                                @endphp
+                                                @if($rango)
+                                                    <span class="badge badge-info text-wrap" style="font-size: 0.9em;">
+                                                        {{ $rango->value_text ?? ($rango->value_min . ' - ' . $rango->value_max) }}
+                                                    </span>
+                                                    @if($rango->condition)
+                                                        <br><small class="text-muted">({{ $rango->condition }})</small>
+                                                    @endif
+                                                @else
+                                                    <span class="text-muted">{{ $item->reference_value ?? 'N/A' }}</span>
+                                                @endif
                                             </td>
                                             <td>
                                                 <input type="text" 

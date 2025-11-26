@@ -24,6 +24,16 @@
         </div>
 
         <div>
+            <x-input-label for="sexo" :value="__('Sexo')" />
+            <select id="sexo" name="sexo" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                <option value="">Seleccione...</option>
+                <option value="M" {{ old('sexo', $user->sexo) == 'M' ? 'selected' : '' }}>Masculino</option>
+                <option value="F" {{ old('sexo', $user->sexo) == 'F' ? 'selected' : '' }}>Femenino</option>
+            </select>
+            <x-input-error class="mt-2" :messages="$errors->get('sexo')" />
+        </div>
+
+        <div>
             <x-input-label for="email" :value="__('Correo electrónico')" />
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />

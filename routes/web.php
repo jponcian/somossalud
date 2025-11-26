@@ -30,13 +30,14 @@ Route::get('/dashboard', function () {
         ->whereHas('medicamentos')
         ->orderByRaw('COALESCE(concluida_at, updated_at) DESC')
         ->first();
-    // Resultados de laboratorio del paciente
-    $resultadosLaboratorio = \App\Models\ResultadoLaboratorio::with(['clinica'])
-        ->where('paciente_id', $user->id)
-        ->orderBy('fecha_resultado', 'desc')
+    // Órdenes de laboratorio completadas del paciente
+    $ordenesLaboratorio = \App\Models\LabOrder::with(['clinica', 'details.exam'])
+        ->where('patient_id', $user->id)
+        ->where('status', 'completed')
+        ->orderBy('result_date', 'desc')
         ->limit(5)
         ->get();
-    return view('panel.pacientes', compact('suscripcionActiva', 'reportePendiente', 'ultimoRechazado', 'ultimaReceta', 'resultadosLaboratorio'));
+    return view('panel.pacientes', compact('suscripcionActiva', 'reportePendiente', 'ultimoRechazado', 'ultimaReceta', 'ordenesLaboratorio'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Rutas de órdenes de laboratorio (personal autorizado)
@@ -166,46 +167,18 @@ Route::middleware('auth')->group(function () {
 
     // Resultados de laboratorio para pacientes
     Route::get('mis-resultados', function () {
-        // Resultados antiguos
-        $resultadosAntiguos = \App\Models\ResultadoLaboratorio::with(['clinica'])
-            ->where('paciente_id', auth()->id())
-            ->orderBy('fecha_resultado', 'desc')
-            ->get();
-
-        // Nuevas órdenes completadas
-        $nuevasOrdenes = \App\Models\LabOrder::with(['clinica', 'details.exam', 'details.results.examItem'])
+        // Órdenes de laboratorio completadas
+        $ordenes = \App\Models\LabOrder::with(['clinica', 'details.exam', 'details.results.examItem'])
             ->where('patient_id', auth()->id())
             ->where('status', 'completed')
             ->orderBy('result_date', 'desc')
             ->get();
 
-        return view('paciente.resultados', compact('resultadosAntiguos', 'nuevasOrdenes'));
+        return view('paciente.resultados', compact('ordenes'));
     })->name('paciente.resultados');
 });
 
-// Rutas de laboratorio (personal autorizado)
-Route::middleware(['auth', 'verified', 'role:laboratorio|admin_clinica|super-admin'])
-    ->prefix('laboratorio')
-    ->name('laboratorio.')
-    ->group(function () {
-        Route::get('/', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'index'])->name('index');
-        Route::get('crear', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'store'])->name('store');
-        Route::post('crear-paciente-rapido', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'crearPacienteRapido'])->name('crear-paciente-rapido');
-        Route::get('ajax/pacientes', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'buscarPacientes'])->name('ajax.pacientes');
-    });
 
-// Rutas de visualización de resultados (accesibles para pacientes y personal)
-Route::middleware(['auth', 'verified'])
-    ->prefix('laboratorio')
-    ->name('laboratorio.')
-    ->group(function () {
-        Route::get('{resultado}', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'show'])->name('show');
-        Route::get('{resultado}/pdf', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'imprimirPDF'])->name('pdf');
-    });
-
-// Ruta pública de verificación de resultados (sin autenticación)
-Route::get('verificar-resultado/{codigo}', [\App\Http\Controllers\Laboratorio\ResultadoLaboratorioController::class, 'verificar'])->name('laboratorio.verificar');
 
 Route::middleware(['auth', 'verified', 'role:recepcionista|admin_clinica|super-admin'])
     ->prefix('recepcion')

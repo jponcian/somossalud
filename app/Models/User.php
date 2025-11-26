@@ -29,6 +29,7 @@ class User extends Authenticatable
         'clinica_id',
         'cedula',
         'fecha_nacimiento',
+        'sexo',
         'especialidad_id',
     ];
 

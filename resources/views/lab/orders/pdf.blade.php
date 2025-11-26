@@ -190,7 +190,19 @@
                     <td>{{ $result->examItem->name }}</td>
                     <td style="font-weight: bold;">{{ $result->value }}</td>
                     <td>{{ $result->examItem->unit }}</td>
-                    <td>{{ $result->examItem->reference_value }}</td>
+                    <td>
+                        @php
+                            $rango = $result->examItem->getReferenceRangeForPatient($order->patient);
+                        @endphp
+                        @if($rango)
+                            {{ $rango->value_text ?? ($rango->value_min . ' - ' . $rango->value_max) }}
+                            @if($rango->condition)
+                                <br><span style="font-size: 7pt; font-style: italic;">({{ $rango->condition }})</span>
+                            @endif
+                        @else
+                            {{ $result->examItem->reference_value }}
+                        @endif
+                    </td>
                 </tr>
                 @if($result->observation)
                     <tr>

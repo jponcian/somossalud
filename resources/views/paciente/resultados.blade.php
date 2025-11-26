@@ -7,11 +7,9 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if($nuevasOrdenes->count() > 0 || $resultadosAntiguos->count() > 0)
+            @if($ordenes->count() > 0)
                 <div class="space-y-6">
-                    
-                    <!-- NUEVAS ÓRDENES -->
-                    @foreach($nuevasOrdenes as $order)
+                    @foreach($ordenes as $order)
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-l-4 border-blue-500">
                         <div class="p-6">
                             <div class="flex justify-between items-start">
@@ -75,62 +73,6 @@
                                            target="_blank"
                                            class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150">
                                             <i class="fas fa-external-link-alt mr-2"></i> Verificar
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-
-                    <!-- RESULTADOS ANTIGUOS -->
-                    @foreach($resultadosAntiguos as $resultado)
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-l-4 border-gray-400 opacity-90">
-                        <div class="p-6">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-grow">
-                                    <div class="flex items-center mb-2">
-                                        <h3 class="text-lg font-semibold text-gray-700 mb-0">
-                                            {{ $resultado->nombre_examen }}
-                                        </h3>
-                                        <span class="ml-3 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Histórico
-                                        </span>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mb-3">
-                                        <div>
-                                            <i class="fas fa-calendar-alt text-gray-500 mr-2"></i>
-                                            <strong>Fecha Muestra:</strong> {{ $resultado->fecha_muestra->format('d/m/Y') }}
-                                        </div>
-                                        <div>
-                                            <i class="fas fa-calendar-check text-gray-500 mr-2"></i>
-                                            <strong>Fecha Resultado:</strong> {{ $resultado->fecha_resultado->format('d/m/Y') }}
-                                        </div>
-                                        <div>
-                                            <i class="fas fa-hospital text-gray-500 mr-2"></i>
-                                            <strong>Clínica:</strong> {{ $resultado->clinica->nombre }}
-                                        </div>
-                                    </div>
-
-                                    @if($resultado->observaciones)
-                                    <div class="mt-3 p-3 bg-gray-50 border-l-4 border-gray-300 rounded">
-                                        <p class="text-sm text-gray-600 mb-0">
-                                            <strong>Observaciones:</strong> {{ $resultado->observaciones }}
-                                        </p>
-                                    </div>
-                                    @endif
-                                </div>
-                                
-                                <div class="ml-4 text-right flex-shrink-0">
-                                    <div class="mb-3 flex justify-end">
-                                        {!! QrCode::size(80)->generate($resultado->url_verificacion) !!}
-                                    </div>
-                                    
-                                    <div class="flex flex-col space-y-2">
-                                        <a href="{{ route('laboratorio.pdf', $resultado) }}" 
-                                           class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                            <i class="fas fa-download mr-2"></i> PDF
                                         </a>
                                     </div>
                                 </div>

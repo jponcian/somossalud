@@ -89,7 +89,21 @@
                                                 <td><strong>{{ $result->examItem->name }}</strong></td>
                                                 <td>{{ $result->value }}</td>
                                                 <td>{{ $result->examItem->unit ?? '-' }}</td>
-                                                <td>{{ $result->examItem->reference_value ?? '-' }}</td>
+                                                <td>
+                                                    @php
+                                                        $rango = $result->examItem->getReferenceRangeForPatient($order->patient);
+                                                    @endphp
+                                                    @if($rango)
+                                                        <span class="badge badge-light border text-wrap" style="font-size: 0.9em;">
+                                                            {{ $rango->value_text ?? ($rango->value_min . ' - ' . $rango->value_max) }}
+                                                        </span>
+                                                        @if($rango->condition)
+                                                            <br><small class="text-muted">({{ $rango->condition }})</small>
+                                                        @endif
+                                                    @else
+                                                        {{ $result->examItem->reference_value ?? '-' }}
+                                                    @endif
+                                                </td>
                                             </tr>
                                             @endforeach
                                         </tbody>

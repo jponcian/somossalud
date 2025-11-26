@@ -61,14 +61,6 @@
                 <p>Exámenes</p>
             </a>
         </li>
-        <!-- Sistema Anterior (Compatibilidad) -->
-        <li class="nav-item">
-            <a href="{{ route('laboratorio.index') }}"
-                class="nav-link {{ request()->routeIs('laboratorio.index') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-flask"></i>
-                <p>Resultados Anteriores</p>
-            </a>
-        </li>
         @endhasanyrole
         <!-- SECCIÓN INVENTARIO -->
         @hasanyrole('super-admin|admin_clinica|almacen')

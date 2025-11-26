@@ -47,11 +47,14 @@ class RegisteredUserController extends Controller
                     'name' => ['required', 'string', 'max:255'],
                     'email' => ['required', 'string', 'email', 'max:255', 'unique:usuarios,email'],
                     'fecha_nacimiento' => ['required', 'date', 'before:today'],
+                    'sexo' => ['required', 'in:M,F'],
                     'password' => ['required', 'confirmed', Rules\Password::defaults()],
                 ], [
                     'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
                     'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida',
                     'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy',
+                    'sexo.required' => 'El sexo es obligatorio',
+                    'sexo.in' => 'El sexo seleccionado no es válido',
                 ]);
 
                 // Actualizar cuenta existente con datos reales
@@ -59,6 +62,7 @@ class RegisteredUserController extends Controller
                     'name' => $request->name,
                     'email' => $request->email,
                     'fecha_nacimiento' => $request->fecha_nacimiento,
+                    'sexo' => $request->sexo,
                     'password' => Hash::make($request->password),
                 ]);
 
@@ -91,6 +95,7 @@ class RegisteredUserController extends Controller
                 'regex:/^[VEJGP]-\d{6,8}$/i'
             ],
             'fecha_nacimiento' => ['required', 'date', 'before:today'],
+            'sexo' => ['required', 'in:M,F'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
             'cedula.regex' => 'El formato de la cédula debe ser: V-12345678 (6 a 8 dígitos). Letras permitidas: V, E, J, G, P',
@@ -98,6 +103,8 @@ class RegisteredUserController extends Controller
             'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
             'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida',
             'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy',
+            'sexo.required' => 'El sexo es obligatorio',
+            'sexo.in' => 'El sexo seleccionado no es válido',
         ]);
 
         // Asignar a la clínica por defecto (SaludSonrisa) si existe
@@ -108,6 +115,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'cedula' => $cedula,
             'fecha_nacimiento' => $request->fecha_nacimiento,
+            'sexo' => $request->sexo,
             'password' => Hash::make($request->password),
             'clinica_id' => $clinicaId,
         ]);
