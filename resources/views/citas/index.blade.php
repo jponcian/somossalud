@@ -9,306 +9,345 @@
 @push('styles')
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        --success-gradient: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        --glass-bg: rgba(255, 255, 255, 0.95);
+        --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+        --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+    }
+
     body {
         font-family: 'Outfit', sans-serif !important;
-        background-color: #f8fafc;
+        background-color: #f0f4f8;
+        color: #1e293b;
     }
+
     .content-wrapper {
-        background-color: #f8fafc !important;
+        background-color: #f0f4f8 !important;
     }
-    .card {
-        border: none;
-        border-radius: 16px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        transition: all 0.3s ease;
+
+    .page-header {
         background: white;
+        padding: 2rem 1.5rem;
+        border-radius: 0 0 2rem 2rem;
+        box-shadow: 0 4px 20px -5px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+        position: relative;
         overflow: hidden;
     }
-    .card:hover {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 4px;
+        background: var(--primary-gradient);
     }
-    .card-header {
-        background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%);
-        border-bottom: 1px solid #cbd5e1;
-        padding: 1.25rem 1.5rem;
-    }
-    .card-title {
+
+    .btn-new-appointment {
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        border-radius: 1rem;
+        padding: 1rem 1.5rem;
         font-weight: 600;
-        color: #1e293b;
-        font-size: 1.1rem;
-        display: flex;
+        box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+        transition: all 0.3s ease;
+        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
     }
-    .table {
-        margin-bottom: 0;
+
+    .btn-new-appointment:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+        color: white;
+        text-decoration: none;
     }
-    .table thead th {
-        border-bottom: 2px solid #e2e8f0;
+
+    /* Card Styles for Mobile First */
+    .appointment-card {
+        background: white;
+        border-radius: 1.5rem;
+        border: none;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
+
+    .appointment-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .appointment-card .card-status-bar {
+        height: 6px;
+        width: 100%;
+    }
+
+    .appointment-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .date-badge {
+        background: #f1f5f9;
+        border-radius: 1rem;
+        padding: 0.5rem 1rem;
+        text-align: center;
+        min-width: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .date-badge .day {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1;
+    }
+
+    .date-badge .month {
+        font-size: 0.75rem;
+        text-transform: uppercase;
         color: #64748b;
         font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.75rem;
         letter-spacing: 0.05em;
-        padding: 1rem;
-        background: #f8fafc;
     }
-    .table tbody tr {
-        border-bottom: 1px solid #f1f5f9;
-        transition: all 0.2s ease;
-    }
-    .table tbody tr:hover {
-        background: #f8fafc;
-    }
-    .table tbody td {
-        padding: 1rem;
-        vertical-align: middle;
-    }
-    .badge {
-        padding: 0.4em 0.8em;
-        border-radius: 6px;
+
+    .time-badge {
+        font-size: 0.9rem;
+        color: #475569;
         font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .specialist-info {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .specialist-name {
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 1.05rem;
+    }
+
+    .status-badge {
+        padding: 0.35rem 0.85rem;
+        border-radius: 2rem;
         font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
     }
-    .btn {
-        border-radius: 8px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
-    .btn-primary {
-        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+
+    .status-pendiente { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+    .status-confirmada { background: #eff6ff; color: #0369a1; border: 1px solid #dbeafe; }
+    .status-cancelada { background: #fef2f2; color: #b91c1c; border: 1px solid #fee2e2; }
+    .status-concluida { background: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; }
+    .status-validado { background: #f0f9ff; color: #0284c7; border: 1px solid #e0f2fe; }
+    .status-en_consulta { background: #fffbeb; color: #b45309; border: 1px solid #fef3c7; }
+    .status-cerrado { background: #f0fdf4; color: #166534; border: 1px solid #dcfce7; }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
         border: none;
-        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+        text-decoration: none !important;
     }
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+    
+    .action-btn:hover {
+        transform: scale(1.1);
     }
-    .btn-sm {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.875rem;
-    }
-    .empty-state {
-        padding: 3rem 1rem;
-        text-align: center;
-        color: #94a3b8;
-    }
-    .empty-state i {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        opacity: 0.3;
+
+    .btn-view { background: #e0f2fe; color: #0284c7; }
+    .btn-meds { background: #dcfce7; color: #16a34a; }
+    .btn-cancel { background: #fee2e2; color: #dc2626; }
+
+    @media (max-width: 576px) {
+        .page-header {
+            padding: 1.5rem 1rem;
+            border-radius: 0 0 1.5rem 1.5rem;
+        }
+        .appointment-card {
+            border-radius: 1rem;
+        }
     }
 </style>
 @endpush
 
 @section('content')
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-1 font-weight-bold text-dark">
-                <i class="fas fa-calendar-alt text-primary mr-2"></i>Mis Citas
-            </h1>
-            <p class="text-muted mb-0">Agenda nuevas consultas, confirma fechas y revisa tus atenciones</p>
+<div class="container-fluid px-0 px-md-3">
+    <!-- Mobile Header -->
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+        <div class="text-center text-md-left">
+            <h1 class="h3 font-weight-bold mb-1" style="color: #0f172a;">Mis Citas</h1>
+            <p class="text-muted mb-0">Gestiona tus consultas y atenciones médicas</p>
         </div>
-        <a href="{{ route('citas.create') }}" class="btn btn-primary shadow-sm">
-            <i class="fas fa-calendar-plus mr-2"></i>Nueva cita
+        <a href="{{ route('citas.create') }}" class="btn-new-appointment">
+            <i class="fas fa-plus-circle"></i>
+            <span>Nueva Cita</span>
         </a>
     </div>
 
-    <!-- Success Message -->
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert">
-                <span>&times;</span>
-            </button>
-        </div>
-    @endif
+    <div class="container-fluid pb-5">
+        @if(session('success'))
+            <div class="alert alert-success border-0 shadow-sm rounded-lg mb-4" style="background: #dcfce7; color: #166534;">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle mr-2 text-success"></i>
+                    <strong>¡Listo!</strong>&nbsp;{{ session('success') }}
+                </div>
+            </div>
+        @endif
 
-    <!-- Citas Table -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title mb-0">
-                <i class="fas fa-list text-primary"></i> Listado de Citas
-            </h3>
-        </div>
-        <div class="card-body p-0">
-            @if(isset($items))
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Fecha / Hora</th>
-                                <th>Tipo</th>
-                                <th>Estado</th>
-                                <th>Especialista</th>
-                                <th class="text-right">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @forelse($items as $row)
-                            @php
-                                $__fecha = \Illuminate\Support\Carbon::parse($row['momento'])->format('d/m/Y');
-                                $__hora = str_replace(' ', '', \Illuminate\Support\Carbon::parse($row['momento'])->format('h:i a'));
-                                $tipo = $row['tipo'];
-                                $estado = $row['estado'];
-                                $badge = $tipo==='cita'
-                                    ? match($estado){ 'pendiente'=>'warning','confirmada'=>'info','cancelada'=>'danger','concluida'=>'success', default=>'secondary' }
-                                    : match($estado){ 'validado'=>'info','en_consulta'=>'warning','cerrado'=>'success', default=>'secondary' };
-                            @endphp
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <i class="far fa-calendar text-muted mr-2"></i>
-                                        <div>
-                                            <div class="font-weight-bold">{{ $__fecha }}</div>
-                                            <small class="text-muted">{{ $__hora }}</small>
+        @php
+            // Unify data source
+            $data = isset($items) ? $items : (isset($citas) ? $citas : []);
+        @endphp
+
+        <div class="row">
+            @forelse($data as $item)
+                @php
+                    // Normalize data structure
+                    $isItemArray = is_array($item);
+                    $id = $isItemArray ? $item['id'] : $item->id;
+                    $fechaRaw = $isItemArray ? $item['momento'] : $item->fecha;
+                    $tipo = $isItemArray ? $item['tipo'] : 'cita';
+                    $estado = $isItemArray ? $item['estado'] : $item->estado;
+                    $especialista = $isItemArray ? ($item['especialista'] ?? '—') : (optional($item->especialista)->name ?? '—');
+                    $tieneMeds = $isItemArray ? $item['tiene_meds'] : ($item->medicamentos()->exists());
+                    
+                    $carbonFecha = \Illuminate\Support\Carbon::parse($fechaRaw);
+                    $dia = $carbonFecha->format('d');
+                    $mes = $carbonFecha->translatedFormat('M');
+                    $hora = $carbonFecha->format('h:i A');
+                    
+                    $statusColor = match($estado) {
+                        'pendiente', 'en_consulta' => '#f59e0b',
+                        'confirmada', 'validado' => '#0ea5e9',
+                        'cancelada' => '#ef4444',
+                        'concluida', 'cerrado' => '#22c55e',
+                        default => '#64748b'
+                    };
+                @endphp
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="appointment-card">
+                        <div class="card-status-bar" style="background: {{ $statusColor }}"></div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="d-flex gap-3 align-items-center">
+                                    <div class="date-badge">
+                                        <span class="day">{{ $dia }}</span>
+                                        <span class="month">{{ $mes }}</span>
+                                    </div>
+                                    <div>
+                                        <div class="time-badge mb-1">
+                                            <i class="far fa-clock text-primary"></i>
+                                            {{ $hora }}
                                         </div>
+                                        <span class="status-badge status-{{ $estado }}">
+                                            {{ ucfirst(str_replace('_', ' ', $estado)) }}
+                                        </span>
                                     </div>
-                                </td>
-                                <td>
-                                    <span class="badge badge-light border">
-                                        <i class="fas {{ $tipo==='cita' ? 'fa-calendar-check' : 'fa-ambulance' }} mr-1"></i>
-                                        {{ $tipo==='cita' ? 'Cita' : 'Atención' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge badge-{{ $badge }}">
-                                        {{ $tipo==='cita' ? ucfirst($estado) : ($estado==='validado'?'Validada':($estado==='en_consulta'?'En proceso':($estado==='cerrado'?'Cerrada':ucfirst($estado)))) }}
-                                    </span>
-                                </td>
-                                <td>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-link text-muted p-0" type="button" data-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg rounded-lg">
+                                        @if($tipo === 'cita')
+                                            <a class="dropdown-item py-2" href="{{ route('citas.show', $id) }}">
+                                                <i class="fas fa-eye text-primary mr-2" style="width: 20px"></i> Ver detalles
+                                            </a>
+                                            @if($tieneMeds)
+                                                <a class="dropdown-item py-2" href="{{ route('citas.receta', $id) }}">
+                                                    <i class="fas fa-prescription-bottle-alt text-success mr-2" style="width: 20px"></i> Ver receta
+                                                </a>
+                                            @endif
+                                            @if(!in_array($estado, ['cancelada','concluida']))
+                                                <div class="dropdown-divider"></div>
+                                                <form action="{{ route('citas.cancelar', $id) }}" method="POST" class="js-cancel-cita">
+                                                    @csrf
+                                                    <button type="submit" class="dropdown-item py-2 text-danger">
+                                                        <i class="fas fa-ban mr-2" style="width: 20px"></i> Cancelar cita
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        @else
+                                            @if($estado === 'cerrado')
+                                                <a class="dropdown-item py-2" href="{{ route('atenciones.paciente.show', $id) }}">
+                                                    <i class="fas fa-eye text-primary mr-2" style="width: 20px"></i> Ver detalles
+                                                </a>
+                                            @endif
+                                            @if($tieneMeds)
+                                                <a class="dropdown-item py-2" href="{{ route('atenciones.paciente.receta', $id) }}">
+                                                    <i class="fas fa-prescription-bottle-alt text-success mr-2" style="width: 20px"></i> Ver receta
+                                                </a>
+                                            @endif
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="specialist-info">
+                                <p class="text-uppercase text-muted small font-weight-bold mb-1" style="font-size: 0.7rem; letter-spacing: 1px;">
+                                    {{ $tipo === 'cita' ? 'Especialista' : 'Atención Médica' }}
+                                </p>
+                                <div class="d-flex align-items-center justify-content-between">
                                     <div class="d-flex align-items-center">
-                                        <i class="fas fa-user-md text-info mr-2"></i>
-                                        {{ $row['especialista'] ?? '—' }}
-                                    </div>
-                                </td>
-                                <td class="text-right">
-                                    @if($tipo==='cita')
-                                        <a href="{{ route('citas.show', $row['id']) }}" class="btn btn-sm btn-outline-primary" title="Ver detalle">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        @if($row['tiene_meds'])
-                                            <a href="{{ route('citas.receta', $row['id']) }}" class="btn btn-sm btn-outline-success" title="Receta">
-                                                <i class="fas fa-prescription-bottle-alt"></i>
-                                            </a>
-                                        @endif
-                                        @if(!in_array($estado, ['cancelada','concluida']))
-                                            <form action="{{ route('citas.cancelar', $row['id']) }}" method="POST" class="d-inline js-cancel-cita" data-cita-id="{{ $row['id'] }}">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancelar">
-                                                    <i class="fas fa-ban"></i>
-                                                </button>
-                                            </form>
-                                        @endif
-                                    @else
-                                        @if($estado==='cerrado')
-                                            <a href="{{ route('atenciones.paciente.show', $row['id']) }}" class="btn btn-sm btn-outline-primary" title="Ver detalle">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                        @endif
-                                        @if($row['tiene_meds'])
-                                            <a href="{{ route('atenciones.paciente.receta', $row['id']) }}" class="btn btn-sm btn-outline-success" title="Receta">
-                                                <i class="fas fa-prescription-bottle-alt"></i>
-                                            </a>
-                                        @endif
-                                        @if($estado!=='cerrado' && !$row['tiene_meds'])
-                                            <span class="text-muted small">En curso</span>
-                                        @endif
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <i class="fas fa-calendar-times"></i>
-                                        <p class="mb-0">Aún no tienes consultas ni atenciones registradas</p>
-                                        <small>Agenda tu primera cita médica</small>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            @else
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Fecha / Hora</th>
-                                <th>Estado</th>
-                                <th>Especialista</th>
-                                <th class="text-right">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @forelse($citas as $cita)
-                            <tr>
-                                <td>
-                                    @php
-                                        $__f = \Illuminate\Support\Carbon::parse($cita->fecha);
-                                        $__fecha = $__f->format('d/m/Y');
-                                        $__hora = str_replace(' ', '', $__f->format('h:i a'));
-                                    @endphp
-                                    <div class="d-flex align-items-center">
-                                        <i class="far fa-calendar text-muted mr-2"></i>
-                                        <div>
-                                            <div class="font-weight-bold">{{ $__fecha }}</div>
-                                            <small class="text-muted">{{ $__hora }}</small>
+                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 40px; height: 40px;">
+                                            <i class="fas {{ $tipo === 'cita' ? 'fa-user-md' : 'fa-ambulance' }} text-primary"></i>
                                         </div>
+                                        <span class="specialist-name">{{ $especialista }}</span>
                                     </div>
-                                </td>
-                                <td>
-                                    @php $badge = match($cita->estado){
-                                        'pendiente' => 'warning',
-                                        'confirmada' => 'info',
-                                        'cancelada' => 'danger',
-                                        'concluida' => 'success',
-                                        default => 'secondary'
-                                    }; @endphp
-                                    <span class="badge badge-{{ $badge }}">{{ ucfirst($cita->estado) }}</span>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-user-md text-info mr-2"></i>
-                                        {{ optional($cita->especialista)->name ?? '—' }}
+                                    
+                                    <!-- Quick Actions (Visible) -->
+                                    <div class="d-flex gap-2">
+                                        @if($tipo === 'cita')
+                                            <a href="{{ route('citas.show', $id) }}" class="action-btn btn-view" title="Ver">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                        @elseif($estado === 'cerrado')
+                                            <a href="{{ route('atenciones.paciente.show', $id) }}" class="action-btn btn-view" title="Ver">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                        @endif
                                     </div>
-                                </td>
-                                <td class="text-right">
-                                    <a href="{{ route('citas.show', $cita) }}" class="btn btn-sm btn-outline-primary" title="Ver detalle">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    @if($cita->medicamentos()->exists())
-                                        <a href="{{ route('citas.receta', $cita) }}" class="btn btn-sm btn-outline-success" title="Receta">
-                                            <i class="fas fa-prescription-bottle-alt"></i>
-                                        </a>
-                                    @endif
-                                    <form action="{{ route('citas.cancelar', $cita) }}" method="POST" class="d-inline js-cancel-cita">
-                                        @csrf
-                                        <button class="btn btn-sm btn-outline-danger" @disabled($cita->estado==='cancelada') title="Cancelar">
-                                            <i class="fas fa-ban"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4">
-                                    <div class="empty-state">
-                                        <i class="fas fa-calendar-times"></i>
-                                        <p class="mb-0">No tienes citas registradas todavía</p>
-                                        <small>Agenda tu primera cita médica</small>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                        </tbody>
-                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            @endif
+            @empty
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <div class="bg-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                                <i class="fas fa-calendar-plus text-primary fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                        <h3 class="h4 font-weight-bold text-dark">No tienes citas programadas</h3>
+                        <p class="text-muted mb-4">Agenda tu primera consulta médica con nuestros especialistas.</p>
+                        <a href="{{ route('citas.create') }}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">
+                            Agendar Cita Ahora
+                        </a>
+                    </div>
+                </div>
+            @endforelse
         </div>
     </div>
 </div>
@@ -325,14 +364,20 @@
             form.addEventListener('submit', function(e){
                 e.preventDefault();
                 Swal.fire({
-                    title: '¿Cancelar esta cita?',
-                    text: 'Esta acción no se puede revertir. Se notificará al especialista si aplica.',
+                    title: '¿Cancelar cita?',
+                    text: 'Esta acción notificará al especialista.',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Sí, cancelar',
-                    cancelButtonText: 'No',
-                    confirmButtonColor: '#dc3545',
-                    cancelButtonColor: '#6c757d'
+                    cancelButtonText: 'Volver',
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    reverseButtons: true,
+                    customClass: {
+                        popup: 'rounded-xl',
+                        confirmButton: 'rounded-lg',
+                        cancelButton: 'rounded-lg'
+                    }
                 }).then(function(result){
                     if(result.isConfirmed){ form.submit(); }
                 });

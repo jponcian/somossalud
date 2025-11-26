@@ -12,13 +12,13 @@
                 </a>
                 <div class="d-lg-none d-flex align-items-center gap-2">
                     <a href="{{ route('login', ['perfil' => 'pacientes']) }}"
-                        class="btn btn-outline-primary btn-sm fw-bold px-3" aria-label="Pacientes"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Accede a tus resultados y citas">
+                        class="btn btn-outline-primary btn-sm fw-bold px-3" aria-label="Pacientes" data-bs-toggle="tooltip"
+                        data-bs-placement="bottom" title="Accede a tus resultados y citas">
                         <i class="fa-solid fa-user"></i>
                     </a>
-                    <a href="{{ route('login', ['perfil' => 'empleados']) }}" 
-                        class="btn btn-success btn-sm fw-bold px-3" aria-label="Clínica"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Acceso para personal médico y administrativo">
+                    <a href="{{ route('login', ['perfil' => 'empleados']) }}" class="btn btn-success btn-sm fw-bold px-3"
+                        aria-label="Clínica" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                        title="Acceso para personal médico y administrativo">
                         <i class="fa-solid fa-hospital"></i>
                     </a>
                 </div>
@@ -26,11 +26,12 @@
             <div class="d-none d-lg-flex align-items-center ms-auto gap-4">
                 <a href="#contacto" class="text-decoration-none text-primary fw-semibold">Contacto</a>
                 <a href="{{ route('login', ['perfil' => 'pacientes']) }}" class="btn btn-outline-primary fw-bold"
-                   data-bs-toggle="tooltip" data-bs-placement="bottom" title="Accede a tus resultados y citas">
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Accede a tus resultados y citas">
                     Pacientes
                 </a>
                 <a href="{{ route('login', ['perfil' => 'empleados']) }}" class="btn btn-success fw-bold"
-                   data-bs-toggle="tooltip" data-bs-placement="bottom" title="Acceso para personal médico y administrativo">
+                    data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="Acceso para personal médico y administrativo">
                     Clínica
                 </a>
             </div>
@@ -69,31 +70,32 @@
                         <i class="fa-solid fa-circle-info me-1"></i>
                         Costo de afiliación: <strong>$10</strong>
                         @if($__bsEquivalent !== null)
-                            <span class="ms-1">(aprox. {{ number_format((float) $__bsEquivalent, 2, ',', '.') }} Bs a la tasa actual)</span>
+                            <span class="ms-1">(aprox. {{ number_format((float) $__bsEquivalent, 2, ',', '.') }} Bs a la tasa
+                                actual)</span>
                         @else
                             <span class="ms-1">(equivalente en Bs no disponible)</span>
                         @endif
                     </div>
                     <!-- <div class="row mt-4 g-3 text-start">
-                                                                <div class="col-6 col-md-4">
-                                                                    <div class="metric-card">
-                                                                        <div class="value">+500</div>
-                                                                        <div class="label">Pacientes acompañados</div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-6 col-md-4">
-                                                                    <div class="metric-card">
-                                                                        <div class="value">10 min</div>
-                                                                        <div class="label">Promedio de respuesta</div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-6 col-md-4">
-                                                                    <div class="metric-card">
-                                                                        <div class="value">+6</div>
-                                                                        <div class="label">Aliados en integración</div>
-                                                                    </div>
-                                                                </div>
-                                                            </div> -->
+                                                                                                <div class="col-6 col-md-4">
+                                                                                                    <div class="metric-card">
+                                                                                                        <div class="value">+500</div>
+                                                                                                        <div class="label">Pacientes acompañados</div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="col-6 col-md-4">
+                                                                                                    <div class="metric-card">
+                                                                                                        <div class="value">10 min</div>
+                                                                                                        <div class="label">Promedio de respuesta</div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="col-6 col-md-4">
+                                                                                                    <div class="metric-card">
+                                                                                                        <div class="value">+6</div>
+                                                                                                        <div class="label">Aliados en integración</div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div> -->
                 </div>
                 <div class="col-lg-5 offset-lg-1">
                     <div class="insight-card">
@@ -114,9 +116,9 @@
                         </ul>
                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                             <!-- <div>
-                                                                                    <span class="d-block text-white-75 small">Próxima renovación</span>
-                                                                                    <strong>Octubre 2026</strong>
-                                                                                </div> -->
+                                                                                                                    <span class="d-block text-white-75 small">Próxima renovación</span>
+                                                                                                                    <strong>Octubre 2026</strong>
+                                                                                                                </div> -->
                             <a href="{{ route('login') }}" class="btn btn-outline-light btn-sm">Ingresar al portal</a>
                         </div>
                     </div>
@@ -134,9 +136,10 @@
                         <p class="mb-4 text-white-75">Agenda una demo personalizada y descubre cómo SomosSalud impulsa la
                             atención comunitaria junto a tu equipo.</p>
                         <div class="d-flex flex-column flex-md-row gap-3 justify-content-center justify-content-lg-start">
-                            <a href="mailto:alianzas@clinicasaludsonrisa.com" class="btn btn-light btn-lg">Afiliar mi clínica</a>
+                            <a href="mailto:alianzas@clinicasaludsonrisa.com.ve" class="btn btn-light btn-lg">Afiliar mi
+                                clínica</a>
                             <!-- <a href="mailto:alianzas@somossalud.com" class="btn btn-outline-light btn-lg">Escribir al
-                                                                    equipo</a> -->
+                                                                                                    equipo</a> -->
                         </div>
                     </div>
                     <div class="col-lg-5">
@@ -150,7 +153,8 @@
                                 <li class="d-flex align-items-center mb-2"><i
                                         class="fa-solid fa-phone text-primary me-3"></i><span>0414-1490401</span></li>
                                 <li class="d-flex align-items-center"><i
-                                        class="fa-solid fa-envelope text-primary me-3"></i><span>alianzas@clinicasaludsonrisa.com</span></li>
+                                        class="fa-solid fa-envelope text-primary me-3"></i><span>alianzas@clinicasaludsonrisa.com.ve</span>
+                                </li>
                             </ul>
                             <p class="small text-muted mb-0">Horario de atención: 24 horas / 7 días a la semana
                             </p>
@@ -162,25 +166,27 @@
     </section>
 
     <footer>
-        <div class="container text-center py-3">
+        <div class="container text-center py-0"
+            style="min-height:unset;line-height:1; padding-top:0.15rem; padding-bottom:0.15rem;">
             <span>© {{ date('Y') }} SomosSalud — Innovación en salud comunitaria.</span>
             @php
                 $__rateLanding = optional(\App\Models\ExchangeRate::latestEffective()->first());
             @endphp
             <div class="text-muted small mt-2">
                 @if($__rateLanding && $__rateLanding->rate)
-                    Tasa BCV: <strong>{{ number_format((float)$__rateLanding->rate, 2, ',', '.') }} Bs</strong> • {{ $__rateLanding->date?->format('d/m/Y') }}
+                    Tasa BCV: <strong>{{ number_format((float) $__rateLanding->rate, 2, ',', '.') }} Bs</strong> •
+                    {{ $__rateLanding->date?->format('d/m/Y') }}
                 @else
                     Tasa BCV no disponible
                 @endif
             </div>
             <!-- <div class="d-flex gap-3 justify-content-center mt-2">
-                <a href="https://www.instagram.com/clinicasaludsonrisave/?hl=es" target="_blank" rel="noopener"><i
-                    class="fa-brands fa-instagram me-1"></i>Instagram</a>
-                <a href="https://www.facebook.com/p/Clínica-SaludSonrisa-100089365696512/" target="_blank" rel="noopener"><i
-                    class="fa-brands fa-facebook me-1"></i>Facebook</a>
-                <a href="mailto:hola@somossalud.com"><i class="fa-solid fa-envelope me-1"></i>Contacto</a>
-            </div> -->
+                                                <a href="https://www.instagram.com/clinicasaludsonrisave/?hl=es" target="_blank" rel="noopener"><i
+                                                    class="fa-brands fa-instagram me-1"></i>Instagram</a>
+                                                <a href="https://www.facebook.com/p/Clínica-SaludSonrisa-100089365696512/" target="_blank" rel="noopener"><i
+                                                    class="fa-brands fa-facebook me-1"></i>Facebook</a>
+                                                <a href="mailto:hola@somossalud.com"><i class="fa-solid fa-envelope me-1"></i>Contacto</a>
+                                            </div> -->
         </div>
     </footer>
 @endsection

@@ -19,13 +19,16 @@
 
         <div>
             <x-input-label for="name" :value="__('Nombre')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)"
+                required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
         <div>
             <x-input-label for="sexo" :value="__('Sexo')" />
-            <select id="sexo" name="sexo" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+            <select id="sexo" name="sexo"
+                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                required>
                 <option value="">Seleccione...</option>
                 <option value="M" {{ old('sexo', $user->sexo) == 'M' ? 'selected' : '' }}>Masculino</option>
                 <option value="F" {{ old('sexo', $user->sexo) == 'F' ? 'selected' : '' }}>Femenino</option>
@@ -38,12 +41,13 @@
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
+            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !$user->hasVerifiedEmail())
                 <div>
                     <p class="text-sm mt-2 text-gray-800">
                         {{ __('Tu correo electrónico no está verificado.') }}
 
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <button form="send-verification"
+                            class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             {{ __('Haz clic aquí para reenviar el correo de verificación.') }}
                         </button>
                     </p>
@@ -57,17 +61,19 @@
             @endif
         </div>
 
+        <div>
+            <x-input-label for="fecha_nacimiento" :value="__('Fecha de nacimiento')" />
+            <x-text-input id="fecha_nacimiento" name="fecha_nacimiento" type="date" class="mt-1 block w-full"
+                :value="old('fecha_nacimiento', $user->fecha_nacimiento ? \Carbon\Carbon::parse($user->fecha_nacimiento)->format('Y-m-d') : '')" required autocomplete="bdate" />
+            <x-input-error class="mt-2" :messages="$errors->get('fecha_nacimiento')" />
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Guardar') }}</x-primary-button>
 
             @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Guardado.') }}</p>
+                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
+                    class="text-sm text-gray-600">{{ __('Guardado.') }}</p>
             @endif
         </div>
     </form>

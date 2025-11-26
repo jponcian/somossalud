@@ -14,12 +14,15 @@
 
     <!-- Scripts & estilos principales -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('css/custom-menu.css') }}">
 
     <!-- Bootstrap 5 (preferido en todo el proyecto) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
 
     <!-- Font Awesome 6 (iconos) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css"
+        crossorigin="anonymous">
 
     @stack('head')
     <style>
@@ -27,12 +30,14 @@
             background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
             background-attachment: fixed;
         }
+
         .decorative-icon {
             position: fixed;
             opacity: 0.1;
             pointer-events: none;
             z-index: -1;
         }
+
         .icon-1 {
             top: 10%;
             left: 5%;
@@ -40,6 +45,7 @@
             color: #0ea5e9;
             transform: rotate(-15deg);
         }
+
         .icon-2 {
             bottom: 15%;
             right: 5%;
@@ -47,6 +53,7 @@
             color: #10b981;
             transform: rotate(15deg);
         }
+
         /* Ensure content is above icons */
         .min-h-screen {
             position: relative;
@@ -78,14 +85,17 @@
         @php
             $__rate = optional(\App\Models\ExchangeRate::latestEffective()->first());
         @endphp
-    <footer class="main-footer border-top bg-white small d-flex justify-content-between align-items-center flex-wrap py-2 px-3 mt-auto" style="min-height:auto;">
+        <footer
+            class="main-footer border-top bg-white small d-flex justify-content-between align-items-center flex-wrap py-2 px-3 mt-auto"
+            style="min-height:auto;">
             <div class="text-muted my-1">
                 <strong>© {{ date('Y') }} SomosSalud.</strong>
                 <span class="d-none d-sm-inline"> Plataforma de pacientes.</span>
             </div>
             <div class="text-muted my-1">
                 @if($__rate && $__rate->rate)
-                    Tasa BCV: <strong>{{ number_format((float)$__rate->rate, 2, ',', '.') }} Bs</strong> • {{ $__rate->date?->format('d/m/Y') }}
+                    Tasa BCV: <strong>{{ number_format((float) $__rate->rate, 2, ',', '.') }} Bs</strong> •
+                    {{ $__rate->date?->format('d/m/Y') }}
                 @else
                     Tasa no disponible
                 @endif
@@ -97,7 +107,8 @@
     </div>
 
     <!-- Bootstrap JS bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
 
     @stack('scripts')
 </body>

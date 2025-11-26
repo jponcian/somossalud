@@ -20,12 +20,12 @@ class ProfileUpdateRequest extends FormRequest
             'email' => [
                 'required',
                 'string',
-                'lowercase',
                 'email',
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
             'sexo' => ['required', 'in:M,F'],
+            'fecha_nacimiento' => ['required', 'date'],
         ];
     }
 }

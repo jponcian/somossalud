@@ -1,285 +1,334 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Panel de pacientes
-        </h2>
-    </x-slot>
+    @push('head')
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            --secondary-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --accent-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif !important;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 2rem 1.5rem;
+            border-radius: 0 0 2rem 2rem;
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .welcome-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .date-text {
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 1.5rem;
+            border: none;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-card .card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .icon-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .card-text {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .btn-action {
+            padding: 0.75rem 1.5rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .btn-primary-soft {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+        .btn-primary-soft:hover {
+            background: #bae6fd;
+            color: #0369a1;
+        }
+
+        .btn-success-soft {
+            background: #dcfce7;
+            color: #059669;
+        }
+        .btn-success-soft:hover {
+            background: #bbf7d0;
+            color: #166534;
+        }
+
+        .btn-indigo-soft {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+        .btn-indigo-soft:hover {
+            background: #c7d2fe;
+            color: #4338ca;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.3);
+        }
+
+        .status-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+        }
+
+        .recent-item {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #f1f5f9;
+            transition: all 0.2s;
+        }
+
+        .recent-item:hover {
+            border-color: #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 1.5rem 1rem;
+                border-radius: 0 0 1.5rem 1.5rem;
+            }
+            .welcome-text {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+    @endpush
 
     @php
-        // Variables ahora llegan desde la ruta, pero mantenemos fallback por si acaso
-        $suscripcionActiva = $suscripcionActiva ?? \App\Models\Suscripcion::where('usuario_id', auth()->id())
-            ->where('estado', 'activo')
-            ->latest()
-            ->first();
+        $suscripcionActiva = $suscripcionActiva ?? \App\Models\Suscripcion::where('usuario_id', auth()->id())->where('estado', 'activo')->latest()->first();
         $reportePendiente = $reportePendiente ?? \App\Models\ReportePago::where('usuario_id', auth()->id())->where('estado','pendiente')->latest()->first();
         $ultimoRechazado = $ultimoRechazado ?? \App\Models\ReportePago::where('usuario_id', auth()->id())->where('estado','rechazado')->latest()->first();
         $tieneActiva = (bool) $suscripcionActiva;
     @endphp
 
-    @if (! $tieneActiva && ! $reportePendiente)
-        <!-- Modal Bootstrap: Activación de suscripción -->
-        <div class="modal fade" id="activarSuscripcionModal" tabindex="-1" aria-labelledby="activarSuscripcionLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title d-flex align-items-center" id="activarSuscripcionLabel">
-                            <i class="fas fa-id-card-alt me-2"></i> Activa tu suscripción
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+    <div class="min-vh-100 bg-light">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="welcome-text">Hola, {{ auth()->user()->name }}</h1>
+                        <p class="date-text mb-0">
+                            <i class="far fa-calendar-alt me-2"></i>{{ now()->isoFormat('D [de] MMMM, YYYY') }}
+                        </p>
                     </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <span class="badge rounded-pill text-bg-success me-2">Plan anual</span>
-                            <span class="badge rounded-pill text-bg-warning">Estado: inactivo</span>
-                        </div>
-                        <p class="mb-3">Activa tu suscripción para acceder a citas, resultados, historial y más herramientas de seguimiento médico.</p>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <div class="border rounded p-3 h-100">
-                                    @php
-                                        $__rateModal = optional(\App\Models\ExchangeRate::latestEffective()->first());
-                                        $__bsEquivModal = ($__rateModal && $__rateModal->rate) ? 10 * (float) $__rateModal->rate : null;
-                                    @endphp
-                                    <p class="fw-semibold mb-2"><i class="fas fa-dollar-sign me-1 text-success"></i> Costo: $10 USD
-                                        @if($__bsEquivModal !== null)
-                                            <span class="d-block small text-muted">Aprox. {{ number_format((float)$__bsEquivModal, 2, ',', '.') }} Bs (tasa actual)</span>
-                                        @else
-                                            <span class="d-block small text-muted">Equivalente en Bs no disponible</span>
-                                        @endif
-                                    </p>
-                                    <ul class="mb-0 small">
-                                        <li>Acceso a agenda de citas</li>
-                                        <li>Resultados y estudios</li>
-                                        <li>Perfil clínico unificado</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="border rounded p-3 h-100">
-                                    <p class="fw-semibold mb-2"><i class="far fa-clock me-1 text-secondary"></i> Pago Móvil</p>
-                                    <ul class="mb-0 small">
-                                        <li><span class="fw-medium">Banco:</span> Banco Ejemplo</li>
-                                        <li><span class="fw-medium">Teléfono:</span> 0414-0000000</li>
-                                        <li><span class="fw-medium">Cédula:</span> V-12.345.678</li>
-                                        <li><span class="fw-medium">Nombre:</span> SomosSalud Clínica</li>
-                                    </ul>
-                                    <p class="text-muted small mt-2">Realiza el pago exacto y guarda la referencia antes de continuar.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border rounded p-3 bg-light">
-                            <p class="fw-semibold mb-2"><i class="far fa-list-alt me-1 text-primary"></i> Pasos para activar</p>
-                            <ol class="mb-0 small ps-3">
-                                <li>Realiza el pago móvil por $10 USD</li>
-                                <li>Haz clic en "Reportar mi pago"</li>
-                                <li>Ingresa los datos y referencia del pago</li>
-                                <li>Espera la validación (recibirás confirmación)</li>
-                            </ol>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="{{ route('suscripcion.show') }}" class="btn btn-success">
-                            <i class="fas fa-paper-plane me-1"></i> Reportar mi pago
-                        </a>
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <div class="d-none d-md-block">
+                        <img src="{{ asset('images/saludsonrisa.jpg') }}" alt="Logo" class="rounded-circle shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
                     </div>
                 </div>
             </div>
         </div>
 
-        @push('scripts')
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    var el = document.getElementById('activarSuscripcionModal');
-                    // Solo auto-mostrar si no hay reporte pendiente (controlado también en Blade)
-                    if (el && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                        var modal = new bootstrap.Modal(el);
-                        modal.show();
-                    }
-                });
-            </script>
-        @endpush
-    @endif
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+        <div class="container pb-5">
+            <!-- Status Section -->
             @if (!$tieneActiva)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-start border-4 border-success">
-                    <div class="p-4 d-flex align-items-center justify-content-between">
-                        <div class="me-3">
+                <div class="status-card mb-4">
+                    <div class="d-flex justify-content-between align-items-start position-relative" style="z-index: 1;">
+                        <div>
                             @if($reportePendiente)
-                                <div class="fw-semibold">Tu pago está en revisión</div>
-                                <div class="text-muted small">Referencia: {{ $reportePendiente->referencia }} — Te avisaremos al aprobarse.</div>
+                                <h3 class="h5 font-weight-bold mb-1 text-warning">
+                                    <i class="fas fa-clock me-2"></i>Pago en Revisión
+                                </h3>
+                                <p class="text-white-50 mb-3 small">Referencia: {{ $reportePendiente->referencia }}</p>
+                                <a href="{{ route('suscripcion.show') }}" class="btn btn-sm btn-light text-dark font-weight-bold rounded-pill px-3">
+                                    Ver Estado
+                                </a>
                             @elseif($ultimoRechazado)
-                                <div class="fw-semibold text-danger">Tu último reporte fue rechazado</div>
-                                <div class="text-muted small">@if($ultimoRechazado->observaciones) Motivo: {{ $ultimoRechazado->observaciones }} @endif</div>
+                                <h3 class="h5 font-weight-bold mb-1 text-danger">
+                                    <i class="fas fa-times-circle me-2"></i>Pago Rechazado
+                                </h3>
+                                <p class="text-white-50 mb-3 small">{{ $ultimoRechazado->observaciones }}</p>
+                                <a href="{{ route('suscripcion.show') }}" class="btn btn-sm btn-light text-dark font-weight-bold rounded-pill px-3">
+                                    Intentar de nuevo
+                                </a>
                             @else
-                                <div class="fw-semibold">Activa tu suscripción</div>
-                                <div class="text-muted small">Realiza tu pago móvil y repórtalo para habilitar todas las funciones.</div>
+                                <h3 class="h5 font-weight-bold mb-1">Activa tu Suscripción</h3>
+                                <p class="text-white-50 mb-3 small">Accede a todas las funciones premium.</p>
+                                <a href="{{ route('suscripcion.show') }}" class="btn btn-sm btn-primary font-weight-bold rounded-pill px-3 border-0" style="background: var(--primary-gradient);">
+                                    Reportar Pago
+                                </a>
                             @endif
                         </div>
-                        <div class="text-nowrap">
-                            <a href="{{ route('suscripcion.show') }}" class="btn btn-success btn-sm">
-                                <i class="fas fa-paper-plane me-1"></i>
-                                {{ $reportePendiente ? 'Ver estado' : 'Reportar mi pago' }}
-                            </a>
-                        </div>
+                        <i class="fas fa-crown text-white-50 fa-3x"></i>
                     </div>
                 </div>
             @endif
 
-            {{-- <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Tu próxima atención</h3>
-                    <p class="text-sm text-gray-600">
-                        Revisa el estado de tus citas, resultados de laboratorio y datos personales en un solo lugar.
-                    </p>
-                </div>
-            </div> --}}
-
-            <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-emerald-400">
-                    <div class="p-6">
-                        <h4 class="text-base font-semibold text-gray-800 mb-1">Consultas y atenciones</h4>
-                        <p class="text-sm text-gray-600 mb-4">Agenda nuevas consultas y revisa tus atenciones por seguro en un sólo lugar.</p>
-                        <a href="{{ route('citas.index') }}"
-                            class="inline-flex items-center text-emerald-600 font-semibold text-sm">Gestionar citas<span
-                                class="ml-2">→</span></a>
-                    </div>
-                </div>
-
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-sky-400">
-                    <div class="p-6">
-                        <h4 class="text-base font-semibold text-gray-800 mb-1">Resultados y estudios</h4>
-                        <p class="text-sm text-gray-600 mb-4">
-                            Consulta informes, descarga tus resultados y comparte con especialistas cuando lo necesites.
-                        </p>
-                        <a href="{{ route('paciente.resultados') }}"
-                            class="inline-flex items-center text-sky-600 font-semibold text-sm">Ver mis resultados<span
-                                class="ml-2">→</span></a>
-                    </div>
-                </div>
-
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-indigo-400">
-                    <div class="p-6">
-                        <h4 class="text-base font-semibold text-gray-800 mb-1">Mi información</h4>
-                        <p class="text-sm text-gray-600 mb-4">
-                            Actualiza tus datos personales, contactos de emergencia y preferencias de comunicación.
-                        </p>
-                        <a href="{{ route('profile.edit') }}"
-                            class="inline-flex items-center text-indigo-600 font-semibold text-sm">Actualizar perfil<span
-                                class="ml-2">→</span></a>
-                    </div>
-                </div>
-
-                @if($ultimaReceta)
-                    <style>
-                        .card-receta {
-                            background: linear-gradient(180deg, #ffffff 0%, #fff0f5 100%);
-                            border: 1px solid #f8d7e2;
-                        }
-                        .card-receta .section-title { color: #b83280; }
-                        .btn-receta { background-color: #d63384; border-color: #d63384; color: #fff; }
-                        .btn-receta:hover { background-color: #b62c71; border-color: #b62c71; color: #fff; }
-                    </style>
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-pink-400 relative card-receta">
-                        <div class="p-6">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h4 class="text-base font-semibold section-title mb-0">Medicamentos recientes</h4>
-                                <span class="badge text-bg-light small">{{ $ultimaReceta->concluida_at ? 'Concluida' : 'En curso' }}</span>
+            <!-- Quick Actions Grid -->
+            <div class="row g-4 mb-5">
+                <!-- Citas -->
+                <div class="col-12 col-md-4">
+                    <div class="action-card">
+                        <div class="card-body">
+                            <div>
+                                <div class="icon-wrapper bg-blue-50 text-primary">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <h3 class="card-title">Citas Médicas</h3>
+                                <p class="card-text">Agenda nuevas consultas y revisa tus citas programadas.</p>
                             </div>
-                            @php $__fechaRec = \Illuminate\Support\Carbon::parse($ultimaReceta->fecha)->format('d/m/Y'); @endphp
-                            <p class="text-xs text-gray-500 mb-3">Receta de la cita con {{ optional($ultimaReceta->especialista)->name ?? 'Especialista' }} ({{ $__fechaRec }})</p>
-                            <div class="small" style="max-height: 220px; overflow-y:auto;">
-                                @foreach($ultimaReceta->medicamentos->sortBy('orden') as $m)
-                                    <div class="border rounded p-2 mb-2 position-relative">                                        
-                                        <div class="fw-semibold mb-1">
-                                            {{ $m->nombre_generico }}
-                                            @if($m->presentacion)
-                                                <span class="text-muted">— {{ $m->presentacion }}</span>
-                                            @endif
-                                        </div>
-                                        @if($m->posologia)
-                                            <div class="text-muted"><span class="fw-medium">Posología:</span> {{ $m->posologia }}</div>
-                                        @endif
-                                        @if($m->frecuencia)
-                                            <div class="text-muted"><span class="fw-medium">Frecuencia:</span> {{ $m->frecuencia }}</div>
-                                        @endif
-                                        @if($m->duracion)
-                                            <div class="text-muted"><span class="fw-medium">Duración:</span> {{ $m->duracion }}</div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                                @if($ultimaReceta->medicamentos->isEmpty())
-                                    <div class="text-muted fst-italic">No hay medicamentos registrados.</div>
-                                @endif
-                            </div>
-                            <div class="mt-3">
-                                <a href="{{ route('citas.receta', $ultimaReceta) }}" class="btn btn-sm btn-receta">
-                                    <i class="fas fa-prescription-bottle-alt me-1"></i> Ver receta completa
-                                </a>
-                            </div>
+                            <a href="{{ route('citas.index') }}" class="btn-action btn-primary-soft">
+                                Gestionar Citas <i class="fas fa-arrow-right"></i>
+                            </a>
                         </div>
-                        <span class="position-absolute top-0 end-0 p-2 text-pink-400">
-                            <i class="fas fa-pills"></i>
-                        </span>
                     </div>
-                @endif
-                @php
-                    $ultimaAtencionConMeds = \App\Models\Atencion::with(['medicamentos','medico'])
-                        ->where('paciente_id', auth()->id())
-                        ->whereHas('medicamentos')
-                        ->orderByRaw('COALESCE(cerrada_at, updated_at) DESC')
-                        ->first();
-                @endphp
-                @if($ultimaAtencionConMeds)
-                    <style>
-                        .card-atencion-meds { background: linear-gradient(180deg,#ffffff 0%, #eef9ff 100%); border:1px solid #cfe8ff; }
-                        .card-atencion-meds .section-title { color:#0d6efd; }
-                        .btn-atencion-meds { background:#0d6efd; border-color:#0d6efd; color:#fff; }
-                        .btn-atencion-meds:hover { background:#0b5ed7; border-color:#0b5ed7; color:#fff; }
-                    </style>
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-info-400 relative card-atencion-meds">
-                        <div class="p-6">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h4 class="text-base font-semibold section-title mb-0">Medicamentos recientes (Atención)</h4>
-                                <span class="badge text-bg-light small">{{ $ultimaAtencionConMeds->estado==='cerrado' ? 'Cerrada' : 'En curso' }}</span>
+                </div>
+
+                <!-- Resultados -->
+                <div class="col-12 col-md-4">
+                    <div class="action-card">
+                        <div class="card-body">
+                            <div>
+                                <div class="icon-wrapper bg-green-50 text-success">
+                                    <i class="fas fa-file-medical-alt"></i>
+                                </div>
+                                <h3 class="card-title">Resultados</h3>
+                                <p class="card-text">Consulta y descarga tus informes de laboratorio.</p>
                             </div>
-                            @php $__fechaAten = ($ultimaAtencionConMeds->iniciada_at ?? $ultimaAtencionConMeds->created_at)->format('d/m/Y'); @endphp
-                            <p class="text-xs text-gray-500 mb-3">Indicados en atención con {{ optional($ultimaAtencionConMeds->medico)->name ?? 'Especialista' }} ({{ $__fechaAten }})</p>
-                            <div class="small" style="max-height: 220px; overflow-y:auto;">
-                                @foreach($ultimaAtencionConMeds->medicamentos->sortBy('orden') as $m)
-                                    <div class="border rounded p-2 mb-2 position-relative">
-                                        <div class="fw-semibold mb-1">
-                                            {{ $m->nombre_generico }} @if($m->presentacion)<span class="text-muted">— {{ $m->presentacion }}</span>@endif
-                                        </div>
-                                        @if($m->posologia)
-                                            <div class="text-muted"><span class="fw-medium">Posología:</span> {{ $m->posologia }}</div>
-                                        @endif
-                                        @if($m->frecuencia)
-                                            <div class="text-muted"><span class="fw-medium">Frecuencia:</span> {{ $m->frecuencia }}</div>
-                                        @endif
-                                        @if($m->duracion)
-                                            <div class="text-muted"><span class="fw-medium">Duración:</span> {{ $m->duracion }}</div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                                @if($ultimaAtencionConMeds->medicamentos->isEmpty())
-                                    <div class="text-muted fst-italic">No hay medicamentos registrados.</div>
-                                @endif
-                            </div>
-                            <div class="mt-3">
-                                <a href="{{ route('atenciones.paciente.receta', $ultimaAtencionConMeds) }}" class="btn btn-sm btn-atencion-meds">
-                                    <i class="fas fa-prescription-bottle-alt me-1"></i> Ver receta completa
-                                </a>
-                            </div>
+                            <a href="{{ route('paciente.resultados') }}" class="btn-action btn-success-soft">
+                                Ver Resultados <i class="fas fa-arrow-right"></i>
+                            </a>
                         </div>
-                        <span class="position-absolute top-0 end-0 p-2 text-info">
-                            <i class="fas fa-briefcase-medical"></i>
-                        </span>
                     </div>
-                @endif
+                </div>
+
+                <!-- Perfil -->
+                <div class="col-12 col-md-4">
+                    <div class="action-card">
+                        <div class="card-body">
+                            <div>
+                                <div class="icon-wrapper bg-indigo-50 text-indigo-600">
+                                    <i class="fas fa-user-cog"></i>
+                                </div>
+                                <h3 class="card-title">Mi Perfil</h3>
+                                <p class="card-text">Actualiza tus datos personales y de contacto.</p>
+                            </div>
+                            <a href="{{ route('profile.edit') }}" class="btn-action btn-indigo-soft">
+                                Editar Perfil <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <!-- Recent Activity -->
+            @if($ultimaReceta || (isset($ultimaAtencionConMeds) && $ultimaAtencionConMeds))
+                <h2 class="h5 font-weight-bold mb-3 text-dark">Actividad Reciente</h2>
+                <div class="row g-4">
+                    @if($ultimaReceta)
+                        <div class="col-12 col-lg-6">
+                            <div class="recent-item h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="bg-pink-50 text-pink-500 rounded p-2">
+                                            <i class="fas fa-prescription-bottle-alt"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 font-weight-bold">Última Receta</h6>
+                                            <small class="text-muted">{{ \Carbon\Carbon::parse($ultimaReceta->fecha)->format('d/m/Y') }}</small>
+                                        </div>
+                                    </div>
+                                    <a href="{{ route('citas.receta', $ultimaReceta) }}" class="btn btn-sm btn-light text-primary">Ver</a>
+                                </div>
+                                <div class="small text-muted">
+                                    @foreach($ultimaReceta->medicamentos->take(2) as $med)
+                                        <div class="mb-1">• {{ $med->nombre_generico }}</div>
+                                    @endforeach
+                                    @if($ultimaReceta->medicamentos->count() > 2)
+                                        <div class="fst-italic">+ {{ $ultimaReceta->medicamentos->count() - 2 }} más</div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>

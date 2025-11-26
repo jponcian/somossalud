@@ -266,9 +266,18 @@
                         <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary font-weight-bold px-4">
                             <i class="fas fa-arrow-left mr-2"></i>Cancelar
                         </a>
-                        <button type="submit" class="btn btn-primary font-weight-bold px-5 shadow-sm">
-                            <i class="fas fa-save mr-2"></i>Guardar Cambios
-                        </button>
+                        <div class="d-flex gap-2">
+                            <form method="POST" action="{{ route('password.email') }}" class="d-inline-block mr-2">
+                                @csrf
+                                <input type="hidden" name="email" value="{{ $usuario->email }}">
+                                <button type="submit" class="btn btn-warning font-weight-bold px-4 shadow-sm" title="Enviar correo de recuperación de contraseña">
+                                    <i class="fas fa-envelope mr-2"></i>Solicitar cambio de contraseña
+                                </button>
+                            </form>
+                            <button type="submit" class="btn btn-primary font-weight-bold px-5 shadow-sm">
+                                <i class="fas fa-save mr-2"></i>Guardar Cambios
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>

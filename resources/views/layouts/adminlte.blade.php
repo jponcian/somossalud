@@ -15,14 +15,20 @@
         crossorigin="anonymous">
     {{-- Select2 --}}
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
     <style>
         /* Separación superior del contenido cuando no hay content-header */
-        .content-wrapper > .content { padding-top: .75rem; }
+        .content-wrapper>.content {
+            padding-top: .75rem;
+        }
+
         @media (min-width: 768px) {
-            .content-wrapper > .content { padding-top: 1rem; }
+            .content-wrapper>.content {
+                padding-top: 1rem;
+            }
         }
 
         /* Navbar Premium */
@@ -32,10 +38,12 @@
             background: linear-gradient(135deg, #0056b3 0%, #28a745 100%) !important;
             color: white !important;
         }
+
         .main-header .nav-link {
             color: rgba(255, 255, 255, 0.9) !important;
             font-weight: 500;
         }
+
         .main-header .nav-link:hover {
             color: #ffffff !important;
             background-color: rgba(255, 255, 255, 0.1);
@@ -44,17 +52,21 @@
 
         /* Sidebar Premium */
         .main-sidebar {
-            background: #0f172a !important; /* Slate 900 */
-            box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+            background: #0f172a !important;
+            /* Slate 900 */
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
             border-right: none;
         }
+
         .brand-link {
-            border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
             background: #0f172a !important;
         }
+
         .nav-sidebar .nav-item {
             margin-bottom: 4px;
         }
+
         .nav-sidebar .nav-link {
             border-radius: 8px !important;
             color: #94a3b8 !important;
@@ -62,16 +74,19 @@
             font-weight: 500;
             transition: all 0.2s ease;
         }
+
         .nav-sidebar .nav-link:hover {
-            background-color: rgba(255,255,255,0.05) !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
             color: #fff !important;
         }
-        .nav-sidebar .nav-item > .nav-link.active {
+
+        .nav-sidebar .nav-item>.nav-link.active {
             background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
             color: #fff !important;
             box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
             font-weight: 600;
         }
+
         .nav-sidebar .nav-icon {
             font-size: 1.1rem;
             margin-right: 0.5rem;
@@ -121,8 +136,10 @@
 
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="{{ route('panel.clinica') }}" class="brand-link d-flex align-items-center justify-content-center" style="min-height:58px;">
-                <img src="{{ asset('images/logo.png') }}" alt="SomosSalud" class="brand-image" style="max-height:38px; width:auto; object-fit:contain; opacity:1;">
+            <a href="{{ route('panel.clinica') }}" class="brand-link d-flex align-items-center justify-content-center"
+                style="min-height:58px;">
+                <img src="{{ asset('images/logo.png') }}" alt="SomosSalud" class="brand-image"
+                    style="max-height:38px; width:auto; object-fit:contain; opacity:1;">
             </a>
 
             <div class="sidebar">
@@ -164,7 +181,7 @@
                     <span class="px-3 py-1 rounded-pill bg-white shadow-sm border d-inline-flex align-items-center">
                         <i class="fas fa-coins text-success mr-2"></i>
                         <span class="font-weight-bold text-dark" style="font-size: 1.1em;">
-                            Tasa BCV: {{ number_format((float)$__rateAdmin->rate, 2, ',', '.') }} Bs
+                            Tasa BCV: {{ number_format((float) $__rateAdmin->rate, 2, ',', '.') }} Bs
                         </span>
                         <span class="text-muted ml-2 small border-left pl-2">
                             {{ $__rateAdmin->date?->format('d/m/Y') }}
@@ -186,7 +203,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     {{-- SweetAlert2 --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     {{-- Configuración global CSRF para AJAX --}}
     <script>
         $.ajaxSetup({
@@ -197,6 +214,14 @@
     </script>
 
     @stack('scripts')
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.$ && $.fn.select2) {
+            $('.select2').select2({ width: '100%' });
+        }
+    });
+</script>
 </body>
 
 </html>

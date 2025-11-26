@@ -26,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
         // to 191 to avoid "Specified key was too long" errors during migrations.
         Schema::defaultStringLength(191);
 
+        // Use Bootstrap 5 for pagination views instead of Tailwind
+        \Illuminate\Pagination\Paginator::useBootstrapFive();
+
         // Safety: ensure Spatie middleware aliases exist at runtime even if
         // Kernel.php changes haven't been picked up by a running process.
         // This prevents a BindingResolutionException when the string

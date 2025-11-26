@@ -23,95 +23,54 @@ class ResetSystemSeeder extends Seeder
         // Desactivar verificación de claves foráneas temporalmente
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        // ==========================================
-        // LIMPIAR TABLAS RELACIONADAS CON USUARIOS
-        // ==========================================
-        
-        $this->command->info('🗑️  Limpiando datos de usuarios y relaciones...');
-        
-        // Roles y permisos de usuarios
-        DB::table('model_has_roles')->truncate();
-        DB::table('model_has_permissions')->truncate();
-        
-        // Usuarios
-        DB::table('usuarios')->truncate();
-        
-        $this->command->info('   ✅ Usuarios eliminados');
+        $this->command->info('🗑️  Limpiando todas las tablas principales y relaciones...');
 
-        // ==========================================
-        // LIMPIAR TABLAS DE CITAS
-        // ==========================================
-        
-        $this->command->info('🗑️  Limpiando citas y datos relacionados...');
-        
-        // Adjuntos y medicamentos de citas
-        DB::table('cita_adjuntos')->truncate();
-        DB::table('cita_medicamentos')->truncate();
-        
-        // Citas
-        DB::table('citas')->truncate();
-        
-        $this->command->info('   ✅ Citas eliminadas');
+        // Truncar todas las tablas relevantes
+        $tablas = [
+            // Usuarios y relaciones
+            'model_has_roles',
+            'model_has_permissions',
+            'usuarios',
+            'especialidad_usuario',
+            'especialidades',
+            // Clínicas
+            'clinicas',
+            // Citas y relaciones
+            'citas',
+            'cita_medicamentos',
+            'cita_adjuntos',
+            // Atenciones y relaciones
+            'atenciones',
+            'atencion_medicamentos',
+            'atencion_adjuntos',
+            // Laboratorio
+            'lab_orders',
+            'lab_order_details',
+            'lab_results',
+            'lab_exams',
+            'lab_exam_items',
+            'lab_categories',
+            'lab_reference_groups',
+            'lab_reference_ranges',
+            // Inventario
+            'materiales',
+            'solicitudes_inventario',
+            'items_solicitud_inventario',
+            // Suscripciones y pagos
+            'pagos_reportados',
+            'suscripciones',
+            // Disponibilidad
+            'disponibilidades',
+            // Configuración y otros
+            'settings',
+            'exchange_rates',
+        ];
 
-        // ==========================================
-        // LIMPIAR TABLAS DE ATENCIONES
-        // ==========================================
-        
-        $this->command->info('🗑️  Limpiando atenciones y datos relacionados...');
-        
-        // Adjuntos y medicamentos de atenciones
-        DB::table('atencion_adjuntos')->truncate();
-        DB::table('atencion_medicamentos')->truncate();
-        
-        // Atenciones
-        DB::table('atenciones')->truncate();
-        
-        $this->command->info('   ✅ Atenciones eliminadas');
-
-        // ==========================================
-        // LIMPIAR TABLAS DE SUSCRIPCIONES Y PAGOS
-        // ==========================================
-        
-        $this->command->info('🗑️  Limpiando suscripciones y pagos...');
-        
-        // Reportes de pago
-        DB::table('pagos_reportados')->truncate();
-        
-        // Suscripciones
-        DB::table('suscripciones')->truncate();
-        
-        $this->command->info('   ✅ Suscripciones y pagos eliminados');
-
-        // ==========================================
-        // LIMPIAR TABLAS DE DISPONIBILIDAD
-        // ==========================================
-        
-        $this->command->info('🗑️  Limpiando horarios de disponibilidad...');
-        
-        DB::table('disponibilidades')->truncate();
-        
-        $this->command->info('   ✅ Disponibilidades eliminadas');
-
-        // ==========================================
-        // LIMPIAR TABLAS DE LABORATORIO
-        // ==========================================
-        
-        $this->command->info('🗑️  Limpiando resultados de laboratorio...');
-        
-        if (DB::getSchemaBuilder()->hasTable('resultados_laboratorio')) {
-            DB::table('resultados_laboratorio')->truncate();
-            $this->command->info('   ✅ Resultados de laboratorio eliminados');
-        }
-
-        // ==========================================
-        // LIMPIAR RELACIÓN ESPECIALIDADES-USUARIOS
-        // ==========================================
-        
-        $this->command->info('🗑️  Limpiando relaciones de especialidades...');
-        
-        if (DB::getSchemaBuilder()->hasTable('especialidad_usuario')) {
-            DB::table('especialidad_usuario')->truncate();
-            $this->command->info('   ✅ Relaciones especialidad-usuario eliminadas');
+        foreach ($tablas as $tabla) {
+            if (DB::getSchemaBuilder()->hasTable($tabla)) {
+                DB::table($tabla)->truncate();
+                $this->command->info('   ✅ Tabla limpiada: ' . $tabla);
+            }
         }
 
         // Reactivar verificación de claves foráneas

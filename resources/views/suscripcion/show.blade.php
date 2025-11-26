@@ -1,197 +1,390 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Mi suscripción</h2>
-    </x-slot>
+    @push('head')
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+        }
 
-    <div class="container py-4">
-        {{-- <h1 class="h4 mb-4">Mi suscripción</h1> --}}
+        body {
+            font-family: 'Outfit', sans-serif !important;
+        }
 
-        @if(session('error'))
-            <div class="alert alert-danger small">{{ session('error') }}</div>
-        @endif
-        @if(session('success'))
-            <div class="alert alert-success small">{{ session('success') }}</div>
-        @endif
+        .page-header-custom {
+            background: white;
+            padding: 2rem 1.5rem;
+            border-radius: 0 0 2rem 2rem;
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header-custom::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: var(--primary-gradient);
+        }
 
-        @if($suscripcion)
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <div class="row g-3 align-items-center">
-                        <div class="col-6 col-md-3">
-                            <div class="text-muted small">Plan</div>
-                            <div class="fw-semibold text-uppercase">{{ $suscripcion->plan }}</div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="text-muted small">Estado</div>
-                            <span class="badge {{ $suscripcion->estado === 'activo' ? 'text-bg-success' : 'text-bg-warning' }}">{{ ucfirst($suscripcion->estado) }}</span>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="text-muted small">Vence</div>
-                            <div class="fw-medium">{{ \Illuminate\Support\Carbon::parse($suscripcion->periodo_vencimiento)->format('d/m/Y') }}</div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="text-muted small">Método</div>
-                            <div class="fw-medium">{{ str_replace('_', ' ', $suscripcion->metodo_pago) }}</div>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ route('suscripcion.carnet') }}" class="btn btn-success btn-sm"><i class="fa-solid fa-id-card me-1"></i> Ver carnet</a>
-                    </div>
-                </div>
+        .content-card {
+            background: white;
+            border-radius: 1.5rem;
+            border: none;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-custom {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            background: white;
+        }
+
+        .card-title-custom {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 1.1rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1rem;
+            height: 100%;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1rem;
+        }
+
+        .form-control {
+            border-radius: 0.75rem;
+            border: 2px solid #e2e8f0;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.35);
+            color: white;
+        }
+
+        .payment-info-box {
+            background: #f0f9ff;
+            border: 1px dashed #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .payment-label { color: #64748b; }
+        .payment-val { font-weight: 600; color: #0f172a; text-align: right; }
+
+        @media (max-width: 768px) {
+            .page-header-custom {
+                padding: 1.5rem 1rem;
+                border-radius: 0 0 1.5rem 1.5rem;
+            }
+        }
+    </style>
+    @endpush
+
+    <div class="min-vh-100 bg-light pb-5">
+        <!-- Header -->
+        <div class="page-header-custom">
+            <div class="container">
+                <h1 class="h3 font-weight-bold mb-1" style="color: #0f172a;">Mi Suscripción</h1>
+                <p class="text-muted mb-0">Gestiona tu plan y pagos</p>
             </div>
-        @else
-            <div class="alert alert-primary small">No tienes una suscripción activa.</div>
-        @endif
+        </div>
 
-        @if(isset($ultimoReporte) && $ultimoReporte)
-            @if($ultimoReporte->estado === 'pendiente')
-                <div class="alert alert-warning small">Reporte de pago pendiente (ref: <strong>{{ $ultimoReporte->referencia }}</strong>). Te avisaremos cuando se apruebe.</div>
-            @elseif($ultimoReporte->estado === 'rechazado')
-                <div class="alert alert-danger small">Tu último reporte fue rechazado. @if($ultimoReporte->observaciones) Motivo: <strong>{{ $ultimoReporte->observaciones }}</strong>@endif</div>
+        <div class="container">
+            @if(session('error'))
+                <div class="alert alert-danger border-0 shadow-sm rounded-lg mb-4">
+                    <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                </div>
             @endif
-        @endif
+            @if(session('success'))
+                <div class="alert alert-success border-0 shadow-sm rounded-lg mb-4">
+                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                </div>
+            @endif
 
-        <div class="row g-4">
-            <div class="col-lg-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        @push('styles')
-                            <style>
-                                .reportar-pago-card {
-                                    background: linear-gradient(145deg,#ffffff 0%,#f8fafc 70%);
-                                    border: 1px solid #e5e9ef;
-                                    position: relative;
-                                }
-                                .reportar-pago-header {
-                                    display:flex;
-                                    align-items:center;
-                                    gap:.75rem;
-                                    padding:.65rem .85rem;
-                                    background:#0d6efd;
-                                    color:#fff;
-                                    border-radius:.5rem;
-                                    box-shadow:0 4px 12px -3px rgba(13,110,253,.35);
-                                }
-                                .reportar-pago-header i {font-size:1.1rem;}
-                                .reportar-pago-hint {font-size:.7rem; letter-spacing:.5px; text-transform:uppercase; color:#6c757d;}
-                                .form-floating-sm {position:relative;}
-                                .form-floating-sm > label {font-size:.65rem; text-transform:uppercase; letter-spacing:.5px; background:#fff; padding:0 .35rem; margin-left:.25rem;}
-                                .reportar-pago-card .form-control:focus {box-shadow:0 0 0 .2rem rgba(25,135,84,.15);}
-                                .badge-soft-info {background:rgba(13,110,253,.08); color:#0d6efd; border:1px solid rgba(13,110,253,.18);}
-                                .helper-box {background:#fff; border:1px dashed #ced4da; border-radius:.5rem; padding:.6rem .75rem; font-size:.7rem; color:#495057;}
-                            </style>
-                        @endpush
-                        <div class="reportar-pago-header mb-3">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            <div class="fw-semibold">Reportar pago</div>
-                        </div>
-                        @if(isset($ultimoReporte) && $ultimoReporte && $ultimoReporte->estado === 'pendiente')
-                            <div class="alert alert-warning small">Ya registraste un pago pendiente. Espera la validación.</div>
-                            <a href="{{ route('panel.pacientes') }}" class="btn btn-success btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Volver al panel</a>
-                        @else
-                        <form method="POST" action="{{ route('suscripcion.reportar') }}" class="row g-3 reportar-pago-card p-3 rounded-3">
-                            @csrf
-                            @php
-                                $__rateForm = optional(\App\Models\ExchangeRate::latestEffective()->first());
-                                $__bsDefaultNumeric = ($__rateForm && $__rateForm->rate) ? (10 * (float) $__rateForm->rate) : null;
-                                // Para el value del input number usamos punto decimal
-                                $__bsDefaultValue = $__bsDefaultNumeric !== null ? number_format($__bsDefaultNumeric, 2, '.', '') : '';
-                                // Para mostrar en texto usamos formato local con coma
-                                $__bsDefaultDisplay = $__bsDefaultNumeric !== null ? number_format($__bsDefaultNumeric, 2, ',', '.') : null;
-                            @endphp
-                            <div class="col-12 col-md-6">
-                                <label for="cedula_pagador" class="form-label small fw-semibold">Cédula del pagador</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text bg-white"><i class="fa-solid fa-id-card"></i></span>
-                                    <input type="text" id="cedula_pagador" name="cedula_pagador" value="{{ old('cedula_pagador') }}" class="form-control @error('cedula_pagador') is-invalid @enderror" required>
-                                    @error('cedula_pagador')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            <!-- Subscription Status -->
+            @if($suscripcion)
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h2 class="card-title-custom">
+                            <i class="fas fa-id-card text-primary"></i>
+                            Estado de la Suscripción
+                        </h2>
+                    </div>
+                    <div class="p-4">
+                        <div class="row g-3">
+                            <div class="col-6 col-md-3">
+                                <div class="info-item">
+                                    <div class="info-label">Plan</div>
+                                    <div class="info-value text-uppercase">{{ $suscripcion->plan }}</div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6">
-                                <label for="telefono_pagador" class="form-label small fw-semibold">Teléfono del pagador</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text bg-white"><i class="fa-solid fa-phone"></i></span>
-                                    <input type="text" id="telefono_pagador" name="telefono_pagador" value="{{ old('telefono_pagador') }}" class="form-control @error('telefono_pagador') is-invalid @enderror" placeholder="0414-1234567" required>
-                                    @error('telefono_pagador')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <div class="col-6 col-md-3">
+                                <div class="info-item">
+                                    <div class="info-label">Estado</div>
+                                    <span class="badge rounded-pill {{ $suscripcion->estado === 'activo' ? 'bg-success' : 'bg-warning text-dark' }}">
+                                        {{ ucfirst($suscripcion->estado) }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="info-item">
+                                    <div class="info-label">Vence</div>
+                                    <div class="info-value">
+                                        {{ \Illuminate\Support\Carbon::parse($suscripcion->periodo_vencimiento)->format('d/m/Y') }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="info-item">
+                                    <div class="info-label">Método</div>
+                                    <div class="info-value text-capitalize">
+                                        {{ str_replace('_', ' ', $suscripcion->metodo_pago) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-end">
+                            <a href="{{ route('suscripcion.carnet') }}" class="btn btn-outline-primary rounded-pill px-4">
+                                <i class="fas fa-address-card me-2"></i>Ver Carnet Digital
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-primary border-0 shadow-sm rounded-lg mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-info-circle fa-2x me-3 opacity-50"></i>
+                        <div>
+                            <h5 class="alert-heading fw-bold mb-1">No tienes una suscripción activa</h5>
+                            <p class="mb-0 small">Realiza el pago de tu anualidad para disfrutar de todos los beneficios.</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Pending Report Alert -->
+            @if(isset($ultimoReporte) && $ultimoReporte)
+                @if($ultimoReporte->estado === 'pendiente')
+                    <div class="content-card bg-warning bg-opacity-10 border-warning border-opacity-25">
+                        <div class="p-4">
+                            <div class="d-flex">
+                                <i class="fas fa-clock text-warning fa-2x me-3"></i>
+                                <div>
+                                    <h5 class="fw-bold text-warning-emphasis mb-1">Pago en Revisión</h5>
+                                    <p class="mb-0 text-muted small">
+                                        Referencia: <strong>{{ $ultimoReporte->referencia }}</strong>. 
+                                        Te notificaremos cuando sea aprobado.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @elseif($ultimoReporte->estado === 'rechazado')
+                    <div class="content-card bg-danger bg-opacity-10 border-danger border-opacity-25">
+                        <div class="p-4">
+                            <div class="d-flex">
+                                <i class="fas fa-times-circle text-danger fa-2x me-3"></i>
+                                <div>
+                                    <h5 class="fw-bold text-danger-emphasis mb-1">Pago Rechazado</h5>
+                                    <p class="mb-0 text-muted small">
+                                        @if($ultimoReporte->observaciones) 
+                                            Motivo: <strong>{{ $ultimoReporte->observaciones }}</strong>
+                                        @else
+                                            Por favor verifica los datos e intenta nuevamente.
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @endif
+
+            <div class="row g-4">
+                <!-- Payment Form -->
+                <div class="col-lg-7">
+                    <div class="content-card h-100">
+                        <div class="card-header-custom">
+                            <h2 class="card-title-custom">
+                                <div class="bg-primary bg-opacity-10 p-2 rounded-circle text-primary">
+                                    <i class="fas fa-paper-plane"></i>
+                                </div>
+                                Reportar Pago
+                            </h2>
+                        </div>
+                        <div class="p-4">
+                            @if(isset($ultimoReporte) && $ultimoReporte && $ultimoReporte->estado === 'pendiente')
+                                <div class="text-center py-5">
+                                    <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
+                                    <h4 class="fw-bold text-dark">¡Reporte Enviado!</h4>
+                                    <p class="text-muted">Tu pago está siendo verificado por nuestro equipo.</p>
+                                    <a href="{{ route('dashboard') }}" class="btn btn-primary-custom mt-3 w-auto px-4">
+                                        Volver al Inicio
+                                    </a>
+                                </div>
+                            @else
+                                <form method="POST" action="{{ route('suscripcion.reportar') }}">
+                                    @csrf
+                                    @php
+                                        $__rateForm = optional(\App\Models\ExchangeRate::latestEffective()->first());
+                                        $__bsDefaultNumeric = ($__rateForm && $__rateForm->rate) ? (10 * (float) $__rateForm->rate) : null;
+                                        $__bsDefaultValue = $__bsDefaultNumeric !== null ? number_format($__bsDefaultNumeric, 2, '.', '') : '';
+                                        $__bsDefaultDisplay = $__bsDefaultNumeric !== null ? number_format($__bsDefaultNumeric, 2, ',', '.') : null;
+                                    @endphp
+
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Cédula del Pagador</label>
+                                            <input type="text" id="cedula_pagador" name="cedula_pagador" value="{{ old('cedula_pagador') }}" class="form-control" required placeholder="V-12345678">
+                                            @error('cedula_pagador')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Teléfono</label>
+                                            <input type="text" id="telefono_pagador" name="telefono_pagador" value="{{ old('telefono_pagador') }}" class="form-control" required placeholder="0414-1234567">
+                                            @error('telefono_pagador')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Fecha</label>
+                                            <input type="date" id="fecha_pago" name="fecha_pago" value="{{ old('fecha_pago', now()->format('Y-m-d')) }}" class="form-control" required>
+                                            @error('fecha_pago')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Monto (Bs)</label>
+                                            <input type="number" step="0.01" id="monto" name="monto" value="{{ old('monto', $__bsDefaultValue) }}" class="form-control" required>
+                                            @if($__bsDefaultDisplay)
+                                                <div class="form-text small text-primary"><i class="fas fa-info-circle me-1"></i>Sugerido: {{ $__bsDefaultDisplay }} Bs</div>
+                                            @endif
+                                            @error('monto')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Referencia</label>
+                                            <input type="text" id="referencia" name="referencia" value="{{ old('referencia') }}" class="form-control" required placeholder="Últimos 6 dígitos">
+                                            @error('referencia')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 pt-3 border-top">
+                                        <button class="btn-primary-custom" type="submit">
+                                            Enviar Reporte de Pago
+                                        </button>
+                                        <p class="text-center text-muted small mt-2 mb-0">
+                                            Al enviar, confirmas que los datos son reales.
+                                        </p>
+                                    </div>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Instructions -->
+                <div class="col-lg-5">
+                    <div class="content-card h-100">
+                        <div class="card-header-custom bg-light">
+                            <h2 class="card-title-custom">
+                                <i class="fas fa-wallet text-secondary"></i>
+                                Datos para el Pago
+                            </h2>
+                        </div>
+                        <div class="p-4">
+                            <div class="text-center mb-4">
+                                <h3 class="display-6 fw-bold text-primary mb-0">$10 USD</h3>
+                                <p class="text-muted small">Anualidad</p>
+                            </div>
+
+                            @php
+                                $__ratePago = optional(\App\Models\ExchangeRate::latestEffective()->first());
+                                $__bsEquivPago = ($__ratePago && $__ratePago->rate) ? 10 * (float) $__ratePago->rate : null;
+                            @endphp
+
+                            @if($__bsEquivPago !== null)
+                                <div class="alert alert-info border-0 bg-info bg-opacity-10 text-info-emphasis mb-4">
+                                    <i class="fas fa-exchange-alt me-2"></i>
+                                    Aprox. <strong>{{ number_format((float)$__bsEquivPago, 2, ',', '.') }} Bs</strong>
+                                    <div class="small mt-1 opacity-75">Según tasa del día</div>
+                                </div>
+                            @endif
+
+                            <div class="payment-info-box">
+                                <h6 class="fw-bold text-uppercase text-muted small mb-3">Pago Móvil</h6>
+                                <div class="payment-row">
+                                    <span class="payment-label">Banco</span>
+                                    <span class="payment-val">{{ $pagoMovil['banco'] }}</span>
+                                </div>
+                                <div class="payment-row">
+                                    <span class="payment-label">Cédula/RIF</span>
+                                    <span class="payment-val">{{ $pagoMovil['identificacion'] }}</span>
+                                </div>
+                                <div class="payment-row">
+                                    <span class="payment-label">Teléfono</span>
+                                    <span class="payment-val">{{ $pagoMovil['telefono'] }}</span>
+                                </div>
+                                <div class="payment-row border-top pt-2 mt-2">
+                                    <span class="payment-label">Nombre</span>
+                                    <span class="payment-val">{{ $pagoMovil['nombre'] }}</span>
                                 </div>
                             </div>
                             
-                            <div class="col-sm-6">
-                                <label for="fecha_pago" class="form-label small">Fecha del pago</label>
-                                <input type="date" id="fecha_pago" name="fecha_pago" value="{{ old('fecha_pago', now()->format('Y-m-d')) }}" class="form-control form-control-sm @error('fecha_pago') is-invalid @enderror" required>
-                                @error('fecha_pago')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                            </div>
-                            <div class="col-sm-6">
-                                <label for="monto" class="form-label small fw-semibold">Monto (Bs)</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text bg-white"><i class="fa-solid fa-sack-dollar"></i></span>
-                                    <input type="number" step="0.01" id="monto" name="monto" value="{{ old('monto', $__bsDefaultValue) }}" class="form-control @error('monto') is-invalid @enderror" required>
-                                    @error('monto')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            @if($user->clinica && $user->clinica->descuento)
+                                <div class="mt-3 text-center">
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2">
+                                        <i class="fas fa-tag me-1"></i>
+                                        {{ $user->clinica->descuento }}% Descuento aplicado
+                                    </span>
                                 </div>
-                                @if($__bsDefaultDisplay)
-                                    <div class="form-text small">Sugerido según tasa actual para $10: {{ $__bsDefaultDisplay }} Bs</div>
-                                @endif
-                            </div>
-                            <div class="col-12">
-                                <label for="referencia" class="form-label small fw-semibold">Referencia del pago</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text bg-white"><i class="fa-solid fa-hashtag"></i></span>
-                                    <input type="text" id="referencia" name="referencia" value="{{ old('referencia') }}" class="form-control @error('referencia') is-invalid @enderror" required>
-                                    @error('referencia')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="helper-box">Verifica que el monto coincida con el pago realizado y que la referencia sea exacta. Un error puede retrasar la activación.</div>
-                            </div>
-                            <div class="col-12 d-flex justify-content-between align-items-center">
-                                <button class="btn btn-success btn-sm d-inline-flex align-items-center" type="submit"><i class="fa-solid fa-paper-plane me-1"></i><span>Enviar reporte</span></button>
-                                <div class="text-muted small">Al aprobarse tu pago podrás agendar una cita médica</div>
-                            </div>
-                        </form>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h2 class="h6 fw-semibold mb-2">Pagar suscripción anual</h2>
-                        @php
-                            $__ratePago = optional(\App\Models\ExchangeRate::latestEffective()->first());
-                            $__bsEquivPago = ($__ratePago && $__ratePago->rate) ? 10 * (float) $__ratePago->rate : null;
-                        @endphp
-                        <p class="small mb-2">Precio: <span class="fw-bold">$10</span>
-                            @if($__bsEquivPago !== null)
-                                <span class="text-muted">(aprox. {{ number_format((float)$__bsEquivPago, 2, ',', '.') }} Bs · tasa actual)</span>
-                            @else
-                                <span class="text-muted">(equivalente en Bs no disponible)</span>
                             @endif
-                        </p>
-                        @if($user->clinica && $user->clinica->descuento)
-                            <p class="small mb-3">Afiliado a: <span class="fw-semibold">{{ $user->clinica->nombre }}</span> — Descuento: <span class="fw-semibold">{{ $user->clinica->descuento }}%</span></p>
-                        @endif
-                        <div class="border-top pt-3">
-                            <div class="fw-semibold small mb-2">Datos de Pago Móvil</div>
-                            <div class="row small g-2">
-                                <div class="col-6">
-                                    <div class="text-muted">Banco</div>
-                                    <div class="fw-medium">{{ $pagoMovil['banco'] }}</div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-muted">RIF/Cédula</div>
-                                    <div class="fw-medium">{{ $pagoMovil['identificacion'] }}</div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-muted">Teléfono</div>
-                                    <div class="fw-medium">{{ $pagoMovil['telefono'] }}</div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-muted">Nombre</div>
-                                    <div class="fw-medium">{{ $pagoMovil['nombre'] }}</div>
-                                </div>
-                            </div>
-                            <p class="mt-3 text-muted small">Si ves datos incorrectos, por favor contacta a administración.</p>
                         </div>
                     </div>
                 </div>
@@ -199,14 +392,10 @@
         </div>
     </div>
 
-        {{-- Sección sandbox eliminada para entorno productivo --}}
-    </div>
-
     @push('scripts')
     <script src="{{ asset('js/cedula-validator.js') }}"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Inicializar validador de cédula del pagador
         const cedulaPagadorInput = document.getElementById('cedula_pagador');
         if (cedulaPagadorInput) {
             new CedulaValidator('cedula_pagador');

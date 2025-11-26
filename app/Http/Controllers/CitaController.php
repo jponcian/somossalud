@@ -26,7 +26,7 @@ class CitaController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $usaAdmin = $user->hasRole(['especialista','super-admin','admin_clinica','recepcionista','laboratorio']);
+        $usaAdmin = $user->hasRole(['especialista', 'super-admin', 'admin_clinica', 'recepcionista', 'laboratorio']);
         if ($user->hasRole('especialista')) {
             // Mostrar solo las citas asignadas a este especialista
             $citas = Cita::where('especialista_id', $user->id)
@@ -75,7 +75,7 @@ class CitaController extends Controller
                 'items' => $items,
             ]);
         } else {
-            $citas = Cita::orderBy('fecha', 'desc')->orderBy('id','desc')->get();
+            $citas = Cita::orderBy('fecha', 'desc')->orderBy('id', 'desc')->get();
         }
         return view($usaAdmin ? 'citas.admin.index' : 'citas.index', compact('citas'));
     }
@@ -84,10 +84,10 @@ class CitaController extends Controller
     {
         // Solo especialidades que tengan al menos un usuario con rol especialista asignado (muchos a muchos)
         $especialidades = Especialidad::whereHas('usuarios', function ($q) {
-                $q->role('especialista');
-            })
+            $q->role('especialista');
+        })
             ->orderBy('nombre')
-            ->get(['id','nombre']);
+            ->get(['id', 'nombre']);
 
         return view('citas.create', compact('especialidades'));
     }
@@ -95,14 +95,14 @@ class CitaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'especialidad_id' => ['required','exists:especialidades,id'],
-            'especialista_id' => ['required','exists:usuarios,id'],
-            'fecha' => ['required','date_format:Y-m-d H:i'],
+            'especialidad_id' => ['required', 'exists:especialidades,id'],
+            'especialista_id' => ['required', 'exists:usuarios,id'],
+            'fecha' => ['required', 'date_format:Y-m-d H:i'],
         ]);
 
         // Verificar que el especialista pertenece a la especialidad seleccionada (muchos a muchos)
         $especialista = User::role('especialista')->findOrFail($validated['especialista_id']);
-        if (!$especialista->especialidades->pluck('id')->contains((int)$validated['especialidad_id'])) {
+        if (!$especialista->especialidades->pluck('id')->contains((int) $validated['especialidad_id'])) {
             return back()->withErrors(['especialista_id' => 'El especialista no pertenece a la especialidad seleccionada.'])->withInput();
         }
 
@@ -146,7 +146,7 @@ class CitaController extends Controller
                 Mail::to($cita->usuario->email)->queue(new \App\Mail\CitaAgendada($cita));
             }
         } catch (\Throwable $e) {
-            Log::error('Fallo al enviar correo de cita agendada: '.$e->getMessage());
+            Log::error('Fallo al enviar correo de cita agendada: ' . $e->getMessage());
         }
 
         return redirect()->route('citas.index')->with('success', 'Cita creada correctamente.');
@@ -155,17 +155,17 @@ class CitaController extends Controller
     public function show(Cita $cita)
     {
         $user = Auth::user();
-        $usaAdmin = $user->hasRole(['especialista','super-admin','admin_clinica','recepcionista','laboratorio']);
-        // Construir historial resumido del paciente para especialistas/admin
+        $isPaciente = $user->hasRole('paciente');
+        $usaAdmin = $user->hasRole(['especialista', 'super-admin', 'admin_clinica', 'recepcionista', 'laboratorio']);
         $historial = collect();
         if ($usaAdmin && $cita->usuario_id) {
             $pacienteId = $cita->usuario_id;
-            $citas = Cita::with(['especialista','medicamentos'])
+            $citas = Cita::with(['especialista', 'medicamentos'])
                 ->where('usuario_id', $pacienteId)
-                ->orderBy('fecha','desc')
+                ->orderBy('fecha', 'desc')
                 ->limit(10)
                 ->get();
-            $ats = \App\Models\Atencion::with(['medico','medicamentos'])
+            $ats = \App\Models\Atencion::with(['medico', 'medicamentos'])
                 ->where('paciente_id', $pacienteId)
                 ->orderByRaw('COALESCE(cerrada_at, updated_at, created_at) DESC')
                 ->limit(10)
@@ -178,12 +178,12 @@ class CitaController extends Controller
                     'especialista' => optional($c->especialista)->name,
                     'diagnostico' => $c->diagnostico,
                     'observaciones' => $c->observaciones,
-                    'meds_list' => $c->medicamentos->map(fn($m)=>[
-                        'nombre'=>$m->nombre_generico,
-                        'presentacion'=>$m->presentacion,
-                        'posologia'=>$m->posologia,
-                        'frecuencia'=>$m->frecuencia,
-                        'duracion'=>$m->duracion,
+                    'meds_list' => $c->medicamentos->map(fn($m) => [
+                        'nombre' => $m->nombre_generico,
+                        'presentacion' => $m->presentacion,
+                        'posologia' => $m->posologia,
+                        'frecuencia' => $m->frecuencia,
+                        'duracion' => $m->duracion,
                     ])->values(),
                 ]);
             }
@@ -195,12 +195,12 @@ class CitaController extends Controller
                     'especialista' => optional($a->medico)->name,
                     'diagnostico' => $a->diagnostico,
                     'observaciones' => $a->observaciones,
-                    'meds_list' => $a->medicamentos->map(fn($m)=>[
-                        'nombre'=>$m->nombre_generico,
-                        'presentacion'=>$m->presentacion,
-                        'posologia'=>$m->posologia,
-                        'frecuencia'=>$m->frecuencia,
-                        'duracion'=>$m->duracion,
+                    'meds_list' => $a->medicamentos->map(fn($m) => [
+                        'nombre' => $m->nombre_generico,
+                        'presentacion' => $m->presentacion,
+                        'posologia' => $m->posologia,
+                        'frecuencia' => $m->frecuencia,
+                        'duracion' => $m->duracion,
                     ])->values(),
                 ]);
             }
@@ -208,7 +208,11 @@ class CitaController extends Controller
             $historial = $historial->sortByDesc('momento')->take(10)->values();
         }
 
-        return view($usaAdmin ? 'citas.admin.show' : 'citas.show', compact('cita','historial'));
+        // Forzar layout de paciente si el usuario es paciente
+        if ($isPaciente) {
+            return view('citas.paciente_show', compact('cita', 'historial'));
+        }
+        return view('citas.admin.show', compact('cita', 'historial'));
     }
 
     public function destroy(Cita $cita)
@@ -225,7 +229,7 @@ class CitaController extends Controller
         // Permitir al dueño de la cita, al especialista asignado o a roles administrativos
         $puede = ($cita->usuario_id === $user->id)
             || ($cita->especialista_id === $user->id)
-            || ($user->hasRole(['super-admin','admin_clinica','recepcionista']));
+            || ($user->hasRole(['super-admin', 'admin_clinica', 'recepcionista']));
         if (!$puede) {
             abort(403);
         }
@@ -246,7 +250,7 @@ class CitaController extends Controller
                 Mail::to($cita->usuario->email)->queue(new \App\Mail\CitaActualizada($cita, 'cancelada', $anterior));
             }
         } catch (\Throwable $e) {
-            Log::error('Fallo al enviar correo de cita cancelada: '.$e->getMessage());
+            Log::error('Fallo al enviar correo de cita cancelada: ' . $e->getMessage());
         }
 
         return back()->with('success', 'Cita cancelada.');
@@ -258,17 +262,17 @@ class CitaController extends Controller
         $user = Auth::user();
         $puede = ($cita->usuario_id === $user->id)
             || ($cita->especialista_id === $user->id)
-            || ($user->hasRole(['super-admin','admin_clinica','recepcionista']));
+            || ($user->hasRole(['super-admin', 'admin_clinica', 'recepcionista']));
         if (!$puede) {
             abort(403);
         }
 
-        if (in_array($cita->estado, ['cancelada','concluida'])) {
-            return back()->withErrors(['fecha' => 'No se puede reprogramar una cita '.($cita->estado==='cancelada'?'cancelada':'concluida').'.']);
+        if (in_array($cita->estado, ['cancelada', 'concluida'])) {
+            return back()->withErrors(['fecha' => 'No se puede reprogramar una cita ' . ($cita->estado === 'cancelada' ? 'cancelada' : 'concluida') . '.']);
         }
 
         $validated = $request->validate([
-            'fecha' => ['required','date_format:Y-m-d H:i'],
+            'fecha' => ['required', 'date_format:Y-m-d H:i'],
         ]);
 
         $nuevaFecha = \Carbon\Carbon::createFromFormat('Y-m-d H:i', $validated['fecha']);
@@ -305,7 +309,7 @@ class CitaController extends Controller
                 Mail::to($cita->usuario->email)->queue(new \App\Mail\CitaActualizada($cita, 'reprogramada', $anterior));
             }
         } catch (\Throwable $e) {
-            Log::error('Fallo al enviar correo de cita reprogramada: '.$e->getMessage());
+            Log::error('Fallo al enviar correo de cita reprogramada: ' . $e->getMessage());
         }
 
         return back()->with('success', 'Cita reprogramada.');
@@ -314,14 +318,14 @@ class CitaController extends Controller
     // AJAX: lista de especialistas por especialidad
     public function doctoresPorEspecialidad(Request $request)
     {
-        $request->validate(['especialidad_id' => ['required','exists:especialidades,id']]);
+        $request->validate(['especialidad_id' => ['required', 'exists:especialidades,id']]);
         $especialidadId = (int) $request->query('especialidad_id');
         $doctores = User::role('especialista')
             ->whereHas('especialidades', function ($q) use ($especialidadId) {
                 $q->where('especialidades.id', $especialidadId);
             })
             ->orderBy('name')
-            ->get(['id','name']);
+            ->get(['id', 'name']);
 
         $payload = $doctores->map(fn($u) => [
             'id' => $u->id,
@@ -338,8 +342,8 @@ class CitaController extends Controller
     public function slotsDisponibles(Request $request)
     {
         $validated = $request->validate([
-            'especialista_id' => ['required','exists:usuarios,id'],
-            'fecha' => ['required','date_format:Y-m-d'],
+            'especialista_id' => ['required', 'exists:usuarios,id'],
+            'fecha' => ['required', 'date_format:Y-m-d'],
         ]);
 
         $especialista = User::role('especialista')->findOrFail($validated['especialista_id']);
@@ -350,13 +354,13 @@ class CitaController extends Controller
         $disps = Disponibilidad::where('especialista_id', $especialista->id)
             ->where('dia_semana', $diaKey)
             ->orderBy('hora_inicio')
-            ->get(['hora_inicio','hora_fin']);
+            ->get(['hora_inicio', 'hora_fin']);
 
         $duracionMin = 30; // minutos por cita
         $slots = [];
         foreach ($disps as $disp) {
-            $inicio = \Carbon\Carbon::parse($validated['fecha'].' '.$disp->hora_inicio);
-            $fin = \Carbon\Carbon::parse($validated['fecha'].' '.$disp->hora_fin);
+            $inicio = \Carbon\Carbon::parse($validated['fecha'] . ' ' . $disp->hora_inicio);
+            $fin = \Carbon\Carbon::parse($validated['fecha'] . ' ' . $disp->hora_fin);
             for ($dt = $inicio->copy(); $dt->lt($fin); $dt->addMinutes($duracionMin)) {
                 // Evitar slots en el pasado si la fecha es hoy
                 if ($dt->isPast()) {
@@ -385,8 +389,8 @@ class CitaController extends Controller
     public function diasDisponibles(Request $request)
     {
         $validated = $request->validate([
-            'especialista_id' => ['required','exists:usuarios,id'],
-            'dias' => ['nullable','integer','min:1','max:60'],
+            'especialista_id' => ['required', 'exists:usuarios,id'],
+            'dias' => ['nullable', 'integer', 'min:1', 'max:60'],
         ]);
         $especialista = User::role('especialista')->findOrFail($validated['especialista_id']);
         $span = $validated['dias'] ?? 21;
@@ -396,7 +400,7 @@ class CitaController extends Controller
 
         // Traer disponibilidades del especialista agrupadas por día_semana
         $disps = Disponibilidad::where('especialista_id', $especialista->id)
-            ->get(['dia_semana','hora_inicio','hora_fin']);
+            ->get(['dia_semana', 'hora_inicio', 'hora_fin']);
         if ($disps->isEmpty()) {
             return response()->json(['data' => []]);
         }
@@ -411,11 +415,12 @@ class CitaController extends Controller
             }
             $slotsCount = 0;
             foreach ($bloques as $b) {
-                $inicio = \Carbon\Carbon::parse($date->format('Y-m-d').' '.$b->hora_inicio);
-                $finHora = \Carbon\Carbon::parse($date->format('Y-m-d').' '.$b->hora_fin);
+                $inicio = \Carbon\Carbon::parse($date->format('Y-m-d') . ' ' . $b->hora_inicio);
+                $finHora = \Carbon\Carbon::parse($date->format('Y-m-d') . ' ' . $b->hora_fin);
                 $duracionMin = 30;
                 for ($dt = $inicio->copy(); $dt->lt($finHora); $dt->addMinutes($duracionMin)) {
-                    if ($dt->isPast()) continue; // no contar horas pasadas
+                    if ($dt->isPast())
+                        continue; // no contar horas pasadas
                     $ocupada = Cita::where('especialista_id', $especialista->id)
                         ->where('fecha', $dt->format('Y-m-d H:i'))
                         ->exists();
@@ -442,8 +447,9 @@ class CitaController extends Controller
     public function gestionar(Request $request, Cita $cita)
     {
         $user = Auth::user();
-        $puede = ($cita->especialista_id === $user->id) || ($user->hasRole(['super-admin','admin_clinica']));
-        if (!$puede) abort(403);
+        $puede = ($cita->especialista_id === $user->id) || ($user->hasRole(['super-admin', 'admin_clinica']));
+        if (!$puede)
+            abort(403);
 
         // No permitir gestionar una cita cancelada o concluida
         if ($cita->estado === 'cancelada') {
@@ -454,21 +460,21 @@ class CitaController extends Controller
         }
 
         $validated = $request->validate([
-            'diagnostico' => ['required','string','min:3'],
-            'observaciones' => ['nullable','string'],
-            'concluir' => ['nullable','boolean'],
+            'diagnostico' => ['required', 'string', 'min:3'],
+            'observaciones' => ['nullable', 'string'],
+            'concluir' => ['nullable', 'boolean'],
             // medicamentos estructurados (campo combinado nombre + presentación)
-            'medicamentos' => ['nullable','array','max:10'],
-            'medicamentos.*.nombre_generico' => ['required_with:medicamentos','string','max:255'], // ahora puede incluir presentación
-            'medicamentos.*.posologia' => ['nullable','string','max:255'],
-            'medicamentos.*.frecuencia' => ['nullable','string','max:150'],
-            'medicamentos.*.duracion' => ['nullable','string','max:150'],
+            'medicamentos' => ['nullable', 'array', 'max:10'],
+            'medicamentos.*.nombre_generico' => ['required_with:medicamentos', 'string', 'max:255'], // ahora puede incluir presentación
+            'medicamentos.*.posologia' => ['nullable', 'string', 'max:255'],
+            'medicamentos.*.frecuencia' => ['nullable', 'string', 'max:150'],
+            'medicamentos.*.duracion' => ['nullable', 'string', 'max:150'],
             // adjuntos
-            'adjuntos' => ['nullable','array','max:6'],
-            'adjuntos.*' => ['file','mimes:jpg,jpeg,png,webp,heic,pdf','max:5120'],
+            'adjuntos' => ['nullable', 'array', 'max:6'],
+            'adjuntos.*' => ['file', 'mimes:jpg,jpeg,png,webp,heic,pdf', 'max:5120'],
         ]);
 
-    DB::transaction(function () use ($cita, $validated, $request) {
+        DB::transaction(function () use ($cita, $validated, $request) {
             $cita->diagnostico = $validated['diagnostico'];
             $cita->observaciones = $validated['observaciones'] ?? null;
             // Mantener medicamentos_texto como respaldo si el front lo provee en bloque (opcional)
@@ -481,15 +487,17 @@ class CitaController extends Controller
                 $cita->medicamentos()->delete();
                 $orden = 1;
                 foreach ($validated['medicamentos'] as $med) {
-                    if (empty($med['nombre_generico'])) continue;
+                    if (empty($med['nombre_generico']))
+                        continue;
                     // Intentar separar presentación si el usuario ingresó "Nombre Presentación" o con coma/ guión
                     $nombreBruto = trim($med['nombre_generico']);
-                    $nombre = $nombreBruto; $presentacion = null;
+                    $nombre = $nombreBruto;
+                    $presentacion = null;
                     // Heurística: si contiene ' - ' o ' — ' dividir; si contiene coma, dividir primera coma; si varias palabras y última parece unidad (mg, ml, %, UI, comprimidos, caps, tab, ampolla(s)) entonces separar
                     if (preg_match('/\s[-–—]\s/', $nombreBruto)) {
-                        [$nombre,$presentacion] = preg_split('/\s[-–—]\s/', $nombreBruto,2);
+                        [$nombre, $presentacion] = preg_split('/\s[-–—]\s/', $nombreBruto, 2);
                     } elseif (str_contains($nombreBruto, ',')) {
-                        [$nombre,$presentacion] = array_map('trim', explode(',', $nombreBruto,2));
+                        [$nombre, $presentacion] = array_map('trim', explode(',', $nombreBruto, 2));
                     } else {
                         $parts = preg_split('/\s+/', $nombreBruto);
                         if (count($parts) > 1) {
@@ -515,7 +523,7 @@ class CitaController extends Controller
             // Adjuntos
             if (!empty($validated['adjuntos'])) {
                 foreach ($validated['adjuntos'] as $file) {
-                    $path = $file->store('citas/'.$cita->id, 'public');
+                    $path = $file->store('citas/' . $cita->id, 'public');
                     $cita->adjuntos()->create([
                         'ruta' => $path,
                         'nombre_original' => $file->getClientOriginalName(),
@@ -543,11 +551,12 @@ class CitaController extends Controller
     public function receta(Request $request, Cita $cita)
     {
         $user = Auth::user();
-        $puedeVer = ($cita->usuario_id === $user->id) || ($cita->especialista_id === $user->id) || ($user->hasRole(['super-admin','admin_clinica']));
-        if (!$puedeVer) abort(403);
+        $puedeVer = ($cita->usuario_id === $user->id) || ($cita->especialista_id === $user->id) || ($user->hasRole(['super-admin', 'admin_clinica']));
+        if (!$puedeVer)
+            abort(403);
 
-        $cita->load(['medicamentos','especialista','clinica']);
-        $usaAdmin = $user->hasRole(['especialista','super-admin','admin_clinica','recepcionista','laboratorio']);
+        $cita->load(['medicamentos', 'especialista', 'clinica']);
+        $usaAdmin = $user->hasRole(['especialista', 'super-admin', 'admin_clinica', 'recepcionista', 'laboratorio']);
         return view($usaAdmin ? 'citas.admin.receta' : 'citas.receta', compact('cita'));
     }
 }

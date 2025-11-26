@@ -30,20 +30,24 @@
                         <input type="text" name="empresa" class="form-control form-control-sm bg-light border-0" placeholder="Empresa habitual del paciente">
                     </div>
 
-                    <div class="form-row mt-3">
-                        <div class="form-group col-md-6">
-                            <label class="small font-weight-bold text-uppercase text-muted">Aseguradora</label>
-                            <input type="text" name="aseguradora" class="form-control form-control-sm bg-light border-0">
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="small font-weight-bold text-uppercase text-muted">Aseguradora</label>
+                                <input type="text" name="aseguradora" class="form-control form-control-sm bg-light border-0">
+                            </div>
                         </div>
-                        <div class="form-group col-md-6">
-                            <label class="small font-weight-bold text-uppercase text-muted">Nombre del operador que atendió</label>
-                            <input type="text" name="nombre_operador" class="form-control form-control-sm bg-light border-0" placeholder="Nombre del operador">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="small font-weight-bold text-uppercase text-muted">N° Siniestro</label>
+                                <input type="text" name="numero_siniestro" class="form-control form-control-sm bg-light border-0" placeholder="Ej: Siniestro 123">
+                            </div>
                         </div>
                     </div>
 
                     <div class="form-group mt-3">
-                        <label class="small font-weight-bold text-uppercase text-muted">N° Siniestro</label>
-                        <input type="text" name="numero_siniestro" class="form-control form-control-sm bg-light border-0" placeholder="Ej: Siniestro 123">
+                        <label class="small font-weight-bold text-uppercase text-muted">Nombre del operador que atendió</label>
+                        <input type="text" name="nombre_operador" class="form-control form-control-sm bg-light border-0" placeholder="Nombre del operador">
                     </div>
 
                     <div class="form-group form-check mt-3">

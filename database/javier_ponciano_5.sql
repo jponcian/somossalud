@@ -1,17 +1,17 @@
 /*
- Navicat Premium Data Transfer
+ Navicat Premium Dump SQL
 
  Source Server         : Local
  Source Server Type    : MySQL
- Source Server Version : 80300
+ Source Server Version : 80030 (8.0.30)
  Source Host           : localhost:3306
  Source Schema         : javier_ponciano_5
 
  Target Server Type    : MySQL
- Target Server Version : 80300
+ Target Server Version : 80030 (8.0.30)
  File Encoding         : 65001
 
- Date: 26/11/2025 00:23:36
+ Date: 26/11/2025 14:23:06
 */
 
 SET NAMES utf8mb4;
@@ -68,13 +68,17 @@ DROP TABLE IF EXISTS `atenciones`;
 CREATE TABLE `atenciones`  (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `paciente_id` bigint UNSIGNED NOT NULL,
+  `titular_id` bigint UNSIGNED NULL DEFAULT NULL,
+  `titular_nombre` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `titular_cedula` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `titular_telefono` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `clinica_id` bigint UNSIGNED NOT NULL,
+  `empresa` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `recepcionista_id` bigint UNSIGNED NULL DEFAULT NULL,
-  `medico_id` bigint UNSIGNED NULL DEFAULT NULL,
+  `nombre_operador` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `especialidad_id` bigint UNSIGNED NULL DEFAULT NULL,
   `aseguradora` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `poliza` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `numero_seguro` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `numero_siniestro` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `seguro_validado` tinyint(1) NOT NULL DEFAULT 0,
   `validado_at` timestamp NULL DEFAULT NULL,
   `validado_por` bigint UNSIGNED NULL DEFAULT NULL,
@@ -90,10 +94,10 @@ CREATE TABLE `atenciones`  (
   INDEX `atenciones_paciente_id_foreign`(`paciente_id`) USING BTREE,
   INDEX `atenciones_clinica_id_foreign`(`clinica_id`) USING BTREE,
   INDEX `atenciones_recepcionista_id_foreign`(`recepcionista_id`) USING BTREE,
-  INDEX `atenciones_medico_id_foreign`(`medico_id`) USING BTREE,
   INDEX `atenciones_especialidad_id_foreign`(`especialidad_id`) USING BTREE,
   INDEX `atenciones_validado_por_foreign`(`validado_por`) USING BTREE,
-  INDEX `atenciones_estado_medico_id_index`(`estado`, `medico_id`) USING BTREE
+  INDEX `atenciones_estado_medico_id_index`(`estado`) USING BTREE,
+  INDEX `atenciones_titular_id_foreign`(`titular_id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -114,7 +118,8 @@ CREATE TABLE `cache`  (
 -- ----------------------------
 -- Records of cache
 -- ----------------------------
-INSERT INTO `cache` VALUES ('somossalud-cache-spatie.permission.cache', 'a:3:{s:5:\"alias\";a:0:{}s:11:\"permissions\";a:0:{}s:5:\"roles\";a:0:{}}', 1764122793);
+INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|::1:timer', 'i:1764181352;', 1764181352);
+INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|::1', 'i:3;', 1764181352);
 
 -- ----------------------------
 -- Table structure for cache_locks
@@ -169,7 +174,7 @@ CREATE TABLE `cita_medicamentos`  (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `cita_medicamentos_cita_id_foreign`(`cita_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of cita_medicamentos
@@ -199,7 +204,7 @@ CREATE TABLE `citas`  (
   INDEX `citas_usuario_id_foreign`(`usuario_id`) USING BTREE,
   INDEX `citas_clinica_id_foreign`(`clinica_id`) USING BTREE,
   INDEX `citas_especialista_id_foreign`(`especialista_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of citas
@@ -213,18 +218,18 @@ CREATE TABLE `clinicas`  (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `nombre` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `direccion` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `telefono` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `descuento` int UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Porcentaje de descuento para afiliados',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of clinicas
 -- ----------------------------
-INSERT INTO `clinicas` VALUES (1, 'SaludSonrisa', 'Calle Principal 123', '+57 300 0000000', 10, '2025-11-05 10:06:46', '2025-11-05 10:06:46');
-INSERT INTO `clinicas` VALUES (3, 'SaludSonrisa', 'Calle Principal 123', '+57 300 0000000', 10, '2025-11-26 01:24:07', '2025-11-26 01:24:07');
+INSERT INTO `clinicas` VALUES (1, 'SaludSonrisa', 'Calabozo, Guarico, Venezuela', 'saludsonrisa@clinicasaludsonrisa.com.ve', '+58-246-8716474', 0, '2025-11-26 16:39:53', '2025-11-26 16:39:53');
 
 -- ----------------------------
 -- Table structure for disponibilidades
@@ -240,7 +245,7 @@ CREATE TABLE `disponibilidades`  (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `disp_especialista_intervalo_unique`(`especialista_id`, `dia_semana`, `hora_inicio`, `hora_fin`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of disponibilidades
@@ -251,15 +256,14 @@ CREATE TABLE `disponibilidades`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `especialidad_usuario`;
 CREATE TABLE `especialidad_usuario`  (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `usuario_id` bigint UNSIGNED NOT NULL,
   `especialidad_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `especialidad_usuario_usuario_id_especialidad_id_unique`(`usuario_id`, `especialidad_id`) USING BTREE,
-  INDEX `especialidad_usuario_especialidad_id_foreign`(`especialidad_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Fixed;
+  UNIQUE INDEX `usuario_especialidad`(`usuario_id`, `especialidad_id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Fixed;
 
 -- ----------------------------
 -- Records of especialidad_usuario
@@ -284,34 +288,6 @@ CREATE TABLE `especialidades`  (
 -- ----------------------------
 -- Records of especialidades
 -- ----------------------------
-INSERT INTO `especialidades` VALUES (1, 'Medicina General', 'medicina-general', NULL, '2025-11-06 00:10:20', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (2, 'Pediatría', 'pediatria', NULL, '2025-11-06 00:10:20', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (24, 'Psicología', 'psicologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (3, 'Odontología', 'odontologia', NULL, '2025-11-06 00:10:20', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (20, 'Oftalmología', 'oftalmologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (4, 'Ginecología', 'ginecologia', NULL, '2025-11-06 00:10:20', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (5, 'Cardiología', 'cardiologia', NULL, '2025-11-06 00:10:20', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (7, 'Cirugía', 'cirugia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (6, 'Anestesiología', 'anestesiologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (8, 'Dermatología', 'dermatologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (9, 'Ecografía', 'ecografia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (10, 'Enfermería', 'enfermeria', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (11, 'Fisioterapia', 'fisioterapia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (12, 'Fisitría', 'fisitria', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (13, 'Gastrología', 'gastrologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (14, 'Laboratorio', 'laboratorio', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (15, 'Medicina Interna', 'medicina-interna', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (16, 'Nefrología', 'nefrologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (17, 'Neumología', 'neumologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (18, 'Neurología', 'neurologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (19, 'Nutrición', 'nutricion', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (21, 'Oncología', 'oncologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (22, 'Ortodoncia', 'ortodoncia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (23, 'Otorrinología', 'otorrinologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (25, 'Psiquiatría', 'psiquiatria', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (26, 'Quirofano', 'quirofano', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (27, 'Traumatología', 'traumatologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
-INSERT INTO `especialidades` VALUES (28, 'Urología', 'urologia', NULL, '2025-11-06 01:45:30', '2025-11-06 01:45:30');
 
 -- ----------------------------
 -- Table structure for exchange_rates
@@ -329,16 +305,12 @@ CREATE TABLE `exchange_rates`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uniq_rate_date_source_pair`(`date`, `source`, `from`, `to`) USING BTREE,
   INDEX `exchange_rates_date_index`(`date`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of exchange_rates
 -- ----------------------------
-INSERT INTO `exchange_rates` VALUES (1, '2025-11-07', 'BCV', 'USD', 'VES', 228.480000, '2025-11-08 07:55:09', '2025-11-08 07:55:09');
-INSERT INTO `exchange_rates` VALUES (2, '2025-11-10', 'BCV', 'USD', 'VES', 231.046200, '2025-11-08 08:07:42', '2025-11-08 08:07:42');
-INSERT INTO `exchange_rates` VALUES (3, '2025-11-14', 'BCV', 'USD', 'VES', 234.871500, '2025-11-14 02:56:49', '2025-11-14 02:56:49');
-INSERT INTO `exchange_rates` VALUES (4, '2025-11-21', 'BCV', 'USD', 'VES', 241.578000, '2025-11-21 10:47:18', '2025-11-21 10:47:18');
-INSERT INTO `exchange_rates` VALUES (5, '2025-11-25', 'BCV', 'USD', 'VES', 243.110500, '2025-11-22 00:48:18', '2025-11-22 00:48:18');
+INSERT INTO `exchange_rates` VALUES (1, '2025-11-26', 'BCV', 'USD', 'VES', 243.572700, '2025-11-26 17:00:27', '2025-11-26 17:00:27');
 
 -- ----------------------------
 -- Table structure for failed_jobs
@@ -378,14 +350,15 @@ CREATE TABLE `items_solicitud_inventario`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `items_solicitud_inventario_material_id_foreign`(`material_id`) USING BTREE,
-  INDEX `items_solicitud_inventario_solicitud_id_index`(`solicitud_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+  INDEX `items_solicitud_inventario_material_id_foreign`(`material_id` ASC) USING BTREE,
+  INDEX `items_solicitud_inventario_solicitud_id_index`(`solicitud_id` ASC) USING BTREE,
+  CONSTRAINT `items_solicitud_inventario_material_id_foreign` FOREIGN KEY (`material_id`) REFERENCES `materiales` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT,
+  CONSTRAINT `items_solicitud_inventario_solicitud_id_foreign` FOREIGN KEY (`solicitud_id`) REFERENCES `solicitudes_inventario` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of items_solicitud_inventario
 -- ----------------------------
-INSERT INTO `items_solicitud_inventario` VALUES (1, 1, 4, 'Alcohol Etílico 70%', 'Material estándar de enfermeria', 'Litro', 1, NULL, NULL, NULL, '2025-11-25 11:25:54', '2025-11-25 11:25:54');
 
 -- ----------------------------
 -- Table structure for job_batches
@@ -423,7 +396,7 @@ CREATE TABLE `jobs`  (
   `created_at` int UNSIGNED NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `jobs_queue_index`(`queue`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of jobs
@@ -433,9 +406,26 @@ INSERT INTO `jobs` VALUES (2, 'default', '{\"uuid\":\"739f7199-bffe-4c84-970a-b0
 INSERT INTO `jobs` VALUES (3, 'default', '{\"uuid\":\"1e00aa58-bd5a-4e65-a14e-10f326570d18\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:2;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:19:\\\"JPONCIANG@GMAIL.COM\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762643958,\"delay\":null}', 0, NULL, 1762643958, 1762643958);
 INSERT INTO `jobs` VALUES (4, 'default', '{\"uuid\":\"0f3def6c-af19-4c6f-b8ab-cf5f913a1c1e\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:3;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:19:\\\"JPONCIANG@GMAIL.COM\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762645275,\"delay\":null}', 0, NULL, 1762645275, 1762645275);
 INSERT INTO `jobs` VALUES (5, 'default', '{\"uuid\":\"9103d6dc-b748-4752-82ed-99c34f67c6ab\",\"displayName\":\"App\\\\Mail\\\\CitaActualizada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:24:\\\"App\\\\Mail\\\\CitaActualizada\\\":5:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:2;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:4:\\\"tipo\\\";s:9:\\\"cancelada\\\";s:13:\\\"fechaAnterior\\\";s:19:\\\"2025-11-10 10:00:00\\\";s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:19:\\\"JPONCIANG@GMAIL.COM\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762736965,\"delay\":null}', 0, NULL, 1762736965, 1762736965);
-INSERT INTO `jobs` VALUES (6, 'default', '{\"uuid\":\"cef6cc95-7e90-428c-b34d-ba29983613a6\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:4;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:19:\\\"JPONCIANG@GMAIL.COM\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1763090106,\"delay\":null}', 0, NULL, 1763090106, 1763090106);
-INSERT INTO `jobs` VALUES (7, 'default', '{\"uuid\":\"68539695-6da2-44d4-a1d5-d72f44000ccf\",\"displayName\":\"App\\\\Mail\\\\SuscripcionAprobada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:28:\\\"App\\\\Mail\\\\SuscripcionAprobada\\\":4:{s:7:\\\"usuario\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";i:12;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:11:\\\"suscripcion\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:22:\\\"App\\\\Models\\\\Suscripcion\\\";s:2:\\\"id\\\";i:3;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:19:\\\"JPONCIANG@GMAIL.COM\\\";}}s:6:\\\"mailer\\\";s:4:\\\"smtp\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1763784637,\"delay\":null}', 0, NULL, 1763784637, 1763784637);
-INSERT INTO `jobs` VALUES (8, 'default', '{\"uuid\":\"55e0ffeb-bfe9-4261-a946-728ce23df7c0\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:5;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:19:\\\"JPONCIANG@GMAIL.COM\\\";}}s:6:\\\"mailer\\\";s:4:\\\"smtp\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1763786136,\"delay\":null}', 0, NULL, 1763786136, 1763786136);
+INSERT INTO `jobs` VALUES (6, 'default', '{\"uuid\":\"dd190ea7-0ee9-457f-8179-3f2743d95f94\",\"displayName\":\"App\\\\Mail\\\\SuscripcionAprobada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:28:\\\"App\\\\Mail\\\\SuscripcionAprobada\\\":4:{s:7:\\\"usuario\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";i:12;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:11:\\\"suscripcion\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:22:\\\"App\\\\Models\\\\Suscripcion\\\";s:2:\\\"id\\\";i:1;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:19:\\\"YNAZACR26@GMAIL.OCM\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762776217,\"delay\":null}', 0, NULL, 1762776217, 1762776217);
+INSERT INTO `jobs` VALUES (7, 'default', '{\"uuid\":\"c60e5728-7883-4761-8f6a-0e696f4913c4\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:1;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:19:\\\"YNAZACR26@GMAIL.OCM\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762776857,\"delay\":null}', 0, NULL, 1762776857, 1762776857);
+INSERT INTO `jobs` VALUES (8, 'default', '{\"uuid\":\"a59c47de-e12b-4543-a5ff-febfbbda1034\",\"displayName\":\"App\\\\Mail\\\\SuscripcionAprobada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:28:\\\"App\\\\Mail\\\\SuscripcionAprobada\\\":4:{s:7:\\\"usuario\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";i:15;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:11:\\\"suscripcion\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:22:\\\"App\\\\Models\\\\Suscripcion\\\";s:2:\\\"id\\\";i:2;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:19:\\\"JPONCIANG@GMAIL.COM\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762780509,\"delay\":null}', 0, NULL, 1762780509, 1762780509);
+INSERT INTO `jobs` VALUES (9, 'default', '{\"uuid\":\"e91c84eb-3ae0-42d6-86fa-aa0d6e744242\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:2;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:19:\\\"JPONCIANG@GMAIL.COM\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762780585,\"delay\":null}', 0, NULL, 1762780585, 1762780585);
+INSERT INTO `jobs` VALUES (10, 'default', '{\"uuid\":\"4d51865a-5332-4c2b-9516-96f76c8e868d\",\"displayName\":\"App\\\\Mail\\\\SuscripcionAprobada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:28:\\\"App\\\\Mail\\\\SuscripcionAprobada\\\":4:{s:7:\\\"usuario\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";i:16;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:11:\\\"suscripcion\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:22:\\\"App\\\\Models\\\\Suscripcion\\\";s:2:\\\"id\\\";i:3;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:17:\\\"alberto@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762782322,\"delay\":null}', 0, NULL, 1762782322, 1762782322);
+INSERT INTO `jobs` VALUES (11, 'default', '{\"uuid\":\"602e05f1-45dc-4d56-9fc6-28d8155358a6\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:3;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:17:\\\"alberto@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762782426,\"delay\":null}', 0, NULL, 1762782426, 1762782426);
+INSERT INTO `jobs` VALUES (12, 'default', '{\"uuid\":\"df912a49-2e07-4441-82a4-736012d4d155\",\"displayName\":\"App\\\\Mail\\\\SuscripcionAprobada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:28:\\\"App\\\\Mail\\\\SuscripcionAprobada\\\":4:{s:7:\\\"usuario\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";i:1;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:11:\\\"suscripcion\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:22:\\\"App\\\\Models\\\\Suscripcion\\\";s:2:\\\"id\\\";i:4;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:23:\\\"admin@saludsonrisa.test\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762869970,\"delay\":null}', 0, NULL, 1762869970, 1762869970);
+INSERT INTO `jobs` VALUES (13, 'default', '{\"uuid\":\"7b5a71c4-fb00-4b20-b6ab-c42cde1b8791\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:4;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:17:\\\"alberto@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762870264,\"delay\":null}', 0, NULL, 1762870264, 1762870264);
+INSERT INTO `jobs` VALUES (14, 'default', '{\"uuid\":\"7d089dc4-6193-4552-9b14-5b9c7f705356\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:5;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:17:\\\"alberto@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762873035,\"delay\":null}', 0, NULL, 1762873035, 1762873035);
+INSERT INTO `jobs` VALUES (15, 'default', '{\"uuid\":\"014677d5-8728-4b9f-a296-92a9bec43c8e\",\"displayName\":\"App\\\\Mail\\\\SuscripcionAprobada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:28:\\\"App\\\\Mail\\\\SuscripcionAprobada\\\":4:{s:7:\\\"usuario\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";i:18;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:11:\\\"suscripcion\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:22:\\\"App\\\\Models\\\\Suscripcion\\\";s:2:\\\"id\\\";i:5;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:27:\\\"telefonodevicente@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762873289,\"delay\":null}', 0, NULL, 1762873289, 1762873289);
+INSERT INTO `jobs` VALUES (16, 'default', '{\"uuid\":\"a96762dc-af48-4ed7-b0c2-86c31f2924bb\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:6;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:27:\\\"telefonodevicente@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762873369,\"delay\":null}', 0, NULL, 1762873369, 1762873369);
+INSERT INTO `jobs` VALUES (17, 'default', '{\"uuid\":\"e238a27c-595c-4e00-ae4c-d08545535abc\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:7;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:27:\\\"telefonodevicente@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762873420,\"delay\":null}', 0, NULL, 1762873420, 1762873420);
+INSERT INTO `jobs` VALUES (18, 'default', '{\"uuid\":\"747dc85a-5e8f-40ab-a257-2f3a2403036b\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:8;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:27:\\\"telefonodevicente@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762873489,\"delay\":null}', 0, NULL, 1762873489, 1762873489);
+INSERT INTO `jobs` VALUES (19, 'default', '{\"uuid\":\"f8fe4a03-93aa-4b49-9c03-7da48dc3228d\",\"displayName\":\"App\\\\Mail\\\\SuscripcionAprobada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:28:\\\"App\\\\Mail\\\\SuscripcionAprobada\\\":4:{s:7:\\\"usuario\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";i:20;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:11:\\\"suscripcion\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:22:\\\"App\\\\Models\\\\Suscripcion\\\";s:2:\\\"id\\\";i:6;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:18:\\\"yeniffer@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762889325,\"delay\":null}', 0, NULL, 1762889325, 1762889325);
+INSERT INTO `jobs` VALUES (20, 'default', '{\"uuid\":\"c5246d71-62b3-4507-9caa-0724f9f1f9b4\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:9;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:18:\\\"yeniffer@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1762889404,\"delay\":null}', 0, NULL, 1762889404, 1762889404);
+INSERT INTO `jobs` VALUES (21, 'default', '{\"uuid\":\"e61c3246-36cf-4bc8-9a8b-805f23851ca9\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:10;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:18:\\\"yeniffer@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1763397618,\"delay\":null}', 0, NULL, 1763397618, 1763397618);
+INSERT INTO `jobs` VALUES (22, 'default', '{\"uuid\":\"915ecd69-0d3a-45cc-89e4-9d1baf87be93\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:11;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:18:\\\"yeniffer@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1763397665,\"delay\":null}', 0, NULL, 1763397665, 1763397665);
+INSERT INTO `jobs` VALUES (23, 'default', '{\"uuid\":\"c6ea55dc-8676-437e-8596-99a6f462dcd4\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:12;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:27:\\\"telefonodevicente@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1763475644,\"delay\":null}', 0, NULL, 1763475644, 1763475644);
+INSERT INTO `jobs` VALUES (24, 'default', '{\"uuid\":\"5bbfeb9d-0432-40a6-81b5-27d636398a45\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:13;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:27:\\\"telefonodevicente@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1763475703,\"delay\":null}', 0, NULL, 1763475703, 1763475703);
+INSERT INTO `jobs` VALUES (25, 'default', '{\"uuid\":\"89a17095-5721-4779-8a2d-0f77d24208fd\",\"displayName\":\"App\\\\Mail\\\\SuscripcionAprobada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:28:\\\"App\\\\Mail\\\\SuscripcionAprobada\\\":4:{s:7:\\\"usuario\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";i:25;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:11:\\\"suscripcion\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:22:\\\"App\\\\Models\\\\Suscripcion\\\";s:2:\\\"id\\\";i:7;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:17:\\\"paciente@test.com\\\";}}s:6:\\\"mailer\\\";s:4:\\\"smtp\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1763993450,\"delay\":null}', 0, NULL, 1763993450, 1763993450);
 
 -- ----------------------------
 -- Table structure for lab_categories
@@ -450,7 +440,7 @@ CREATE TABLE `lab_categories`  (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `lab_categories_code_unique`(`code`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 43 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 43 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of lab_categories
@@ -505,7 +495,7 @@ CREATE TABLE `lab_exam_items`  (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `lab_exam_items_lab_exam_id_foreign`(`lab_exam_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 5897 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 5897 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of lab_exam_items
@@ -2478,7 +2468,7 @@ CREATE TABLE `lab_exams`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `lab_exams_code_unique`(`code`) USING BTREE,
   INDEX `lab_exams_lab_category_id_foreign`(`lab_category_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 557 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 557 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of lab_exams
@@ -3041,14 +3031,11 @@ CREATE TABLE `lab_order_details`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `lab_order_details_lab_order_id_foreign`(`lab_order_id`) USING BTREE,
   INDEX `lab_order_details_lab_exam_id_foreign`(`lab_exam_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Fixed;
+) ENGINE = MyISAM AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = FIXED;
 
 -- ----------------------------
 -- Records of lab_order_details
 -- ----------------------------
-INSERT INTO `lab_order_details` VALUES (1, 1, 307, 0.00, 'pending', '2025-11-26 03:15:35', '2025-11-26 03:15:35');
-INSERT INTO `lab_order_details` VALUES (2, 2, 431, 0.00, 'pending', '2025-11-26 03:30:53', '2025-11-26 03:30:53');
-INSERT INTO `lab_order_details` VALUES (3, 2, 15, 0.00, 'pending', '2025-11-26 03:30:53', '2025-11-26 03:30:53');
 
 -- ----------------------------
 -- Table structure for lab_orders
@@ -3078,13 +3065,11 @@ CREATE TABLE `lab_orders`  (
   INDEX `doctor_id`(`doctor_id`) USING BTREE,
   INDEX `clinica_id`(`clinica_id`) USING BTREE,
   INDEX `created_by`(`created_by`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of lab_orders
 -- ----------------------------
-INSERT INTO `lab_orders` VALUES (1, 'LAB-2025-000001', 3, NULL, 1, '2025-11-26', '2025-11-26', NULL, 'pending', 0.00, NULL, NULL, 1, 1, '2025-11-26 03:15:35', '2025-11-26 03:15:35');
-INSERT INTO `lab_orders` VALUES (2, 'LAB-2025-000002', 3, NULL, 1, '2025-11-26', '2025-11-26', NULL, 'pending', 0.00, NULL, NULL, 1, 2, '2025-11-26 03:30:53', '2025-11-26 03:30:53');
 
 -- ----------------------------
 -- Table structure for lab_reference_groups
@@ -3106,7 +3091,7 @@ CREATE TABLE `lab_reference_groups`  (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `lab_reference_groups_code_unique`(`code`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of lab_reference_groups
@@ -3159,7 +3144,7 @@ CREATE TABLE `lab_reference_ranges`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `lab_reference_ranges_lab_exam_item_id_foreign`(`lab_exam_item_id`) USING BTREE,
   INDEX `lab_reference_ranges_lab_reference_group_id_foreign`(`lab_reference_group_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 688 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 688 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of lab_reference_ranges
@@ -3867,7 +3852,7 @@ CREATE TABLE `lab_results`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `lab_results_lab_order_detail_id_foreign`(`lab_order_detail_id`) USING BTREE,
   INDEX `lab_results_lab_exam_item_id_foreign`(`lab_exam_item_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of lab_results
@@ -3890,39 +3875,12 @@ CREATE TABLE `materiales`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `materiales_clinica_id_nombre_index`(`clinica_id`, `nombre`) USING BTREE,
-  INDEX `materiales_clinica_id_categoria_default_index`(`clinica_id`, `categoria_default`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of materiales
 -- ----------------------------
-INSERT INTO `materiales` VALUES (1, 1, NULL, 'Guantes de Látex Talla M', 'Material estándar de enfermeria', 'Caja x 100', 'ENFERMERIA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (2, 1, NULL, 'Guantes de Látex Talla L', 'Material estándar de enfermeria', 'Caja x 100', 'ENFERMERIA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (3, 1, NULL, 'Gasas Estériles 10x10', 'Material estándar de enfermeria', 'Paquete', 'ENFERMERIA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (4, 1, NULL, 'Alcohol Etílico 70%', 'Material estándar de enfermeria', 'Litro', 'ENFERMERIA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (5, 1, NULL, 'Jeringas 5ml con aguja', 'Material estándar de enfermeria', 'Caja x 100', 'ENFERMERIA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (6, 1, NULL, 'Algodón Hidrófilo', 'Material estándar de enfermeria', 'Paquete 500g', 'ENFERMERIA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (7, 1, NULL, 'Vendas Elásticas 10cm', 'Material estándar de enfermeria', 'Unidad', 'ENFERMERIA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (8, 1, NULL, 'Adhesivo Micropore', 'Material estándar de enfermeria', 'Rollo', 'ENFERMERIA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (9, 1, NULL, 'Bata Quirúrgica Desechable', 'Material estándar de quirofano', 'Unidad', 'QUIROFANO', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (10, 1, NULL, 'Gorro Quirúrgico', 'Material estándar de quirofano', 'Caja x 100', 'QUIROFANO', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (11, 1, NULL, 'Mascarilla N95', 'Material estándar de quirofano', 'Caja x 20', 'QUIROFANO', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (12, 1, NULL, 'Sutura Nylon 3-0', 'Material estándar de quirofano', 'Caja x 12', 'QUIROFANO', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (13, 1, NULL, 'Bisturí Hoja #11', 'Material estándar de quirofano', 'Caja x 100', 'QUIROFANO', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (14, 1, NULL, 'Campo Quirúrgico Estéril', 'Material estándar de quirofano', 'Paquete', 'QUIROFANO', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (15, 1, NULL, 'Solución Yodada', 'Material estándar de quirofano', 'Galón', 'QUIROFANO', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (16, 1, NULL, 'Catéter Venoso Central', 'Material estándar de uci', 'Unidad', 'UCI', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (17, 1, NULL, 'Sonda Nasogástrica', 'Material estándar de uci', 'Unidad', 'UCI', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (18, 1, NULL, 'Electrodo para ECG', 'Material estándar de uci', 'Paquete x 50', 'UCI', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (19, 1, NULL, 'Tubo Endotraqueal 7.5', 'Material estándar de uci', 'Unidad', 'UCI', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (20, 1, NULL, 'Bolsa Colectora de Orina', 'Material estándar de uci', 'Unidad', 'UCI', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (21, 1, NULL, 'Resma de Papel Carta', 'Material estándar de oficina', 'Resma', 'OFICINA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (22, 1, NULL, 'Bolígrafos Azules', 'Material estándar de oficina', 'Caja x 12', 'OFICINA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (23, 1, NULL, 'Toner Impresora HP', 'Material estándar de oficina', 'Unidad', 'OFICINA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (24, 1, NULL, 'Carpetas Marrones', 'Material estándar de oficina', 'Paquete x 25', 'OFICINA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
-INSERT INTO `materiales` VALUES (25, 1, NULL, 'Grapas Standard', 'Material estándar de oficina', 'Caja', 'OFICINA', 0, 1, '2025-11-25 02:08:47', '2025-11-25 02:08:47', NULL);
 
 -- ----------------------------
 -- Table structure for migrations
@@ -3933,7 +3891,7 @@ CREATE TABLE `migrations`  (
   `migration` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 36 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of migrations
@@ -3945,7 +3903,7 @@ INSERT INTO `migrations` VALUES (4, '2025_11_04_000000_create_clinicas_table', 1
 INSERT INTO `migrations` VALUES (5, '2025_11_04_000100_add_clinica_id_to_users_table', 1);
 INSERT INTO `migrations` VALUES (6, '2025_11_04_000200_create_suscripciones_table', 1);
 INSERT INTO `migrations` VALUES (7, '2025_11_04_000300_create_citas_table', 1);
-INSERT INTO `migrations` VALUES (25, '2025_11_04_000400_create_resultados_laboratorio_table', 9);
+INSERT INTO `migrations` VALUES (8, '2025_11_04_000400_create_resultados_laboratorio_table', 1);
 INSERT INTO `migrations` VALUES (9, '2025_11_04_001000_add_cedula_to_usuarios_table', 1);
 INSERT INTO `migrations` VALUES (10, '2025_11_04_134759_create_permission_tables', 1);
 INSERT INTO `migrations` VALUES (11, '2025_11_05_000500_create_especialidades_table', 2);
@@ -3962,16 +3920,20 @@ INSERT INTO `migrations` VALUES (21, '2025_11_09_000000_create_atenciones_table'
 INSERT INTO `migrations` VALUES (22, '2025_11_09_000100_create_atencion_medicamentos_table', 7);
 INSERT INTO `migrations` VALUES (23, '2025_11_09_000200_create_atencion_adjuntos_table', 7);
 INSERT INTO `migrations` VALUES (24, '2025_11_13_000000_create_especialidad_usuario_table', 8);
+INSERT INTO `migrations` VALUES (25, '2025_11_25_011000_fix_missing_clinicas_table', 9);
 INSERT INTO `migrations` VALUES (26, '2025_11_25_011953_create_materiales_table', 10);
-INSERT INTO `migrations` VALUES (27, '2025_11_25_012000_create_solicitudes_inventario_table', 10);
-INSERT INTO `migrations` VALUES (28, '2025_11_25_012011_create_items_solicitud_inventario_table', 10);
-INSERT INTO `migrations` VALUES (29, '2025_11_25_011000_fix_missing_clinicas_table', 11);
-INSERT INTO `migrations` VALUES (30, '2025_11_25_125112_create_laboratory_tables', 11);
-INSERT INTO `migrations` VALUES (31, '2025_11_25_130823_create_lab_reference_tables', 11);
-INSERT INTO `migrations` VALUES (32, '2025_11_25_152500_add_daily_exam_count_to_lab_orders_table', 12);
-INSERT INTO `migrations` VALUES (33, '2025_11_25_180000_create_complete_lab_orders_system', 12);
-INSERT INTO `migrations` VALUES (34, '2025_11_25_215435_drop_resultados_laboratorio_table', 13);
-INSERT INTO `migrations` VALUES (35, '2025_11_26_021503_add_sexo_to_usuarios_table', 14);
+INSERT INTO `migrations` VALUES (27, '2025_11_25_012000_create_solicitudes_inventario_table', 11);
+INSERT INTO `migrations` VALUES (28, '2025_11_25_012011_create_items_solicitud_inventario_table', 11);
+INSERT INTO `migrations` VALUES (29, '2025_11_25_125112_create_laboratory_tables', 12);
+INSERT INTO `migrations` VALUES (30, '2025_11_25_130823_create_lab_reference_tables', 12);
+INSERT INTO `migrations` VALUES (32, '2025_11_25_180000_create_complete_lab_orders_system', 13);
+INSERT INTO `migrations` VALUES (33, '2025_11_25_200000_add_daily_exam_count_to_lab_orders_table', 14);
+INSERT INTO `migrations` VALUES (34, '2025_11_25_152500_add_daily_exam_count_to_lab_orders_table', 15);
+INSERT INTO `migrations` VALUES (35, '2025_11_25_192051_add_daily_exam_count_to_lab_orders_table', 15);
+INSERT INTO `migrations` VALUES (36, '2025_11_25_120000_update_atenciones_add_empresa_titular_operador_siniestro', 16);
+INSERT INTO `migrations` VALUES (37, '2025_11_25_215435_drop_resultados_laboratorio_table', 16);
+INSERT INTO `migrations` VALUES (38, '2025_11_26_021503_add_sexo_to_usuarios_table', 16);
+INSERT INTO `migrations` VALUES (39, '2025_11_26_120000_add_fecha_nacimiento_to_usuarios_table', 16);
 
 -- ----------------------------
 -- Table structure for model_has_permissions
@@ -4005,11 +3967,6 @@ CREATE TABLE `model_has_roles`  (
 -- Records of model_has_roles
 -- ----------------------------
 INSERT INTO `model_has_roles` VALUES (1, 'App\\Models\\User', 1);
-INSERT INTO `model_has_roles` VALUES (5, 'App\\Models\\User', 2);
-INSERT INTO `model_has_roles` VALUES (6, 'App\\Models\\User', 3);
-INSERT INTO `model_has_roles` VALUES (6, 'App\\Models\\User', 6);
-INSERT INTO `model_has_roles` VALUES (6, 'App\\Models\\User', 7);
-INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 4);
 
 -- ----------------------------
 -- Table structure for pagos_reportados
@@ -4034,7 +3991,7 @@ CREATE TABLE `pagos_reportados`  (
   INDEX `pagos_reportados_usuario_id_foreign`(`usuario_id`) USING BTREE,
   INDEX `pagos_reportados_reviewed_by_foreign`(`reviewed_by`) USING BTREE,
   INDEX `pagos_reportados_estado_index`(`estado`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of pagos_reportados
@@ -4054,7 +4011,9 @@ CREATE TABLE `password_reset_tokens`  (
 -- ----------------------------
 -- Records of password_reset_tokens
 -- ----------------------------
-INSERT INTO `password_reset_tokens` VALUES ('JPONCIANG@GMAIL.COM', '$2y$12$8pbvq6St5jtl9oIlELq5IuefC.r1AZwo0nZsibiSfYqCgqv3aAErG', '2025-11-23 13:36:18');
+INSERT INTO `password_reset_tokens` VALUES ('telefonodevicente@gmail.com', '$2y$12$HmqZMTtNIVgh3./eENn3y.lpQeFXtJ93VJfvhmLJO35cjyBA3Gwfe', '2025-11-23 18:41:04');
+INSERT INTO `password_reset_tokens` VALUES ('JPONCIANG@GMAIL.COM', '$2y$12$Gwpr8.yPo8yS017tL4U.PuHXKVPeI..jxjMzIPROgsBCWWny572aS', '2025-11-23 18:46:29');
+INSERT INTO `password_reset_tokens` VALUES ('mariadelccelis@gmail.com', '$2y$12$al8djgnbDONdq9qE2/4ufewZ5P6YzB1IJC/YURTxoVdw/MEMw8v5.', '2025-11-22 18:06:57');
 
 -- ----------------------------
 -- Table structure for permissions
@@ -4101,7 +4060,7 @@ CREATE TABLE `roles`  (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `roles_name_guard_name_unique`(`name`, `guard_name`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of roles
@@ -4112,8 +4071,9 @@ INSERT INTO `roles` VALUES (3, 'recepcionista', 'web', '2025-11-05 10:06:46', '2
 INSERT INTO `roles` VALUES (4, 'especialista', 'web', '2025-11-05 10:06:46', '2025-11-05 10:06:46');
 INSERT INTO `roles` VALUES (5, 'laboratorio', 'web', '2025-11-05 10:06:46', '2025-11-05 10:06:46');
 INSERT INTO `roles` VALUES (6, 'paciente', 'web', '2025-11-05 10:06:46', '2025-11-05 10:06:46');
-INSERT INTO `roles` VALUES (7, 'almacen', 'web', '2025-11-25 01:18:39', '2025-11-25 01:18:39');
-INSERT INTO `roles` VALUES (8, 'medico', 'web', '2025-11-26 01:24:07', '2025-11-26 01:24:07');
+INSERT INTO `roles` VALUES (7, 'almacen', 'web', '2025-11-25 17:04:14', '2025-11-25 17:04:14');
+INSERT INTO `roles` VALUES (8, 'jefe-almacen', 'web', '2025-11-25 17:04:14', '2025-11-25 17:04:14');
+INSERT INTO `roles` VALUES (9, 'lab-resultados', 'web', '2025-11-25 17:04:14', '2025-11-25 17:04:14');
 
 -- ----------------------------
 -- Table structure for sessions
@@ -4134,7 +4094,7 @@ CREATE TABLE `sessions`  (
 -- ----------------------------
 -- Records of sessions
 -- ----------------------------
-INSERT INTO `sessions` VALUES ('BjWE73ijAXpiwDNAsRZSV7BRKjIQMYFn1Luq44Gs', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiMG9oakdHSlJodEVwRmNadUkzbFFvcW56ZGg3dU8yNHFRZDFCT0kxOSI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQ1OiJodHRwOi8vbG9jYWxob3N0L3NvbW9zc2FsdWQvcHVibGljL2F0ZW5jaW9uZXMiO3M6NToicm91dGUiO3M6MTY6ImF0ZW5jaW9uZXMuaW5kZXgiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6MjU6InBhbmVsX2JpZW52ZW5pZGFfbW9zdHJhZGEiO2I6MTt9', 1764130914);
+INSERT INTO `sessions` VALUES ('dhznGYlgfkdQBXzpP1nkxcMtRQy9yTvvEZnrRO0y', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiMDhJb1dEN09od2dDRWs2WUdtcDJ5UHdsQ1RTWkxiRVJOMXg0VGNNdCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDg6Imh0dHA6Ly9sb2NhbGhvc3Qvc29tb3NzYWx1ZC9wdWJsaWMvcGFuZWwvY2xpbmljYSI7czo1OiJyb3V0ZSI7czoxMzoicGFuZWwuY2xpbmljYSI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7czoyNToicGFuZWxfYmllbnZlbmlkYV9tb3N0cmFkYSI7YjoxO30=', 1764181350);
 
 -- ----------------------------
 -- Table structure for settings
@@ -4153,10 +4113,6 @@ CREATE TABLE `settings`  (
 -- ----------------------------
 -- Records of settings
 -- ----------------------------
-INSERT INTO `settings` VALUES (1, 'pago_movil_banco', 'MERCANTIL', '2025-11-09 15:11:45', '2025-11-09 15:11:45');
-INSERT INTO `settings` VALUES (2, 'pago_movil_identificacion', 'V16912337', '2025-11-09 15:11:45', '2025-11-09 15:11:45');
-INSERT INTO `settings` VALUES (3, 'pago_movil_telefono', '0414-4679693', '2025-11-09 15:11:45', '2025-11-09 15:11:45');
-INSERT INTO `settings` VALUES (4, 'pago_movil_nombre', 'JAVIER PONCIANO', '2025-11-09 15:11:45', '2025-11-09 15:11:45');
 
 -- ----------------------------
 -- Table structure for solicitudes_inventario
@@ -4177,19 +4133,12 @@ CREATE TABLE `solicitudes_inventario`  (
   `fecha_despacho` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `solicitudes_inventario_numero_solicitud_unique`(`numero_solicitud`) USING BTREE,
-  INDEX `solicitudes_inventario_solicitante_id_foreign`(`solicitante_id`) USING BTREE,
-  INDEX `solicitudes_inventario_aprobado_por_foreign`(`aprobado_por`) USING BTREE,
-  INDEX `solicitudes_inventario_despachado_por_foreign`(`despachado_por`) USING BTREE,
-  INDEX `solicitudes_inventario_clinica_id_estado_created_at_index`(`clinica_id`, `estado`, `created_at`) USING BTREE,
-  INDEX `solicitudes_inventario_categoria_estado_index`(`categoria`, `estado`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of solicitudes_inventario
 -- ----------------------------
-INSERT INTO `solicitudes_inventario` VALUES (1, 'SOL-2025-0001', 4, 1, 'ENFERMERIA', 'pendiente', 'Observaciones', NULL, NULL, NULL, NULL, NULL, '2025-11-25 11:25:54', '2025-11-25 11:25:54');
 
 -- ----------------------------
 -- Table structure for suscripciones
@@ -4211,12 +4160,11 @@ CREATE TABLE `suscripciones`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `suscripciones_numero_unique`(`numero`) USING BTREE,
   INDEX `suscripciones_usuario_id_foreign`(`usuario_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of suscripciones
 -- ----------------------------
-INSERT INTO `suscripciones` VALUES (1, 7, NULL, 'anual', 10.00, '2025-11-26', '2026-11-26', 'activo', 'sandbox', 'sandbox-692656b93598d', '2025-11-26 01:24:09', '2025-11-26 01:24:09');
 
 -- ----------------------------
 -- Table structure for usuarios
@@ -4238,18 +4186,14 @@ CREATE TABLE `usuarios`  (
   `especialidad_id` bigint UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `usuarios_cedula_unique`(`cedula`) USING BTREE,
+  UNIQUE INDEX `usuarios_email_unique`(`email`) USING BTREE,
   INDEX `usuarios_clinica_id_foreign`(`clinica_id`) USING BTREE,
   INDEX `usuarios_especialidad_id_foreign`(`especialidad_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of usuarios
 -- ----------------------------
-INSERT INTO `usuarios` VALUES (1, 'Javier Ponciano', 'V-16912337', NULL, NULL, 'admin@saludsonrisa.com', '2025-11-23 18:55:12', '$2y$12$7gXFvAcpDo2p9quGVLYX3e6GnkqxhWCJDllQQNmq1JuCyVzXQkdM2', NULL, '2025-11-23 18:55:12', '2025-11-23 20:56:08', 1, NULL);
-INSERT INTO `usuarios` VALUES (2, 'Usuario Laboratorio', 'V-12345678', NULL, NULL, 'laboratorio@somossalud.com', NULL, '$2y$12$ah6k4InLLXtUlrZE3CBK0O8WxAwchygrk/jy9GNaICl7Uh48ExIXG', NULL, '2025-11-23 23:56:01', '2025-11-23 23:56:01', 1, NULL);
-INSERT INTO `usuarios` VALUES (3, 'Juan Pérez', 'V-98765432', '1984-10-01', 'M', 'jponciang@gmail.com', NULL, '$2y$12$kfbwjnB2wCYC1MZTkXZ1kexFTbyFuFMvrjt9LMiP6AtI/4gSbBAvi', NULL, '2025-11-23 23:56:02', '2025-11-26 02:37:08', 1, NULL);
-INSERT INTO `usuarios` VALUES (4, 'Usuario Almacen', 'V-12345679', '2000-01-01', NULL, 'JPONCIANG1@GMAIL.COM', NULL, '$2y$12$PqkyidYaXGdoGeQLxeWPHO2ccwGb7rqHvDvmW4Zy3hVDfpSju/wSO', NULL, '2025-11-25 01:48:47', '2025-11-25 01:48:47', 1, NULL);
-INSERT INTO `usuarios` VALUES (6, 'Paciente Sin Suscripcion', '20000000', NULL, NULL, NULL, NULL, '$2y$12$OL.UIlstN9Y4bnEfQ1kbqODZ.X9KTEI6om0/BFzaBlKbZrBvSGvFW', NULL, '2025-11-26 01:24:08', '2025-11-26 01:24:08', 1, NULL);
-INSERT INTO `usuarios` VALUES (7, 'Paciente Con Suscripcion', '30000000', NULL, NULL, NULL, NULL, '$2y$12$lmYzkMVhplG6Q15.lEOh9OOdyl7bvokRkGmWF7mJrr1uQHMBaK0DS', NULL, '2025-11-26 01:24:09', '2025-11-26 01:24:09', 1, NULL);
+INSERT INTO `usuarios` VALUES (1, 'Super Administrador', 'V-16912337', NULL, NULL, 'jponciang@gmail.com', '2025-11-26 16:39:54', '$2y$12$Tn0rL8pSAYTcwjhxcKsQvezB.dHylhRccqmMI7jqamCu5Oo/uE2dO', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;
