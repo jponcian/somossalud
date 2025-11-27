@@ -31,6 +31,7 @@ class User extends Authenticatable
         'fecha_nacimiento',
         'sexo',
         'especialidad_id',
+        'representante_id',
     ];
 
     /**
@@ -91,6 +92,18 @@ class User extends Authenticatable
     public function disponibilidades()
     {
         return $this->hasMany(Disponibilidad::class, 'especialista_id');
+    }
+
+    // Relación con el representante (padre/madre)
+    public function representante()
+    {
+        return $this->belongsTo(User::class, 'representante_id');
+    }
+
+    // Relación con los dependientes (hijos)
+    public function dependientes()
+    {
+        return $this->hasMany(User::class, 'representante_id');
     }
 
     // Accesores para nombres en español (lectura)
