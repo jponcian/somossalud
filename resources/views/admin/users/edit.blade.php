@@ -315,7 +315,7 @@
                     </a>
                     <div class="d-flex gap-2">
                         <button type="button" id="btn-password-reset" class="btn btn-warning font-weight-bold px-4 shadow-sm mr-2"
-                            data-user-id="{{ $usuario->id }}"
+                            data-reset-url="{{ route('admin.users.password-reset', $usuario) }}"
                             title="Enviar correo de recuperación de contraseña">
                             <i class="fas fa-envelope mr-2"></i>Solicitar cambio de contraseña
                         </button>
@@ -385,7 +385,7 @@
             
             if (btnPasswordReset) {
                 btnPasswordReset.addEventListener('click', function () {
-                    const userId = this.getAttribute('data-user-id');
+                    const resetUrl = this.getAttribute('data-reset-url');
                     const btn = this;
                     const originalHtml = btn.innerHTML;
                     
@@ -394,7 +394,7 @@
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
                     
                     // Realizar petición AJAX
-                    fetch(`/somossalud/public/admin/users/${userId}/password-reset`, {
+                    fetch(resetUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
