@@ -38,7 +38,7 @@ class SolicitudInventarioPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole(['super-admin', 'almacen']);
+        return $user->hasAnyRole(['super-admin', 'admin_clinica', 'almacen']);
     }
 
     /**

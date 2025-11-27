@@ -277,11 +277,11 @@ Route::middleware(['auth', 'verified'])
 
             Route::get('/crear', [\App\Http\Controllers\SolicitudInventarioController::class, 'create'])
                 ->name('create')
-                ->middleware('role:super-admin|almacen');
+                ->middleware('role:super-admin|admin_clinica|almacen');
 
             Route::post('/', [\App\Http\Controllers\SolicitudInventarioController::class, 'store'])
                 ->name('store')
-                ->middleware('role:almacen');
+                ->middleware('role:super-admin|admin_clinica|almacen');
 
             Route::get('/buscar-materiales', [\App\Http\Controllers\SolicitudInventarioController::class, 'buscarMateriales'])
                 ->name('buscar-materiales'); // AJAX para autocompletado
@@ -306,6 +306,23 @@ Route::middleware(['auth', 'verified'])
                 ->name('destroy')
                 ->middleware('role:super-admin|admin_clinica|almacen');
         });
+
+        // Rutas de Materiales
+        Route::resource('materiales', \App\Http\Controllers\MaterialController::class)
+            ->middleware('role:super-admin|admin_clinica|almacen');
+
+        // Rutas de Ingresos
+        Route::get('ingresos', [\App\Http\Controllers\IngresoInventarioController::class, 'index'])
+            ->name('ingresos.index')
+            ->middleware('role:super-admin|admin_clinica|almacen');
+        
+        Route::get('ingresos/crear', [\App\Http\Controllers\IngresoInventarioController::class, 'create'])
+            ->name('ingresos.create')
+            ->middleware('role:super-admin|admin_clinica|almacen');
+            
+        Route::post('ingresos', [\App\Http\Controllers\IngresoInventarioController::class, 'store'])
+            ->name('ingresos.store')
+            ->middleware('role:super-admin|admin_clinica|almacen');
     });
 
 require __DIR__ . '/auth.php';

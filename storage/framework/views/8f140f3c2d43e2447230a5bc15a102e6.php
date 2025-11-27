@@ -1,23 +1,21 @@
-@extends('layouts.adminlte')
+<?php $__env->startSection('title', 'Nueva Solicitud'); ?>
 
-@section('title', 'Nueva Solicitud')
-
-@section('content_header')
+<?php $__env->startSection('content_header'); ?>
     <div class="d-flex justify-content-between align-items-center">
         <h1><i class="fas fa-cart-plus text-primary"></i> Nueva Solicitud de Materiales</h1>
-        <a href="{{ route('inventario.solicitudes.index') }}" class="btn btn-secondary">
+        <a href="<?php echo e(route('inventario.solicitudes.index')); ?>" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Volver
         </a>
     </div>
-@stop
+<?php $__env->stopSection(); ?>
 
-@section('content')
-    <form action="{{ route('inventario.solicitudes.store') }}" method="POST" id="formSolicitud">
-        @csrf
+<?php $__env->startSection('content'); ?>
+    <form action="<?php echo e(route('inventario.solicitudes.store')); ?>" method="POST" id="formSolicitud">
+        <?php echo csrf_field(); ?>
         
         <div class="row">
             <div class="col-md-8">
-                {{-- Información general --}}
+                
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-primary text-white">
                         <h3 class="card-title"><i class="fas fa-info-circle"></i> Datos de la Solicitud</h3>
@@ -27,24 +25,39 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="categoria" class="font-weight-bold">Categoría <span class="text-danger">*</span></label>
-                                    <select name="categoria" id="categoria" class="form-control select2 @error('categoria') is-invalid @enderror" required>
+                                    <select name="categoria" id="categoria" class="form-control select2 <?php $__errorArgs = ['categoria'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" required>
                                         <option value="">Seleccione una categoría</option>
-                                        @foreach($categorias as $cat)
-                                            <option value="{{ $cat }}" {{ old('categoria') == $cat ? 'selected' : '' }}>
-                                                {{ $cat }}
+                                        <?php $__currentLoopData = $categorias; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($cat); ?>" <?php echo e(old('categoria') == $cat ? 'selected' : ''); ?>>
+                                                <?php echo e($cat); ?>
+
                                             </option>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                     <small class="form-text text-muted">La categoría ayuda a filtrar los materiales sugeridos.</small>
-                                    @error('categoria')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror
+                                    <?php $__errorArgs = ['categoria'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <span class="invalid-feedback"><?php echo e($message); ?></span>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="font-weight-bold">Solicitante</label>
-                                    <input type="text" class="form-control bg-light" value="{{ auth()->user()->name }}" readonly>
+                                    <input type="text" class="form-control bg-light" value="<?php echo e(auth()->user()->name); ?>" readonly>
                                 </div>
                             </div>
                         </div>
@@ -53,17 +66,31 @@
                             <label for="observaciones_solicitante" class="font-weight-bold">Observaciones / Justificación</label>
                             <textarea name="observaciones_solicitante" 
                                       id="observaciones_solicitante" 
-                                      class="form-control @error('observaciones_solicitante') is-invalid @enderror" 
+                                      class="form-control <?php $__errorArgs = ['observaciones_solicitante'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
                                       rows="2" 
-                                      placeholder="Ej: Reposición mensual para el área de emergencias...">{{ old('observaciones_solicitante') }}</textarea>
-                            @error('observaciones_solicitante')
-                                <span class="invalid-feedback">{{ $message }}</span>
-                            @enderror
+                                      placeholder="Ej: Reposición mensual para el área de emergencias..."><?php echo e(old('observaciones_solicitante')); ?></textarea>
+                            <?php $__errorArgs = ['observaciones_solicitante'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <span class="invalid-feedback"><?php echo e($message); ?></span>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
                 </div>
 
-                {{-- Formulario para agregar items --}}
+                
                 <div class="card shadow-lg border-primary">
                     <div class="card-header bg-white">
                         <h3 class="card-title text-primary font-weight-bold"><i class="fas fa-boxes"></i> Items Solicitados</h3>
@@ -80,9 +107,9 @@
                             <div class="col-md-3 mb-3">
                                 <label class="small font-weight-bold text-muted">UNIDAD</label>
                                 <select id="unidadInput" class="form-control">
-                                    @foreach($unidadesMedida as $unidad)
-                                        <option value="{{ $unidad }}">{{ $unidad }}</option>
-                                    @endforeach
+                                    <?php $__currentLoopData = $unidadesMedida; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $unidad): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($unidad); ?>"><?php echo e($unidad); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
                             
@@ -102,7 +129,7 @@
             </div>
 
             <div class="col-md-4">
-                {{-- Resumen con lista de items --}}
+                
                 <div class="card card-outline card-primary shadow sticky-top" style="top: 20px;">
                     <div class="card-header">
                         <h3 class="card-title font-weight-bold"><i class="fas fa-clipboard-check"></i> Resumen</h3>
@@ -131,7 +158,7 @@
                         <button type="submit" class="btn btn-primary btn-block btn-lg shadow-sm">
                             <i class="fas fa-paper-plane"></i> Enviar Solicitud
                         </button>
-                        <a href="{{ route('inventario.solicitudes.index') }}" class="btn btn-default btn-block">
+                        <a href="<?php echo e(route('inventario.solicitudes.index')); ?>" class="btn btn-default btn-block">
                             Cancelar
                         </a>
                     </div>
@@ -139,9 +166,9 @@
             </div>
         </div>
     </form>
-@stop
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
 let carrito = []; // Array para almacenar los items del carrito
 let itemCounter = 0;
@@ -154,7 +181,7 @@ function initMaterialSelect() {
         allowClear: true,
         minimumInputLength: 0,
         ajax: {
-            url: '{{ url("inventario/solicitudes/buscar-materiales") }}',
+            url: '<?php echo e(url("inventario/solicitudes/buscar-materiales")); ?>',
             dataType: 'json',
             delay: 300,
             data: function (params) {
@@ -322,7 +349,7 @@ $(document).ready(function() {
 });
 </script>
 
-{{-- Estilos adicionales --}}
+
 <style>
     .select2-selection.is-invalid {
         border-color: #dc3545 !important;
@@ -335,4 +362,6 @@ $(document).ready(function() {
         box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.adminlte', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\wamp64\www\somossalud\resources\views/inventario/solicitudes/create.blade.php ENDPATH**/ ?>

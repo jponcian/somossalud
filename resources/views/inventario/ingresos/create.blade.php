@@ -1,62 +1,50 @@
 @extends('layouts.adminlte')
 
-@section('title', 'Nueva Solicitud')
+@section('title', 'Registrar Ingreso')
 
-@section('content_header')
+@section('content-header')
     <div class="d-flex justify-content-between align-items-center">
-        <h1><i class="fas fa-cart-plus text-primary"></i> Nueva Solicitud de Materiales</h1>
-        <a href="{{ route('inventario.solicitudes.index') }}" class="btn btn-secondary">
+        <h1><i class="fas fa-plus-circle text-success"></i> Registrar Ingreso de Materiales</h1>
+        <a href="{{ route('inventario.ingresos.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Volver
         </a>
     </div>
 @stop
 
 @section('content')
-    <form action="{{ route('inventario.solicitudes.store') }}" method="POST" id="formSolicitud">
+    <form action="{{ route('inventario.ingresos.store') }}" method="POST" id="formIngreso">
         @csrf
         
         <div class="row">
             <div class="col-md-8">
                 {{-- Información general --}}
                 <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="card-title"><i class="fas fa-info-circle"></i> Datos de la Solicitud</h3>
+                    <div class="card-header bg-success text-white">
+                        <h3 class="card-title"><i class="fas fa-info-circle"></i> Datos del Ingreso</h3>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="categoria" class="font-weight-bold">Categoría <span class="text-danger">*</span></label>
-                                    <select name="categoria" id="categoria" class="form-control select2 @error('categoria') is-invalid @enderror" required>
-                                        <option value="">Seleccione una categoría</option>
-                                        @foreach($categorias as $cat)
-                                            <option value="{{ $cat }}" {{ old('categoria') == $cat ? 'selected' : '' }}>
-                                                {{ $cat }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <small class="form-text text-muted">La categoría ayuda a filtrar los materiales sugeridos.</small>
-                                    @error('categoria')
+                                    <label for="referencia" class="font-weight-bold">Referencia (Factura/Orden)</label>
+                                    <input type="text" name="referencia" id="referencia" class="form-control @error('referencia') is-invalid @enderror" value="{{ old('referencia') }}" placeholder="Ej: FAC-12345">
+                                    @error('referencia')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="font-weight-bold">Solicitante</label>
+                                    <label class="font-weight-bold">Usuario</label>
                                     <input type="text" class="form-control bg-light" value="{{ auth()->user()->name }}" readonly>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="observaciones_solicitante" class="font-weight-bold">Observaciones / Justificación</label>
-                            <textarea name="observaciones_solicitante" 
-                                      id="observaciones_solicitante" 
-                                      class="form-control @error('observaciones_solicitante') is-invalid @enderror" 
-                                      rows="2" 
-                                      placeholder="Ej: Reposición mensual para el área de emergencias...">{{ old('observaciones_solicitante') }}</textarea>
-                            @error('observaciones_solicitante')
+                            <label for="motivo" class="font-weight-bold">Motivo / Observación</label>
+                            <textarea name="motivo" id="motivo" class="form-control @error('motivo') is-invalid @enderror" rows="2" placeholder="Ej: Compra mensual de insumos">{{ old('motivo', 'COMPRA DE INSUMOS') }}</textarea>
+                            @error('motivo')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
@@ -64,29 +52,25 @@
                 </div>
 
                 {{-- Formulario para agregar items --}}
-                <div class="card shadow-lg border-primary">
+                <div class="card shadow-lg border-success">
                     <div class="card-header bg-white">
-                        <h3 class="card-title text-primary font-weight-bold"><i class="fas fa-boxes"></i> Items Solicitados</h3>
+                        <h3 class="card-title text-success font-weight-bold"><i class="fas fa-boxes"></i> Materiales a Ingresar</h3>
                     </div>
                     <div class="card-body bg-light">
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-8 mb-3">
                                 <label class="small font-weight-bold text-muted">BUSCAR MATERIAL</label>
                                 <select id="materialSelect" class="form-control" style="width: 100%;">
                                     <option value="">Buscar material...</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-3 mb-3">
-                                <label class="small font-weight-bold text-muted">UNIDAD</label>
-                                <select id="unidadInput" class="form-control">
-                                    @foreach($unidadesMedida as $unidad)
-                                        <option value="{{ $unidad }}">{{ $unidad }}</option>
+                                    @foreach($materiales as $material)
+                                        <option value="{{ $material->id }}" data-nombre="{{ $material->nombre }}" data-codigo="{{ $material->codigo }}" data-stock="{{ $material->stock_actual }}">
+                                            {{ $material->nombre }} ({{ $material->codigo }}) - Stock: {{ $material->stock_actual }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                             
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="small font-weight-bold text-muted">CANTIDAD</label>
                                 <input type="number" id="cantidadInput" class="form-control font-weight-bold text-center" min="1" value="1">
                             </div>
@@ -103,14 +87,14 @@
 
             <div class="col-md-4">
                 {{-- Resumen con lista de items --}}
-                <div class="card card-outline card-primary shadow sticky-top" style="top: 20px;">
+                <div class="card card-outline card-success shadow sticky-top" style="top: 20px;">
                     <div class="card-header">
                         <h3 class="card-title font-weight-bold"><i class="fas fa-clipboard-check"></i> Resumen</h3>
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
                             <span class="text-muted">Total Items:</span>
-                            <span id="totalItems" class="font-weight-bold h5 text-primary mb-0">0</span>
+                            <span id="totalItems" class="font-weight-bold h5 text-success mb-0">0</span>
                         </div>
                         
                         <div id="listaItems" class="mb-3" style="max-height: 400px; overflow-y: auto;">
@@ -124,14 +108,14 @@
                         
                         <div class="alert alert-info small mb-0">
                             <i class="fas fa-lightbulb"></i> <strong>Tip:</strong>
-                            Puede buscar materiales existentes o escribir nombres nuevos si no encuentra lo que busca.
+                            Agregue los materiales que desea ingresar al inventario.
                         </div>
                     </div>
                     <div class="card-footer bg-white">
-                        <button type="submit" class="btn btn-primary btn-block btn-lg shadow-sm">
-                            <i class="fas fa-paper-plane"></i> Enviar Solicitud
+                        <button type="submit" class="btn btn-success btn-block btn-lg shadow-sm">
+                            <i class="fas fa-save"></i> Registrar Ingreso
                         </button>
-                        <a href="{{ route('inventario.solicitudes.index') }}" class="btn btn-default btn-block">
+                        <a href="{{ route('inventario.ingresos.index') }}" class="btn btn-default btn-block">
                             Cancelar
                         </a>
                     </div>
@@ -143,82 +127,44 @@
 
 @push('scripts')
 <script>
-let carrito = []; // Array para almacenar los items del carrito
+let carrito = [];
 let itemCounter = 0;
 
 // Inicializar Select2 para el material
-function initMaterialSelect() {
+$(document).ready(function() {
     $('#materialSelect').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione un material...',
-        allowClear: true,
-        minimumInputLength: 0,
-        ajax: {
-            url: '{{ url("inventario/solicitudes/buscar-materiales") }}',
-            dataType: 'json',
-            delay: 300,
-            data: function (params) {
-                return {
-                    q: params.term
-                };
-            },
-            processResults: function (data, params) {
-                if (data.error) {
-                    console.error('Error del servidor:', data.error);
-                    return { results: [] };
-                }
-                // Ordenar alfabéticamente por nombre
-                data.sort(function(a, b) {
-                    return a.text.localeCompare(b.text);
-                });
-                return { results: data };
-            },
-            error: function(xhr, status, error) {
-                console.error('Error AJAX:', {
-                    status: xhr.status,
-                    statusText: xhr.statusText,
-                    error: error,
-                    response: xhr.responseText
-                });
-            },
-            cache: true
-        },
-        language: {
-            searching: function() { return 'Buscando...'; },
-            noResults: function() { return 'No se encontraron materiales registrados.'; },
-            errorLoading: function() { return 'No se pudieron cargar los resultados.'; }
-        }
-    }).on('select2:select', function (e) {
-        var data = e.params.data;
-        if (data.unidad) {
-            $('#unidadInput').val(data.unidad);
-        }
+        allowClear: true
     });
-}
+    
+    $('#emptyState').show();
+});
 
 // Agregar item al carrito
 $('#btnAgregarAlCarrito').click(function() {
-    const materialData = $('#materialSelect').select2('data')[0];
+    const materialId = $('#materialSelect').val();
+    const materialData = $('#materialSelect option:selected');
     
-    if (!materialData || !materialData.id) {
+    if (!materialId) {
         Swal.fire({
             icon: 'warning',
             title: 'Material requerido',
-            text: 'Por favor, seleccione un material del catálogo.',
+            text: 'Por favor, seleccione un material.',
             confirmButtonText: 'Entendido'
         });
         return;
     }
     
     const cantidad = parseInt($('#cantidadInput').val()) || 1;
-    const unidad = $('#unidadInput').val();
     
-    // Crear objeto del item (solo materiales registrados)
+    // Crear objeto del item
     const item = {
         index: itemCounter++,
-        material_id: materialData.id,
-        nombre: materialData.text,
-        unidad: unidad,
+        material_id: materialId,
+        nombre: materialData.data('nombre'),
+        codigo: materialData.data('codigo'),
+        stock_actual: materialData.data('stock'),
         cantidad: cantidad
     };
     
@@ -256,8 +202,10 @@ function renderizarCarrito() {
                             <h6 class="mb-1 font-weight-bold text-dark" style="font-size: 0.9rem;">
                                 ${item.nombre}
                             </h6>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="badge badge-primary">${item.cantidad} ${item.unidad}</span>
+                            <small class="text-muted d-block">${item.codigo}</small>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <span class="badge badge-success">+${item.cantidad}</span>
+                                <small class="text-muted">Stock actual: ${item.stock_actual}</small>
                             </div>
                         </div>
                         <button type="button" class="btn btn-sm btn-danger btn-eliminar-item ml-2" data-index="${index}" title="Eliminar">
@@ -267,9 +215,7 @@ function renderizarCarrito() {
                     
                     <!-- Hidden inputs para enviar con el formulario -->
                     <input type="hidden" name="items[${index}][material_id]" value="${item.material_id}">
-                    <input type="hidden" name="items[${index}][nombre_item]" value="${item.nombre}">
-                    <input type="hidden" name="items[${index}][unidad_medida]" value="${item.unidad}">
-                    <input type="hidden" name="items[${index}][cantidad_solicitada]" value="${item.cantidad}">
+                    <input type="hidden" name="items[${index}][cantidad]" value="${item.cantidad}">
                 </div>
             </div>
         `;
@@ -289,50 +235,20 @@ $(document).on('click', '.btn-eliminar-item', function() {
 function limpiarFormulario() {
     $('#materialSelect').val(null).trigger('change');
     $('#cantidadInput').val('1');
-    // Mantener la unidad seleccionada por defecto
 }
 
 // Validar formulario antes de enviar
-$('#formSolicitud').submit(function(e) {
+$('#formIngreso').submit(function(e) {
     if (carrito.length === 0) {
         e.preventDefault();
         Swal.fire({
             icon: 'warning',
             title: 'Carrito vacío',
-            text: 'Debe agregar al menos un item a la solicitud.',
+            text: 'Debe agregar al menos un material al ingreso.',
             confirmButtonText: 'Entendido'
         });
         return false;
     }
 });
-
-// Inicialización
-$(document).ready(function() {
-    // Select2 para categoría
-    $('#categoria').select2({
-        theme: 'bootstrap4',
-        placeholder: 'Seleccione categoría'
-    });
-    
-    // Inicializar select2 del material
-    initMaterialSelect();
-    
-    // Mostrar estado vacío inicial
-    $('#emptyState').show();
-});
 </script>
-
-{{-- Estilos adicionales --}}
-<style>
-    .select2-selection.is-invalid {
-        border-color: #dc3545 !important;
-    }
-    #listaItems .card {
-        transition: all 0.2s;
-    }
-    #listaItems .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
-    }
-</style>
 @endpush

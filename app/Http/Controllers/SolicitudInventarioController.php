@@ -99,11 +99,11 @@ class SolicitudInventarioController extends Controller
             $query->buscar($term);
         }
             
-        if ($categoria) {
-            $query->where('categoria_default', $categoria);
-        }
+        // if ($categoria) {
+        //     $query->where('categoria_default', $categoria);
+        // }
         
-        $materiales = $query->limit(10)->get();
+        $materiales = $query->limit(500)->get();
         
         return response()->json($materiales->map(function($m) {
             return [

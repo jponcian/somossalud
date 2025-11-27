@@ -20,6 +20,7 @@ class Material extends Model
         'unidad_medida_default',
         'categoria_default',
         'stock_minimo',
+        'stock_actual',
         'activo'
     ];
     

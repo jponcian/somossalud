@@ -142,6 +142,12 @@
                     </div>
                 </div>
             @endif
+
+            <div class="mt-4 mb-4">
+                <a href="{{ route('inventario.solicitudes.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver al Listado
+                </a>
+            </div>
         </div>
 
         {{-- Columna Derecha: Info --}}

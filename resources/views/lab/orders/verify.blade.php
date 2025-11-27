@@ -195,6 +195,7 @@
             <div class="verification-card">
                 <!-- Header -->
                 <div class="card-header-custom">
+                    <img src="{{ asset('images/saludsonrisa.jpg') }}" alt="Logo SaludSonrisa" style="max-height: 80px; margin-bottom: 10px;">
                     <h1><i class="fas fa-shield-alt"></i> Verificación de Resultado de Laboratorio</h1>
                     <p>Clínica SaludSonrisa</p>
                 </div>
