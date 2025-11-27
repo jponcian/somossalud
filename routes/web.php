@@ -90,6 +90,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcion
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        Route::post('users/{user}/password-reset', [UserManagementController::class, 'sendPasswordResetLink'])->name('users.password-reset');
         Route::resource('users', UserManagementController::class)->only(['index', 'create', 'store', 'edit', 'update']);
     });
 

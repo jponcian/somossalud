@@ -246,4 +246,23 @@ class UserManagementController extends Controller
             ->route('admin.users.index')
             ->with('status', 'Usuario actualizado correctamente.');
     }
+    public function sendPasswordResetLink(User $user): \Illuminate\Http\JsonResponse
+    {
+        // Enviar el enlace de restablecimiento de contraseña
+        $status = \Illuminate\Support\Facades\Password::broker()->sendResetLink(
+            ['email' => $user->email]
+        );
+
+        if ($status == \Illuminate\Support\Facades\Password::RESET_LINK_SENT) {
+            return response()->json([
+                'success' => true,
+                'message' => __($status)
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => __($status)
+        ], 400);
+    }
 }

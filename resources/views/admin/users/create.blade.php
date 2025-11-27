@@ -183,7 +183,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="font-weight-bold text-dark small text-uppercase mb-3">Roles Asignados</label>
-                                    @if (auth()->user()->hasRole('recepcionista'))
+                                    @if (auth()->user()->hasRole('recepcionista') && !auth()->user()->hasAnyRole(['super-admin','admin_clinica']))
                                         <div class="alert alert-info shadow-sm border-0">
                                             <i class="fas fa-info-circle mr-2"></i>
                                             <span class="font-weight-bold">Rol: Paciente</span>
@@ -230,7 +230,7 @@
                                             <i class="fas fa-stethoscope text-muted"></i>
                                         </div>
                                         <div class="flex-grow-1">
-                                            <select name="especialidades[]" id="especialidades" class="form-control border-0 @error('especialidades') is-invalid @enderror" multiple {{ auth()->user()->hasRole('recepcionista') ? 'disabled' : '' }} style="width: 100%;">
+                                            <select name="especialidades[]" id="especialidades" class="form-control border-0 @error('especialidades') is-invalid @enderror" multiple {{ (auth()->user()->hasRole('recepcionista') && !auth()->user()->hasAnyRole(['super-admin','admin_clinica'])) ? 'disabled' : '' }} style="width: 100%;">
                                                 @php
                                                     $selectedEspecialidades = old('especialidades', []);
                                                 @endphp
@@ -243,7 +243,7 @@
                                         </div>
                                     </div>
                                     <small class="form-text text-muted mt-1">
-                                        @if (auth()->user()->hasRole('recepcionista'))
+                                        @if (auth()->user()->hasRole('recepcionista') && !auth()->user()->hasAnyRole(['super-admin','admin_clinica']))
                                             <i class="fas fa-lock mr-1"></i>Campo no disponible para recepcionistas.
                                         @else
                                             <i class="fas fa-info-circle mr-1"></i>Se habilita cuando el rol "Especialista" está seleccionado.
