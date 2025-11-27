@@ -9,9 +9,9 @@
             </a>
         </li>
         <!-- SECCIÓN CLÍNICA -->
-        @hasanyrole('super-admin|admin_clinica|especialista')
+        @hasanyrole('especialista|recepcionista')
         <li class="nav-header">CLÍNICA</li>
-        @hasanyrole('super-admin|admin_clinica')
+        @hasanyrole('recepcionista')
         <li class="nav-item">
             <a href="{{ route('recepcion.pagos.index') }}"
                 class="nav-link {{ request()->routeIs('recepcion.pagos.*') ? 'active' : '' }}">
@@ -51,7 +51,7 @@
         @endrole
         @endhasanyrole
         <!-- SECCIÓN LABORATORIO -->
-        @hasanyrole('super-admin|admin_clinica|laboratorio|laboratorio-resul|recepcionista')
+        @hasanyrole('laboratorio|laboratorio-resul|recepcionista')
         <li class="nav-header">LABORATORIO</li>
         <!-- Sistema de Órdenes (Nuevo) -->
         <li class="nav-item">
@@ -59,7 +59,7 @@
                 class="nav-link {{ request()->routeIs('lab.orders.*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-file-medical"></i>
                 <p>
-                    @hasanyrole('laboratorio|admin_clinica|super-admin|recepcionista')
+                    @hasanyrole('laboratorio|recepcionista')
                         Exámenes
                     @else
                         Resultados Pendientes
@@ -69,7 +69,7 @@
         </li>
         @endhasanyrole
         <!-- SECCIÓN INVENTARIO -->
-        @hasanyrole('super-admin|admin_clinica|almacen|almacen-jefe')
+        @hasanyrole('almacen|almacen-jefe')
         <li class="nav-header">INVENTARIO</li>
              <li class="nav-item">
             <a href="{{ route('inventario.solicitudes.create') }}"
@@ -84,7 +84,7 @@
                 <p>Solicitudes</p>
             </a>
         </li>
-        @hasanyrole('super-admin|admin_clinica|almacen-jefe')
+        @hasanyrole('almacen-jefe')
         <li class="nav-item">
             <a href="{{ route('inventario.ingresos.index') }}"
                 class="nav-link {{ request()->routeIs('inventario.ingresos.*') ? 'active' : '' }}">
@@ -119,6 +119,7 @@
                 <p>Pago móvil</p>
             </a>
         </li>
+        @role('super-admin')
         <li class="nav-item">
             <a href="{{ route('admin.settings.cache.clear') }}" class="nav-link text-warning" id="btn-limpiar-cache">
                 <i class="nav-icon fas fa-broom"></i>
@@ -147,6 +148,7 @@
                 });
             });
         </script>
+        @endrole
         @endhasanyrole
     </ul>
 </nav>

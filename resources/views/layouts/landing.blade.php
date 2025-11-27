@@ -4,54 +4,59 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    
+
+
     <!-- SEO Meta Tags -->
     <title>@yield('title', 'Clínica SaludSonrisa | Atención Médica y Odontológica en Venezuela | SomosSalud')</title>
-    <meta name="description" content="@yield('description', 'Clínica SaludSonrisa ofrece atención médica integral, odontología, pediatría y laboratorio clínico. Agenda citas online, consulta resultados y accede a descuentos con SomosSalud. Atención 24/7 en Venezuela.')">
-    
+    <meta name="description"
+        content="@yield('description', 'Clínica SaludSonrisa ofrece atención médica integral, odontología, pediatría y laboratorio clínico. Agenda citas online, consulta resultados y accede a descuentos con SomosSalud. Atención 24/7 en Venezuela.')">
+
     <!-- Palabras clave optimizadas para búsqueda local -->
-    <meta name="keywords" content="clínica venezuela, salud sonrisa, saludsonrisa, clínica saludsonrisa, clínica salud sonrisa, odontología venezuela, pediatría venezuela, laboratorio clínico, citas médicas online, resultados de laboratorio online, atención médica 24 horas, consultas médicas, dentista venezuela, médico pediatra, exámenes de laboratorio, descuentos médicos, salud familiar venezuela, somossalud, clínica familiar, atención odontológica, servicios médicos, centro médico venezuela, somossalud, somos salud, somos salud venezuela">
-    
+    <meta name="keywords"
+        content="clínica venezuela, salud sonrisa, saludsonrisa, clínica saludsonrisa, clínica salud sonrisa, odontología venezuela, pediatría venezuela, laboratorio clínico, citas médicas online, resultados de laboratorio online, atención médica 24 horas, consultas médicas, dentista venezuela, médico pediatra, exámenes de laboratorio, descuentos médicos, salud familiar venezuela, somossalud, clínica familiar, atención odontológica, servicios médicos, centro médico venezuela, somossalud, somos salud, somos salud venezuela">
+
     <meta name="author" content="Clínica SaludSonrisa">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="googlebot" content="index, follow">
-    
+
     <!-- Geo Tags para búsqueda local -->
     <meta name="geo.region" content="VE">
     <meta name="geo.placename" content="Venezuela">
     <meta name="geo.position" content="10.4806;-66.9036">
     <meta name="ICBM" content="10.4806, -66.9036">
-    
+
     <!-- Idioma y localización -->
     <meta http-equiv="content-language" content="es-VE">
     <link rel="alternate" hreflang="es-ve" href="{{ url('/') }}">
     <link rel="alternate" hreflang="es" href="{{ url('/') }}">
-    
+
     <!-- Open Graph / Facebook (Mejorado) -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
     <meta property="og:site_name" content="Clínica SaludSonrisa">
-    <meta property="og:title" content="@yield('og_title', 'Clínica SaludSonrisa | Atención Médica Integral en Venezuela')">
-    <meta property="og:description" content="@yield('og_description', 'Tu salud y la de tu familia en las mejores manos. Agenda citas, consulta resultados de laboratorio y accede a descuentos exclusivos.')">
+    <meta property="og:title"
+        content="@yield('og_title', 'Clínica SaludSonrisa | Atención Médica Integral en Venezuela')">
+    <meta property="og:description"
+        content="@yield('og_description', 'Tu salud y la de tu familia en las mejores manos. Agenda citas, consulta resultados de laboratorio y accede a descuentos exclusivos.')">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="es_VE">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('twitter_title', 'Clínica SaludSonrisa | Atención Médica en Venezuela')">
-    <meta name="twitter:description" content="@yield('twitter_description', 'Agenda citas médicas, consulta resultados de laboratorio y accede a atención 24/7')">
+    <meta name="twitter:description"
+        content="@yield('twitter_description', 'Agenda citas médicas, consulta resultados de laboratorio y accede a atención 24/7')">
     <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ url()->current() }}">
-    
+
     <!-- Datos Estructurados JSON-LD para Google -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
+      "@@context": "https://schema.org",
       "@type": "MedicalClinic",
       "name": "Clínica SaludSonrisa",
       "description": "Clínica médica integral con servicios de odontología, pediatría y laboratorio clínico en Venezuela",
@@ -121,11 +126,11 @@
       }
     }
     </script>
-    
+
     <!-- Organización Schema -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
+      "@@context": "https://schema.org",
       "@type": "Organization",
       "name": "SomosSalud",
       "alternateName": "Clínica SaludSonrisa",
@@ -151,18 +156,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('favicon.ico') }}">
 
     <style>
         :root {
-            --primary-blue: #0056b3; /* Azul original */
+            --primary-blue: #0056b3;
+            /* Azul original */
             --primary-light: #e3f2fd;
-            --accent-green: #28a745; /* Verde original */
+            --accent-green: #28a745;
+            /* Verde original */
             --accent-green-hover: #218838;
             --text-dark: #1e293b;
             --text-muted: #64748b;
@@ -181,18 +190,30 @@
         }
 
         /* Sobreescribir Bootstrap Colors para consistencia */
-        .text-primary { color: var(--primary-blue) !important; }
-        .bg-primary { background-color: var(--primary-blue) !important; }
-        .text-success { color: var(--accent-green) !important; }
-        .bg-success { background-color: var(--accent-green) !important; }
+        .text-primary {
+            color: var(--primary-blue) !important;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-blue) !important;
+        }
+
+        .text-success {
+            color: var(--accent-green) !important;
+        }
+
+        .bg-success {
+            background-color: var(--accent-green) !important;
+        }
 
         /* Navbar Premium */
         .navbar {
             background-color: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             padding: 1rem 0;
         }
+
         .navbar-brand img {
             height: 50px;
         }
@@ -216,53 +237,67 @@
             left: -100%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+            background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
             transform: skewX(-25deg);
-            animation: shine 3s infinite linear; /* Movimiento continuo cada 3 segundos */
+            animation: shine 3s infinite linear;
+            /* Movimiento continuo cada 3 segundos */
             pointer-events: none;
         }
 
         @keyframes shine {
-            0% { left: -100%; }
-            100% { left: 200%; }
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 200%;
+            }
         }
-        
+
         /* Botones Modernos */
         .btn {
-            border-radius: 50px; /* Pill shape */
+            border-radius: 50px;
+            /* Pill shape */
             padding: 0.75rem 2rem;
             font-weight: 600;
             transition: all 0.3s ease;
             letter-spacing: 0.5px;
         }
+
         .btn-primary {
             background-color: var(--primary-blue);
             border: none;
             box-shadow: 0 4px 15px rgba(0, 86, 179, 0.3);
         }
+
         .btn-primary:hover {
             background-color: #004494;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 86, 179, 0.4);
         }
+
         .btn-success {
             background-color: var(--accent-green);
             border: none;
             box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
         }
+
         .btn-success:hover {
             background-color: var(--accent-green-hover);
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
         }
+
         .btn-outline-light:hover {
             background-color: white;
             color: var(--primary-blue);
         }
+
         .btn-outline-primary {
             color: var(--primary-blue);
             border-color: var(--primary-blue);
         }
+
         .btn-outline-primary:hover {
             background-color: var(--primary-blue);
             color: white;
@@ -275,9 +310,9 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        
+
         .feature-icon {
             width: 60px;
             height: 60px;
@@ -309,8 +344,10 @@
             gap: 10px;
             font-size: 1.05rem;
         }
+
         .hero-list i {
-            color: #a3ffb8; /* Verde claro para iconos en fondo azul */
+            color: #a3ffb8;
+            /* Verde claro para iconos en fondo azul */
         }
 
         /* Footer */
@@ -337,26 +374,27 @@
     @endphp
 
     <!-- Badge con la hora del servidor (actualiza cada segundo en el cliente) -->
-    <div id="server-time-badge" style="position:fixed;bottom:12px;right:12px;z-index:9999;background:#0d6efd;color:#fff;padding:6px 10px;border-radius:6px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+    <div id="server-time-badge"
+        style="position:fixed;bottom:12px;right:12px;z-index:9999;background:#0d6efd;color:#fff;padding:6px 10px;border-radius:6px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
         Servidor: <span id="server-time-text">{{ now()->format('H:i:s') }}</span>
         <small style="opacity:.85;margin-left:6px;font-size:12px;vertical-align:middle">({{ $__server_tz }})</small>
     </div>
 
     <script>
-        (function(){
+        (function () {
             // timestamp del servidor en ms
             let serverTs = {{ $__server_ts }} * 1000;
 
-            function pad(n){ return n.toString().padStart(2,'0'); }
+            function pad(n) { return n.toString().padStart(2, '0'); }
 
-            function updateServerTime(){
+            function updateServerTime() {
                 serverTs += 1000; // avanzamos 1s
                 const d = new Date(serverTs);
                 const h = pad(d.getHours());
                 const m = pad(d.getMinutes());
                 const s = pad(d.getSeconds());
                 const el = document.getElementById('server-time-text');
-                if(el) el.textContent = `${h}:${m}:${s}`;
+                if (el) el.textContent = `${h}:${m}:${s}`;
             }
 
             // Actualizar cada segundo; el texto inicial se renderizó desde el servidor

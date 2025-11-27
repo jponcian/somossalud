@@ -66,6 +66,44 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label class="font-weight-bold text-dark small text-uppercase">Tipo de Usuario</label>
+                                    <div class="custom-control custom-checkbox mt-2">
+                                        <input type="checkbox" class="custom-control-input" id="es_dependiente" name="es_dependiente" value="1" {{ old('es_dependiente') ? 'checked' : '' }}>
+                                        <label class="custom-control-label font-weight-bold" for="es_dependiente">
+                                            <i class="fas fa-child mr-1"></i> Es un dependiente (hijo/a)
+                                        </label>
+                                    </div>
+                                    <small class="form-text text-muted mt-1">
+                                        <i class="fas fa-info-circle mr-1"></i>Marca si es un niño sin cédula propia.
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div id="representante-field" class="col-md-12">
+                                <div class="form-group">
+                                    <label for="representante_id" class="font-weight-bold text-dark small text-uppercase">
+                                        Representante (Padre/Madre) <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group shadow-sm">
+                                        <select name="representante_id" id="representante_id" class="form-control border-left-0 select2-representante js-example-basic-single" style="width: 100%;">
+                                            @foreach($posiblesRepresentantes as $rep)
+                                                <option value="{{ $rep->id }}" 
+                                                    data-cedula="{{ $rep->cedula }}" 
+                                                    data-email="{{ $rep->email }}"
+                                                    {{ old('representante_id') == $rep->id ? 'selected' : '' }}>
+                                                    {{ $rep->name }} ({{ $rep->cedula }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <small class="form-text text-muted mt-1">
+                                        <i class="fas fa-info-circle mr-1"></i>La cédula y email se copiarán automáticamente del representante.
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="cedula" class="font-weight-bold text-dark small text-uppercase">Cédula <span class="text-danger">*</span></label>
                                     <div class="input-group shadow-sm">
                                         <div class="input-group-prepend">
@@ -75,14 +113,16 @@
                                             class="form-control border-left-0 @error('cedula') is-invalid @enderror" 
                                             placeholder="Ej: V-12345678" required>
                                     </div>
-                                    <small class="form-text text-muted mt-1"><i class="fas fa-info-circle mr-1"></i>Si empiezas con un número, se asume V- automáticamente.</small>
+                                    <small class="form-text text-muted mt-1" id="cedula-help">
+                                        <i class="fas fa-info-circle mr-1"></i>Si empiezas con un número, se asume V- automáticamente.
+                                    </small>
                                     @error('cedula')
                                         <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
                                     @enderror
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="email" class="font-weight-bold text-dark small text-uppercase">Correo electrónico <span class="text-danger">*</span></label>
                                     <div class="input-group shadow-sm">
@@ -183,7 +223,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="font-weight-bold text-dark small text-uppercase mb-3">Roles Asignados</label>
-                                    @if (auth()->user()->hasRole('recepcionista'))
+                                    @if (auth()->user()->hasRole('recepcionista') && !auth()->user()->hasAnyRole(['super-admin','admin_clinica']))
                                         <div class="alert alert-info shadow-sm border-0">
                                             <i class="fas fa-info-circle mr-2"></i>
                                             <span class="font-weight-bold">Rol: Paciente</span>
@@ -230,7 +270,7 @@
                                             <i class="fas fa-stethoscope text-muted"></i>
                                         </div>
                                         <div class="flex-grow-1">
-                                            <select name="especialidades[]" id="especialidades" class="form-control border-0 @error('especialidades') is-invalid @enderror" multiple {{ auth()->user()->hasRole('recepcionista') ? 'disabled' : '' }} style="width: 100%;">
+                                            <select name="especialidades[]" id="especialidades" class="form-control border-0 @error('especialidades') is-invalid @enderror" multiple {{ (auth()->user()->hasRole('recepcionista') && !auth()->user()->hasAnyRole(['super-admin','admin_clinica'])) ? 'disabled' : '' }} style="width: 100%;">
                                                 @php
                                                     $selectedEspecialidades = old('especialidades', []);
                                                 @endphp
@@ -243,7 +283,7 @@
                                         </div>
                                     </div>
                                     <small class="form-text text-muted mt-1">
-                                        @if (auth()->user()->hasRole('recepcionista'))
+                                        @if (auth()->user()->hasRole('recepcionista') && !auth()->user()->hasAnyRole(['super-admin','admin_clinica']))
                                             <i class="fas fa-lock mr-1"></i>Campo no disponible para recepcionistas.
                                         @else
                                             <i class="fas fa-info-circle mr-1"></i>Se habilita cuando el rol "Especialista" está seleccionado.
@@ -273,6 +313,28 @@
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    /* Fix para Select2 dentro de Input Group */
+    .input-group > .select2-container--default {
+        width: auto !important;
+        flex: 1 1 auto;
+    }
+    .input-group > .select2-container--default .select2-selection--single {
+        height: 38px;
+        line-height: 38px;
+        padding: 5px;
+        border: 1px solid #ced4da;
+        border-left: none;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    .input-group > .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px;
+    }
+    .input-group > .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 26px;
+    }
+</style>
 @endpush
 
 @push('scripts')
@@ -315,6 +377,119 @@ $(document).ready(function() {
 
         // Run on load to set initial state
         toggleEspecialidad();
+    });
+
+    // Lógica para dependientes
+    document.addEventListener('DOMContentLoaded', function () {
+        const esDependienteCheckbox = document.getElementById('es_dependiente');
+        const representanteField = document.getElementById('representante-field');
+        const cedulaInput = document.getElementById('cedula');
+        const emailInput = document.getElementById('email');
+        const cedulaHelp = document.getElementById('cedula-help');
+
+        // Inicializar Select2 de forma defensiva. Si no está disponible, usar select nativo.
+        const representanteSelect = document.getElementById('representante_id');
+        function handleRepresentativeSelection(value, cedula, email) {
+            if (value) {
+                if (cedula) {
+                    generarCedulaDependiente(value, cedula);
+                }
+                emailInput.value = email || '';
+                emailInput.readOnly = true;
+            } else {
+                cedulaInput.value = '';
+                emailInput.value = '';
+                emailInput.readOnly = false;
+            }
+        }
+
+        if (window.jQuery && window.jQuery.fn && window.jQuery.fn.select2) {
+            // Inicialización sencilla tipo "js-example-basic-single": mostrar la lista completa
+            $('.select2-representante').each(function () {
+                var $el = $(this);
+                if (!$el.data('select2')) {
+                    $el.select2({
+                        placeholder: 'Buscar representante por nombre o cédula...',
+                        allowClear: true,
+                        width: '100%'
+                    });
+                }
+            });
+
+            // Eventos Select2 (sencillos)
+            $('.select2-representante').on('select2:select', function (e) {
+                var $option = $(e.params.data.element);
+                var cedula = $option.data('cedula');
+                var email = $option.data('email');
+                var value = $(this).val();
+                handleRepresentativeSelection(value, cedula, email);
+            });
+
+            $('.select2-representante').on('select2:clear', function (e) {
+                handleRepresentativeSelection('', null, null);
+            });
+        } else if (representanteSelect) {
+            // Fallback nativo
+            representanteSelect.addEventListener('change', function (ev) {
+                const selected = this.options[this.selectedIndex];
+                const cedula = selected ? selected.getAttribute('data-cedula') : null;
+                const email = selected ? selected.getAttribute('data-email') : null;
+                const value = this.value;
+                handleRepresentativeSelection(value, cedula, email);
+            });
+        }
+
+        // Toggle de campos de dependiente
+        esDependienteCheckbox.addEventListener('change', function () {
+            if (this.checked) {
+                representanteField.style.display = 'block';
+                cedulaInput.readOnly = true;
+                cedulaInput.placeholder = 'Se generará automáticamente';
+                cedulaHelp.innerHTML = '<i class="fas fa-lock mr-1"></i>La cédula se genera automáticamente basada en el representante.';
+                
+                // Si ya hay un representante seleccionado, asegurar que los campos estén bloqueados
+                if ($('.select2-representante').val()) {
+                    emailInput.readOnly = true;
+                }
+            } else {
+                representanteField.style.display = 'none';
+                cedulaInput.readOnly = false;
+                cedulaInput.placeholder = 'Ej: V-12345678';
+                cedulaInput.value = '';
+                emailInput.value = '';
+                emailInput.readOnly = false;
+                cedulaHelp.innerHTML = '<i class="fas fa-info-circle mr-1"></i>Si empiezas con un número, se asume V- automáticamente.';
+                
+                // Limpiar selección de representante (soporta Select2 o select nativo)
+                if (window.jQuery && window.jQuery.fn && window.jQuery.fn.select2) {
+                    $('.select2-representante').val(null).trigger('change');
+                } else if (representanteSelect) {
+                    representanteSelect.value = '';
+                    representanteSelect.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+
+        function generarCedulaDependiente(representanteId, cedulaRepresentante) {
+            // Obtener el siguiente número de hijo disponible
+            const url = `{{ url('admin/users/next-dependent-number') }}/${representanteId}`;
+            
+            cedulaInput.value = 'Generando...';
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const siguienteNumero = data.next_number || 1;
+                    const cedulaDependiente = `${cedulaRepresentante}-H${siguienteNumero}`;
+                    cedulaInput.value = cedulaDependiente;
+                })
+                .catch(error => {
+                    console.error('Error generando cédula:', error);
+                    // Fallback: usar H1 por defecto
+                    const cedulaDependiente = `${cedulaRepresentante}-H1`;
+                    cedulaInput.value = cedulaDependiente;
+                });
+        }
     });
 </script>
 @endpush

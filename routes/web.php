@@ -90,6 +90,9 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcion
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        Route::post('users/{user}/password-reset', [UserManagementController::class, 'sendPasswordResetLink'])->name('users.password-reset');
+        Route::get('users/next-dependent-number/{representante}', [UserManagementController::class, 'getNextDependentNumber'])->name('users.next-dependent-number');
+        Route::get('users/search-representantes', [UserManagementController::class, 'searchRepresentantes'])->name('users.search-representantes');
         Route::resource('users', UserManagementController::class)->only(['index', 'create', 'store', 'edit', 'update']);
     });
 
@@ -133,7 +136,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica'])
             } catch (\Exception $e) {
                 return back()->with('error', 'Error limpiando caché manualmente: ' . $e->getMessage());
             }
-        })->name('settings.cache.clear');
+        })->name('settings.cache.clear')->middleware('role:super-admin');
     });
 
 Route::middleware('auth')->group(function () {
