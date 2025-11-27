@@ -25,8 +25,8 @@ class UserManagementController extends Controller
                 $q->where('name', 'super-admin');
             });
 
-        // Si es recepcionista: solo puede ver pacientes
-        if ($usuarioActual && $usuarioActual->hasRole('recepcionista')) {
+        // Si es recepcionista (y no es admin): solo puede ver pacientes
+        if ($usuarioActual && $usuarioActual->hasRole('recepcionista') && !$usuarioActual->hasAnyRole(['super-admin', 'admin_clinica'])) {
             $roles = collect(['paciente']);
             $usuariosQuery->whereHas('roles', function ($q) {
                 $q->where('name', 'paciente');
@@ -53,7 +53,9 @@ class UserManagementController extends Controller
 
     public function create(): View
     {
-        $roles = Auth::user()->hasRole('recepcionista')
+        $esRecepcionistaLimitado = Auth::user()->hasRole('recepcionista') && !Auth::user()->hasAnyRole(['super-admin', 'admin_clinica']);
+
+        $roles = $esRecepcionistaLimitado
             ? collect(['paciente'])
             : Role::where('name', '!=', 'super-admin')->orderBy('name')->pluck('name');
         $especialidades = Especialidad::orderBy('nombre')->get();
@@ -66,8 +68,8 @@ class UserManagementController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        // Si es recepcionista, forzar rol paciente y sin especialidad
-        if (Auth::user()->hasRole('recepcionista')) {
+        // Si es recepcionista (y no admin), forzar rol paciente y sin especialidad
+        if (Auth::user()->hasRole('recepcionista') && !Auth::user()->hasAnyRole(['super-admin', 'admin_clinica'])) {
             $request->merge(['roles' => ['paciente'], 'especialidad_id' => null]);
         }
 
@@ -142,12 +144,14 @@ class UserManagementController extends Controller
     {
         $user->load(['roles', 'especialidad']);
 
-        // Recepcionista solo puede editar pacientes
-        if (Auth::user()->hasRole('recepcionista') && !$user->hasRole('paciente')) {
+        // Recepcionista (no admin) solo puede editar pacientes
+        $esRecepcionistaLimitado = Auth::user()->hasRole('recepcionista') && !Auth::user()->hasAnyRole(['super-admin', 'admin_clinica']);
+
+        if ($esRecepcionistaLimitado && !$user->hasRole('paciente')) {
             abort(403);
         }
 
-        $roles = Auth::user()->hasRole('recepcionista')
+        $roles = $esRecepcionistaLimitado
             ? collect(['paciente'])
             : Role::where('name', '!=', 'super-admin')->orderBy('name')->pluck('name');
         $especialidades = Especialidad::orderBy('nombre')->get();
@@ -163,8 +167,8 @@ class UserManagementController extends Controller
 
     public function update(Request $request, User $user): RedirectResponse
     {
-        // Recepcionista solo puede actualizar pacientes y forzar rol paciente
-        if (Auth::user()->hasRole('recepcionista')) {
+        // Recepcionista (no admin) solo puede actualizar pacientes y forzar rol paciente
+        if (Auth::user()->hasRole('recepcionista') && !Auth::user()->hasAnyRole(['super-admin', 'admin_clinica'])) {
             if (!$user->hasRole('paciente')) {
                 abort(403);
             }
