@@ -133,7 +133,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica'])
             } catch (\Exception $e) {
                 return back()->with('error', 'Error limpiando caché manualmente: ' . $e->getMessage());
             }
-        })->name('settings.cache.clear');
+        })->name('settings.cache.clear')->middleware('role:super-admin');
     });
 
 Route::middleware('auth')->group(function () {

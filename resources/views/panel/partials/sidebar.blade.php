@@ -119,6 +119,7 @@
                 <p>Pago móvil</p>
             </a>
         </li>
+        @role('super-admin')
         <li class="nav-item">
             <a href="{{ route('admin.settings.cache.clear') }}" class="nav-link text-warning" id="btn-limpiar-cache">
                 <i class="nav-icon fas fa-broom"></i>
@@ -147,6 +148,7 @@
                 });
             });
         </script>
+        @endrole
         @endhasanyrole
     </ul>
 </nav>
