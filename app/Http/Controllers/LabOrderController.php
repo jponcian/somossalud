@@ -33,6 +33,17 @@ class LabOrderController extends Controller
             $query->where('clinica_id', $user->clinica_id);
         }
 
+        // Si es laboratorio-resul, solo mostrar órdenes pendientes o completadas hace menos de 2 días
+        if ($user->hasRole('laboratorio-resul') && !$user->hasRole(['super-admin', 'admin_clinica', 'laboratorio'])) {
+            $query->where(function($q) {
+                $q->where('status', 'pending')
+                  ->orWhere(function($subQ) {
+                      $subQ->where('status', 'completed')
+                           ->where('result_date', '>=', now()->subDays(2));
+                  });
+            });
+        }
+
         // Filtrar por estado
         if ($status !== 'all') {
             $query->where('status', $status);
@@ -180,6 +191,17 @@ class LabOrderController extends Controller
             abort(403, 'No tiene permisos para cargar resultados a esta orden');
         }
 
+        // Verificar si el rol laboratorio-resul puede modificar (solo hasta 2 días después)
+        if ($user->hasRole('laboratorio-resul') && !$user->hasRole(['super-admin', 'admin_clinica', 'laboratorio'])) {
+            if ($order->status === 'completed' && $order->result_date) {
+                $daysSinceResult = now()->diffInDays($order->result_date);
+                if ($daysSinceResult > 2) {
+                    return redirect()->route('lab.orders.show', $order->id)
+                        ->with('error', 'No puede modificar resultados después de 2 días de haberlos cargado.');
+                }
+            }
+        }
+
         return view('lab.orders.load_results', compact('order'));
     }
 
@@ -189,6 +211,18 @@ class LabOrderController extends Controller
     public function storeResults(Request $request, $id)
     {
         $order = LabOrder::findOrFail($id);
+        $user = Auth::user();
+
+        // Verificar si el rol laboratorio-resul puede modificar (solo hasta 2 días después)
+        if ($user->hasRole('laboratorio-resul') && !$user->hasRole(['super-admin', 'admin_clinica', 'laboratorio'])) {
+            if ($order->status === 'completed' && $order->result_date) {
+                $daysSinceResult = now()->diffInDays($order->result_date);
+                if ($daysSinceResult > 2) {
+                    return redirect()->route('lab.orders.show', $order->id)
+                        ->with('error', 'No puede modificar resultados después de 2 días de haberlos cargado.');
+                }
+            }
+        }
 
         $request->validate([
             'results' => 'required|array',
@@ -222,12 +256,17 @@ class LabOrderController extends Controller
             }
 
             // Actualizar fechas y estado de la orden
-            $order->update([
-                // sample_date se conserva
-                'result_date' => now(),
+            $updateData = [
                 'status' => 'completed',
                 'verification_code' => $order->verification_code ?? LabOrder::generateVerificationCode()
-            ]);
+            ];
+            
+            // Solo actualizar result_date si es la primera vez que se cargan resultados
+            if ($order->status !== 'completed') {
+                $updateData['result_date'] = now();
+            }
+            
+            $order->update($updateData);
 
             $order->details()->update(['status' => 'completed']);
 
@@ -260,7 +299,7 @@ class LabOrderController extends Controller
 
         // Verificar permisos
         $user = Auth::user();
-        $isAuthorizedStaff = $user->hasRole(['laboratorio', 'admin_clinica', 'super-admin', 'recepcionista']);
+        $isAuthorizedStaff = $user->hasRole(['laboratorio', 'laboratorio-resul', 'admin_clinica', 'super-admin', 'recepcionista']);
         $isPatientOwner = $order->patient_id === $user->id;
 
         if (!$isAuthorizedStaff && !$isPatientOwner) {

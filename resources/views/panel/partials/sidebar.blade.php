@@ -51,19 +51,25 @@
         @endrole
         @endhasanyrole
         <!-- SECCIÓN LABORATORIO -->
-        @hasanyrole('super-admin|admin_clinica|laboratorio|recepcionista')
+        @hasanyrole('super-admin|admin_clinica|laboratorio|laboratorio-resul|recepcionista')
         <li class="nav-header">LABORATORIO</li>
         <!-- Sistema de Órdenes (Nuevo) -->
         <li class="nav-item">
             <a href="{{ route('lab.orders.index') }}"
                 class="nav-link {{ request()->routeIs('lab.orders.*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-file-medical"></i>
-                <p>Exámenes</p>
+                <p>
+                    @hasanyrole('laboratorio|admin_clinica|super-admin|recepcionista')
+                        Exámenes
+                    @else
+                        Resultados Pendientes
+                    @endhasanyrole
+                </p>
             </a>
         </li>
         @endhasanyrole
         <!-- SECCIÓN INVENTARIO -->
-        @hasanyrole('super-admin|admin_clinica|almacen')
+        @hasanyrole('super-admin|admin_clinica|almacen|almacen-jefe')
         <li class="nav-header">INVENTARIO</li>
              <li class="nav-item">
             <a href="{{ route('inventario.solicitudes.create') }}"
@@ -78,6 +84,7 @@
                 <p>Solicitudes</p>
             </a>
         </li>
+        @hasanyrole('super-admin|admin_clinica|almacen-jefe')
         <li class="nav-item">
             <a href="{{ route('inventario.ingresos.index') }}"
                 class="nav-link {{ request()->routeIs('inventario.ingresos.*') ? 'active' : '' }}">
@@ -92,6 +99,7 @@
                 <p>Gestión de Materiales</p>
             </a>
         </li>
+        @endhasanyrole
 
         @endhasanyrole
         <!-- SECCIÓN CONFIGURACIÓN -->

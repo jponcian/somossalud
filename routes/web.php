@@ -18,7 +18,7 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = \Illuminate\Support\Facades\Auth::user();
     // Si el usuario tiene rol de personal clínico distinto a paciente, podría ir a panel.clinica
-    if ($user->hasRole(['super-admin', 'admin_clinica', 'recepcionista', 'especialista', 'laboratorio', 'almacen']) && !$user->hasRole('paciente')) {
+    if ($user->hasRole(['super-admin', 'admin_clinica', 'recepcionista', 'especialista', 'laboratorio', 'laboratorio-resul', 'almacen', 'almacen-jefe']) && !$user->hasRole('paciente')) {
         return redirect()->route('panel.clinica');
     }
     // Panel de paciente unificado
@@ -41,18 +41,22 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Rutas de órdenes de laboratorio (personal autorizado)
-Route::middleware(['auth', 'verified', 'role:laboratorio|admin_clinica|super-admin|recepcionista'])
+Route::middleware(['auth', 'verified', 'role:laboratorio|laboratorio-resul|admin_clinica|super-admin|recepcionista'])
     ->prefix('lab/orders')
     ->name('lab.orders.')
     ->group(function () {
         Route::get('/', [\App\Http\Controllers\LabOrderController::class, 'index'])->name('index');
-        Route::get('/create', [\App\Http\Controllers\LabOrderController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\LabOrderController::class, 'store'])->name('store');
+        Route::get('/create', [\App\Http\Controllers\LabOrderController::class, 'create'])->name('create')
+            ->middleware('role:laboratorio|admin_clinica|super-admin|recepcionista');
+        Route::post('/', [\App\Http\Controllers\LabOrderController::class, 'store'])->name('store')
+            ->middleware('role:laboratorio|admin_clinica|super-admin|recepcionista');
         Route::get('/{id}', [\App\Http\Controllers\LabOrderController::class, 'show'])->name('show');
         Route::get('/{id}/load-results', [\App\Http\Controllers\LabOrderController::class, 'loadResults'])->name('load-results');
         Route::post('/{id}/results', [\App\Http\Controllers\LabOrderController::class, 'storeResults'])->name('store-results');
-        Route::get('/ajax/search-patients', [\App\Http\Controllers\LabOrderController::class, 'searchPatients'])->name('search-patients');
-        Route::post('/delete-exam-item', [\App\Http\Controllers\LabOrderController::class, 'deleteExamItem'])->name('delete-exam-item');
+        Route::get('/ajax/search-patients', [\App\Http\Controllers\LabOrderController::class, 'searchPatients'])->name('search-patients')
+            ->middleware('role:laboratorio|admin_clinica|super-admin|recepcionista');
+        Route::post('/delete-exam-item', [\App\Http\Controllers\LabOrderController::class, 'deleteExamItem'])->name('delete-exam-item')
+            ->middleware('role:laboratorio|admin_clinica|super-admin|recepcionista');
     });
 
 // Ruta de descarga de PDF accesible para pacientes y personal (validación en controlador)
@@ -68,7 +72,7 @@ Route::middleware(['auth', 'verified'])->get('/panel/pacientes', function () {
     return redirect()->route('dashboard');
 })->name('panel.pacientes');
 
-Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcionista|especialista|laboratorio|almacen'])->get('/panel/clinica', function () {
+Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcionista|especialista|laboratorio|laboratorio-resul|almacen|almacen-jefe'])->get('/panel/clinica', function () {
     return view('panel.clinica');
 })->name('panel.clinica');
 
@@ -273,56 +277,56 @@ Route::middleware(['auth', 'verified'])
         Route::prefix('solicitudes')->name('solicitudes.')->group(function () {
             Route::get('/', [\App\Http\Controllers\SolicitudInventarioController::class, 'index'])
                 ->name('index')
-                ->middleware('role:super-admin|admin_clinica|almacen');
+                ->middleware('role:super-admin|admin_clinica|almacen|almacen-jefe');
 
             Route::get('/crear', [\App\Http\Controllers\SolicitudInventarioController::class, 'create'])
                 ->name('create')
-                ->middleware('role:super-admin|admin_clinica|almacen');
+                ->middleware('role:super-admin|admin_clinica|almacen|almacen-jefe');
 
             Route::post('/', [\App\Http\Controllers\SolicitudInventarioController::class, 'store'])
                 ->name('store')
-                ->middleware('role:super-admin|admin_clinica|almacen');
+                ->middleware('role:super-admin|admin_clinica|almacen|almacen-jefe');
 
             Route::get('/buscar-materiales', [\App\Http\Controllers\SolicitudInventarioController::class, 'buscarMateriales'])
                 ->name('buscar-materiales'); // AJAX para autocompletado
     
             Route::get('/{solicitud}', [\App\Http\Controllers\SolicitudInventarioController::class, 'show'])
                 ->name('show')
-                ->middleware('role:super-admin|admin_clinica|almacen');
+                ->middleware('role:super-admin|admin_clinica|almacen|almacen-jefe');
 
             Route::get('/{solicitud}/editar', [\App\Http\Controllers\SolicitudInventarioController::class, 'edit'])
                 ->name('edit')
-                ->middleware('role:super-admin|admin_clinica');
+                ->middleware('role:super-admin|admin_clinica|almacen-jefe');
 
             Route::post('/{solicitud}/aprobar', [\App\Http\Controllers\SolicitudInventarioController::class, 'aprobar'])
                 ->name('aprobar')
-                ->middleware('role:super-admin|admin_clinica');
+                ->middleware('role:super-admin|admin_clinica|almacen-jefe');
 
             Route::post('/{solicitud}/despachar', [\App\Http\Controllers\SolicitudInventarioController::class, 'despachar'])
                 ->name('despachar')
-                ->middleware('role:super-admin|admin_clinica');
+                ->middleware('role:super-admin|admin_clinica|almacen-jefe');
 
             Route::delete('/{solicitud}', [\App\Http\Controllers\SolicitudInventarioController::class, 'destroy'])
                 ->name('destroy')
-                ->middleware('role:super-admin|admin_clinica|almacen');
+                ->middleware('role:super-admin|admin_clinica|almacen-jefe');
         });
 
-        // Rutas de Materiales
+        // Rutas de Materiales (solo almacen-jefe)
         Route::resource('materiales', \App\Http\Controllers\MaterialController::class)
-            ->middleware('role:super-admin|admin_clinica|almacen');
+            ->middleware('role:super-admin|admin_clinica|almacen-jefe');
 
-        // Rutas de Ingresos
+        // Rutas de Ingresos (solo almacen-jefe)
         Route::get('ingresos', [\App\Http\Controllers\IngresoInventarioController::class, 'index'])
             ->name('ingresos.index')
-            ->middleware('role:super-admin|admin_clinica|almacen');
+            ->middleware('role:super-admin|admin_clinica|almacen-jefe');
         
         Route::get('ingresos/crear', [\App\Http\Controllers\IngresoInventarioController::class, 'create'])
             ->name('ingresos.create')
-            ->middleware('role:super-admin|admin_clinica|almacen');
+            ->middleware('role:super-admin|admin_clinica|almacen-jefe');
             
         Route::post('ingresos', [\App\Http\Controllers\IngresoInventarioController::class, 'store'])
             ->name('ingresos.store')
-            ->middleware('role:super-admin|admin_clinica|almacen');
+            ->middleware('role:super-admin|admin_clinica|almacen-jefe');
     });
 
 require __DIR__ . '/auth.php';

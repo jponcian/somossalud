@@ -5,19 +5,145 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <!-- SEO Meta Tags -->
-    <title>@yield('title', 'Clinica SaludSonrisa | SomosSalud')</title>
-    <meta name="description" content="@yield('description', 'Tu salud y la de tu familia en las mejores manos. Citas médicas, odontología y resultados en línea.')">
-    <meta name="keywords" content="salud, clinica, odontologia, citas medicas, venezuela, saludsonrisa, somossalud, doctores">
-    <meta name="author" content="Clinica SaludSonrisa">
-    <meta name="robots" content="index, follow">
     
-    <!-- Open Graph / Facebook -->
+    <!-- SEO Meta Tags -->
+    <title>@yield('title', 'Clínica SaludSonrisa | Atención Médica y Odontológica en Venezuela | SomosSalud')</title>
+    <meta name="description" content="@yield('description', 'Clínica SaludSonrisa ofrece atención médica integral, odontología, pediatría y laboratorio clínico. Agenda citas online, consulta resultados y accede a descuentos con SomosSalud. Atención 24/7 en Venezuela.')">
+    
+    <!-- Palabras clave optimizadas para búsqueda local -->
+    <meta name="keywords" content="clínica venezuela, salud sonrisa, saludsonrisa, clínica saludsonrisa, clínica salud sonrisa, odontología venezuela, pediatría venezuela, laboratorio clínico, citas médicas online, resultados de laboratorio online, atención médica 24 horas, consultas médicas, dentista venezuela, médico pediatra, exámenes de laboratorio, descuentos médicos, salud familiar venezuela, somossalud, clínica familiar, atención odontológica, servicios médicos, centro médico venezuela, somossalud, somos salud, somos salud venezuela">
+    
+    <meta name="author" content="Clínica SaludSonrisa">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    
+    <!-- Geo Tags para búsqueda local -->
+    <meta name="geo.region" content="VE">
+    <meta name="geo.placename" content="Venezuela">
+    <meta name="geo.position" content="10.4806;-66.9036">
+    <meta name="ICBM" content="10.4806, -66.9036">
+    
+    <!-- Idioma y localización -->
+    <meta http-equiv="content-language" content="es-VE">
+    <link rel="alternate" hreflang="es-ve" href="{{ url('/') }}">
+    <link rel="alternate" hreflang="es" href="{{ url('/') }}">
+    
+    <!-- Open Graph / Facebook (Mejorado) -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:title" content="@yield('title', 'Clinica SaludSonrisa | SomosSalud')">
-    <meta property="og:description" content="@yield('description', 'Tu salud y la de tu familia en las mejores manos.')">
+    <meta property="og:site_name" content="Clínica SaludSonrisa">
+    <meta property="og:title" content="@yield('og_title', 'Clínica SaludSonrisa | Atención Médica Integral en Venezuela')">
+    <meta property="og:description" content="@yield('og_description', 'Tu salud y la de tu familia en las mejores manos. Agenda citas, consulta resultados de laboratorio y accede a descuentos exclusivos.')">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="es_VE">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('twitter_title', 'Clínica SaludSonrisa | Atención Médica en Venezuela')">
+    <meta name="twitter:description" content="@yield('twitter_description', 'Agenda citas médicas, consulta resultados de laboratorio y accede a atención 24/7')">
+    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url()->current() }}">
+    
+    <!-- Datos Estructurados JSON-LD para Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalClinic",
+      "name": "Clínica SaludSonrisa",
+      "description": "Clínica médica integral con servicios de odontología, pediatría y laboratorio clínico en Venezuela",
+      "url": "{{ url('/') }}",
+      "logo": "{{ asset('images/logo.png') }}",
+      "image": "{{ asset('images/logo.png') }}",
+      "telephone": "+58-246-871-6474",
+      "email": "alianzas@clinicasaludsonrisa.com.ve",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "VE",
+        "addressLocality": "Venezuela"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "00:00",
+        "closes": "23:59"
+      },
+      "medicalSpecialty": [
+        "Odontología",
+        "Pediatría",
+        "Medicina General",
+        "Laboratorio Clínico"
+      ],
+      "priceRange": "$$",
+      "availableService": [
+        {
+          "@type": "MedicalProcedure",
+          "name": "Consultas Médicas"
+        },
+        {
+          "@type": "MedicalProcedure",
+          "name": "Atención Odontológica"
+        },
+        {
+          "@type": "MedicalTest",
+          "name": "Exámenes de Laboratorio"
+        },
+        {
+          "@type": "MedicalProcedure",
+          "name": "Pediatría"
+        }
+      ],
+      "potentialAction": {
+        "@type": "ReserveAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "{{ route('register') }}",
+          "actionPlatform": [
+            "http://schema.org/DesktopWebPlatform",
+            "http://schema.org/MobileWebPlatform"
+          ]
+        },
+        "result": {
+          "@type": "Reservation",
+          "name": "Agendar Cita Médica"
+        }
+      }
+    }
+    </script>
+    
+    <!-- Organización Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "SomosSalud",
+      "alternateName": "Clínica SaludSonrisa",
+      "url": "{{ url('/') }}",
+      "logo": "{{ asset('images/logo.png') }}",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+58-246-871-6474",
+        "contactType": "customer service",
+        "areaServed": "VE",
+        "availableLanguage": "Spanish"
+      },
+      "sameAs": [
+        "https://www.instagram.com/clinicasaludsonrisave/",
+        "https://www.facebook.com/p/Clínica-SaludSonrisa-100089365696512/"
+      ]
+    }
+    </script>
 
     <!-- Google Fonts: Outfit (Moderno y limpio) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
