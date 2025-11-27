@@ -17,27 +17,14 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $user = \Illuminate\Support\Facades\Auth::user();
-    // Si el usuario tiene rol de personal clínico distinto a paciente, podría ir a panel.clinica
-    if ($user->hasRole(['super-admin', 'admin_clinica', 'recepcionista', 'especialista', 'laboratorio', 'laboratorio-resul', 'almacen', 'almacen-jefe']) && !$user->hasRole('paciente')) {
+    
+    // Prioridad al panel clínico para personal
+    if ($user->hasAnyRole(['super-admin', 'admin_clinica', 'recepcionista', 'especialista', 'laboratorio', 'laboratorio-resul', 'almacen', 'almacen-jefe'])) {
         return redirect()->route('panel.clinica');
     }
-    // Panel de paciente unificado
-    $suscripcionActiva = \App\Models\Suscripcion::where('usuario_id', $user->id)->where('estado', 'activo')->latest()->first();
-    $reportePendiente = \App\Models\ReportePago::where('usuario_id', $user->id)->where('estado', 'pendiente')->latest()->first();
-    $ultimoRechazado = \App\Models\ReportePago::where('usuario_id', $user->id)->where('estado', 'rechazado')->latest()->first();
-    $ultimaReceta = \App\Models\Cita::with(['medicamentos', 'especialista', 'clinica'])
-        ->where('usuario_id', $user->id)
-        ->whereHas('medicamentos')
-        ->orderByRaw('COALESCE(concluida_at, updated_at) DESC')
-        ->first();
-    // Órdenes de laboratorio completadas del paciente
-    $ordenesLaboratorio = \App\Models\LabOrder::with(['clinica', 'details.exam'])
-        ->where('patient_id', $user->id)
-        ->where('status', 'completed')
-        ->orderBy('result_date', 'desc')
-        ->limit(5)
-        ->get();
-    return view('panel.pacientes', compact('suscripcionActiva', 'reportePendiente', 'ultimoRechazado', 'ultimaReceta', 'ordenesLaboratorio'));
+    
+    // Por defecto al panel de pacientes
+    return redirect()->route('panel.pacientes');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Rutas de órdenes de laboratorio (personal autorizado)
@@ -69,7 +56,26 @@ Route::get('verificar-orden-laboratorio/{code}', [\App\Http\Controllers\LabOrder
 
 // Mantener ruta antigua pero redirigir al nuevo dashboard unificado
 Route::middleware(['auth', 'verified'])->get('/panel/pacientes', function () {
-    return redirect()->route('dashboard');
+    $user = \Illuminate\Support\Facades\Auth::user();
+    
+    // Panel de paciente unificado
+    $suscripcionActiva = \App\Models\Suscripcion::where('usuario_id', $user->id)->where('estado', 'activo')->latest()->first();
+    $reportePendiente = \App\Models\ReportePago::where('usuario_id', $user->id)->where('estado', 'pendiente')->latest()->first();
+    $ultimoRechazado = \App\Models\ReportePago::where('usuario_id', $user->id)->where('estado', 'rechazado')->latest()->first();
+    $ultimaReceta = \App\Models\Cita::with(['medicamentos', 'especialista', 'clinica'])
+        ->where('usuario_id', $user->id)
+        ->whereHas('medicamentos')
+        ->orderByRaw('COALESCE(concluida_at, updated_at) DESC')
+        ->first();
+    // Órdenes de laboratorio completadas del paciente
+    $ordenesLaboratorio = \App\Models\LabOrder::with(['clinica', 'details.exam'])
+        ->where('patient_id', $user->id)
+        ->where('status', 'completed')
+        ->orderBy('result_date', 'desc')
+        ->limit(5)
+        ->get();
+        
+    return view('panel.pacientes', compact('suscripcionActiva', 'reportePendiente', 'ultimoRechazado', 'ultimaReceta', 'ordenesLaboratorio'));
 })->name('panel.pacientes');
 
 Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcionista|especialista|laboratorio|laboratorio-resul|almacen|almacen-jefe'])->get('/panel/clinica', function () {

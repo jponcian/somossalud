@@ -24,6 +24,9 @@
 
         <form method="POST" action="{{ route('login') }}" novalidate>
             @csrf
+            @if(request()->has('perfil'))
+                <input type="hidden" name="perfil" value="{{ request()->query('perfil') }}">
+            @endif
             
             <div class="mb-4">
                 <label for="cedula" class="form-label">

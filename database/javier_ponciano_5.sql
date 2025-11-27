@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : Local
+ Source Server         : ZZ - SomosSalud
  Source Server Type    : MySQL
- Source Server Version : 80300
- Source Host           : localhost:3306
+ Source Server Version : 100529
+ Source Host           : zz.com.ve:3306
  Source Schema         : javier_ponciano_5
 
  Target Server Type    : MySQL
- Target Server Version : 80300
+ Target Server Version : 100529
  File Encoding         : 65001
 
- Date: 27/11/2025 07:09:57
+ Date: 27/11/2025 19:32:58
 */
 
 SET NAMES utf8mb4;
@@ -113,19 +113,20 @@ CREATE TABLE `cache`  (
   `value` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `expiration` int NOT NULL,
   PRIMARY KEY (`key`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of cache
 -- ----------------------------
 INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|::1:timer', 'i:1764181352;', 1764181352);
 INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|::1', 'i:3;', 1764181352);
-INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|38.41.23.21:timer', 'i:1764187325;', 1764187325);
-INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|38.41.23.21', 'i:1;', 1764187325);
-INSERT INTO `cache` VALUES ('somossalud-cache-v-12345679|38.41.23.21:timer', 'i:1764187341;', 1764187341);
-INSERT INTO `cache` VALUES ('somossalud-cache-v-12345679|38.41.23.21', 'i:1;', 1764187341);
-INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|82.86.113.138:timer', 'i:1764197443;', 1764197443);
-INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|82.86.113.138', 'i:2;', 1764197443);
+INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|38.41.23.21:timer', 'i:1764263516;', 1764263516);
+INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|38.41.23.21', 'i:1;', 1764263516);
+INSERT INTO `cache` VALUES ('somossalud-cache-v-12345679|38.41.23.21:timer', 'i:1764263495;', 1764263495);
+INSERT INTO `cache` VALUES ('somossalud-cache-v-12345679|38.41.23.21', 'i:1;', 1764263495);
+INSERT INTO `cache` VALUES ('somossalud-cache-spatie.permission.cache', 'a:3:{s:5:\"alias\";a:0:{}s:11:\"permissions\";a:0:{}s:5:\"roles\";a:0:{}}', 1764273749);
+INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|82.86.113.138:timer', 'i:1764285047;', 1764285047);
+INSERT INTO `cache` VALUES ('somossalud-cache-v-12345678|82.86.113.138', 'i:1;', 1764285047);
 
 -- ----------------------------
 -- Table structure for cache_locks
@@ -136,7 +137,7 @@ CREATE TABLE `cache_locks`  (
   `owner` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `expiration` int NOT NULL,
   PRIMARY KEY (`key`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of cache_locks
@@ -274,7 +275,7 @@ CREATE TABLE `especialidad_usuario`  (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `usuario_especialidad`(`usuario_id`, `especialidad_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Fixed;
+) ENGINE = MyISAM AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Fixed;
 
 -- ----------------------------
 -- Records of especialidad_usuario
@@ -293,6 +294,10 @@ INSERT INTO `especialidad_usuario` VALUES (11, 20, 2, '2025-11-26 21:35:55', '20
 INSERT INTO `especialidad_usuario` VALUES (12, 22, 1, '2025-11-26 21:36:25', '2025-11-26 21:36:25');
 INSERT INTO `especialidad_usuario` VALUES (13, 26, 24, '2025-11-26 21:37:47', '2025-11-26 21:37:47');
 INSERT INTO `especialidad_usuario` VALUES (14, 27, 12, '2025-11-26 21:38:07', '2025-11-26 21:38:07');
+INSERT INTO `especialidad_usuario` VALUES (15, 32, 13, '2025-11-27 18:42:50', '2025-11-27 18:42:50');
+INSERT INTO `especialidad_usuario` VALUES (16, 33, 9, '2025-11-27 18:49:18', '2025-11-27 18:49:18');
+INSERT INTO `especialidad_usuario` VALUES (18, 34, 1, '2025-11-27 18:56:31', '2025-11-27 18:56:31');
+INSERT INTO `especialidad_usuario` VALUES (19, 35, 1, '2025-11-27 19:02:35', '2025-11-27 19:02:35');
 
 -- ----------------------------
 -- Table structure for especialidades
@@ -377,7 +382,7 @@ CREATE TABLE `failed_jobs`  (
   `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `failed_jobs_uuid_unique`(`uuid`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
@@ -406,14 +411,17 @@ CREATE TABLE `items_solicitud_inventario`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `items_solicitud_inventario_material_id_foreign`(`material_id`) USING BTREE,
   INDEX `items_solicitud_inventario_solicitud_id_index`(`solicitud_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of items_solicitud_inventario
 -- ----------------------------
-INSERT INTO `items_solicitud_inventario` VALUES (1, 1, 1, 'MONONYLON 163 NYLON 3-0 (CAJA)', NULL, 'Unidad', 1, NULL, NULL, NULL, '2025-11-27 01:56:57', '2025-11-27 01:56:57');
-INSERT INTO `items_solicitud_inventario` VALUES (2, 1, 2, 'CATGUT CRÓMICO 1 (813) (CAJA)', NULL, 'Unidad', 1, NULL, NULL, NULL, '2025-11-27 01:56:57', '2025-11-27 01:56:57');
-INSERT INTO `items_solicitud_inventario` VALUES (3, 1, 5, 'CUBRE BOTA PAQX100 UNDS (PAQUETE)', NULL, 'Unidad', 1, NULL, NULL, NULL, '2025-11-27 01:56:57', '2025-11-27 01:56:57');
+INSERT INTO `items_solicitud_inventario` VALUES (1, 1, 8, 'AGUA OXIGENADA GALÓN GUARDIAN (GALON)', NULL, 'Unidad', 1, 3, NULL, NULL, '2025-11-27 16:01:01', '2025-11-27 16:02:25');
+INSERT INTO `items_solicitud_inventario` VALUES (2, 1, 4, 'GUANTES DE EXAMEN LÁTEX TALLA S (CAJA)', NULL, 'Caja', 1, 1, NULL, NULL, '2025-11-27 16:01:01', '2025-11-27 16:02:25');
+INSERT INTO `items_solicitud_inventario` VALUES (3, 1, 6, 'HOJILLA DE BISTURI NRO 10 (CAJA)', NULL, 'Unidad', 5, 5, NULL, NULL, '2025-11-27 16:01:01', '2025-11-27 16:02:25');
+INSERT INTO `items_solicitud_inventario` VALUES (4, 2, 3, 'GUANTES DE EXAMEN TALLA M (CAJA)', NULL, 'Unidad', 1, NULL, NULL, NULL, '2025-11-27 16:42:57', '2025-11-27 16:42:57');
+INSERT INTO `items_solicitud_inventario` VALUES (5, 2, 2, 'CATGUT CRÓMICO 1 (813) (CAJA)', NULL, 'Caja', 1, NULL, NULL, NULL, '2025-11-27 16:42:57', '2025-11-27 16:42:57');
+INSERT INTO `items_solicitud_inventario` VALUES (6, 2, 5, 'CUBRE BOTA PAQX100 UNDS (PAQUETE)', NULL, 'Unidad', 1, NULL, NULL, NULL, '2025-11-27 16:42:57', '2025-11-27 16:42:57');
 
 -- ----------------------------
 -- Table structure for job_batches
@@ -431,7 +439,7 @@ CREATE TABLE `job_batches`  (
   `created_at` int NOT NULL,
   `finished_at` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of job_batches
@@ -451,7 +459,7 @@ CREATE TABLE `jobs`  (
   `created_at` int UNSIGNED NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `jobs_queue_index`(`queue`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of jobs
@@ -481,6 +489,7 @@ INSERT INTO `jobs` VALUES (22, 'default', '{\"uuid\":\"915ecd69-0d3a-45cc-89e4-9
 INSERT INTO `jobs` VALUES (23, 'default', '{\"uuid\":\"c6ea55dc-8676-437e-8596-99a6f462dcd4\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:12;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:27:\\\"telefonodevicente@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1763475644,\"delay\":null}', 0, NULL, 1763475644, 1763475644);
 INSERT INTO `jobs` VALUES (24, 'default', '{\"uuid\":\"5bbfeb9d-0432-40a6-81b5-27d636398a45\",\"displayName\":\"App\\\\Mail\\\\CitaAgendada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:21:\\\"App\\\\Mail\\\\CitaAgendada\\\":3:{s:4:\\\"cita\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\Cita\\\";s:2:\\\"id\\\";i:13;s:9:\\\"relations\\\";a:3:{i:0;s:7:\\\"usuario\\\";i:1;s:12:\\\"especialista\\\";i:2;s:7:\\\"clinica\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:27:\\\"telefonodevicente@gmail.com\\\";}}s:6:\\\"mailer\\\";s:3:\\\"log\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1763475703,\"delay\":null}', 0, NULL, 1763475703, 1763475703);
 INSERT INTO `jobs` VALUES (25, 'default', '{\"uuid\":\"89a17095-5721-4779-8a2d-0f77d24208fd\",\"displayName\":\"App\\\\Mail\\\\SuscripcionAprobada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:28:\\\"App\\\\Mail\\\\SuscripcionAprobada\\\":4:{s:7:\\\"usuario\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";i:25;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:11:\\\"suscripcion\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:22:\\\"App\\\\Models\\\\Suscripcion\\\";s:2:\\\"id\\\";i:7;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:17:\\\"paciente@test.com\\\";}}s:6:\\\"mailer\\\";s:4:\\\"smtp\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1763993450,\"delay\":null}', 0, NULL, 1763993450, 1763993450);
+INSERT INTO `jobs` VALUES (26, 'default', '{\"uuid\":\"2f04455c-bfb2-4f5f-b5d0-258084650489\",\"displayName\":\"App\\\\Mail\\\\SuscripcionAprobada\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Mail\\\\SendQueuedMailable\",\"command\":\"O:34:\\\"Illuminate\\\\Mail\\\\SendQueuedMailable\\\":17:{s:8:\\\"mailable\\\";O:28:\\\"App\\\\Mail\\\\SuscripcionAprobada\\\":4:{s:7:\\\"usuario\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";i:31;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:11:\\\"suscripcion\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:22:\\\"App\\\\Models\\\\Suscripcion\\\";s:2:\\\"id\\\";i:1;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:2:\\\"to\\\";a:1:{i:0;a:2:{s:4:\\\"name\\\";N;s:7:\\\"address\\\";s:30:\\\"hectorcorrosolorzano@gmail.com\\\";}}s:6:\\\"mailer\\\";s:4:\\\"smtp\\\";}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:13:\\\"maxExceptions\\\";N;s:17:\\\"shouldBeEncrypted\\\";b:0;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:12:\\\"messageGroup\\\";N;s:12:\\\"deduplicator\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;s:3:\\\"job\\\";N;}\"},\"createdAt\":1764262699,\"delay\":null}', 0, NULL, 1764262699, 1764262699);
 
 -- ----------------------------
 -- Table structure for lab_categories
@@ -3086,13 +3095,23 @@ CREATE TABLE `lab_order_details`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `lab_order_details_lab_order_id_foreign`(`lab_order_id`) USING BTREE,
   INDEX `lab_order_details_lab_exam_id_foreign`(`lab_exam_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = FIXED;
+) ENGINE = MyISAM AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = FIXED;
 
 -- ----------------------------
 -- Records of lab_order_details
 -- ----------------------------
 INSERT INTO `lab_order_details` VALUES (1, 3, 303, 51.00, 'pending', '2025-11-26 21:48:23', '2025-11-26 21:48:23');
 INSERT INTO `lab_order_details` VALUES (2, 3, 166, 0.00, 'pending', '2025-11-26 21:48:23', '2025-11-26 21:48:23');
+INSERT INTO `lab_order_details` VALUES (3, 4, 483, 0.00, 'completed', '2025-11-27 16:45:30', '2025-11-27 16:47:40');
+INSERT INTO `lab_order_details` VALUES (4, 4, 82, 0.00, 'completed', '2025-11-27 16:45:30', '2025-11-27 16:47:40');
+INSERT INTO `lab_order_details` VALUES (5, 4, 336, 0.00, 'completed', '2025-11-27 16:45:30', '2025-11-27 16:47:40');
+INSERT INTO `lab_order_details` VALUES (6, 4, 124, 16.00, 'completed', '2025-11-27 16:45:30', '2025-11-27 16:47:40');
+INSERT INTO `lab_order_details` VALUES (7, 4, 75, 4.00, 'completed', '2025-11-27 16:45:30', '2025-11-27 16:47:40');
+INSERT INTO `lab_order_details` VALUES (8, 4, 76, 0.00, 'completed', '2025-11-27 16:45:30', '2025-11-27 16:47:40');
+INSERT INTO `lab_order_details` VALUES (9, 4, 63, 0.00, 'completed', '2025-11-27 16:45:30', '2025-11-27 16:47:40');
+INSERT INTO `lab_order_details` VALUES (10, 4, 420, 0.00, 'completed', '2025-11-27 16:45:30', '2025-11-27 16:47:40');
+INSERT INTO `lab_order_details` VALUES (11, 5, 90, 11.00, 'completed', '2025-11-27 17:01:21', '2025-11-27 17:01:47');
+INSERT INTO `lab_order_details` VALUES (12, 5, 93, 11.00, 'completed', '2025-11-27 17:01:21', '2025-11-27 17:01:47');
 
 -- ----------------------------
 -- Table structure for lab_orders
@@ -3122,12 +3141,14 @@ CREATE TABLE `lab_orders`  (
   INDEX `doctor_id`(`doctor_id`) USING BTREE,
   INDEX `clinica_id`(`clinica_id`) USING BTREE,
   INDEX `created_by`(`created_by`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_orders
 -- ----------------------------
 INSERT INTO `lab_orders` VALUES (3, 'LAB-2025-000001', 21, NULL, 1, '2025-11-26', '2025-11-26', NULL, 'pending', 51.00, 'primera solicitud de laboratorio', NULL, 21, 1, '2025-11-26 21:48:23', '2025-11-26 21:48:23');
+INSERT INTO `lab_orders` VALUES (4, 'LAB-2025-000002', 30, NULL, 1, '2025-11-27', '2025-11-27', '2025-11-27', 'completed', 20.00, 'PRUIEBA DE LABORATORIO', 'LDG6SMNOJACO', 21, 1, '2025-11-27 16:45:30', '2025-11-27 16:47:40');
+INSERT INTO `lab_orders` VALUES (5, 'LAB-2025-000003', 31, NULL, 1, '2025-11-27', '2025-11-27', '2025-11-27', 'completed', 22.00, NULL, '47MDWGDGMGBE', 21, 2, '2025-11-27 17:01:21', '2025-11-27 17:01:47');
 
 -- ----------------------------
 -- Table structure for lab_reference_groups
@@ -3910,11 +3931,16 @@ CREATE TABLE `lab_results`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `lab_results_lab_order_detail_id_foreign`(`lab_order_detail_id`) USING BTREE,
   INDEX `lab_results_lab_exam_item_id_foreign`(`lab_exam_item_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = MyISAM AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of lab_results
 -- ----------------------------
+INSERT INTO `lab_results` VALUES (1, 9, 83, '3.4', NULL, '2025-11-27 16:47:40', '2025-11-27 16:47:40');
+INSERT INTO `lab_results` VALUES (2, 10, 1471, '1.1', NULL, '2025-11-27 16:47:40', '2025-11-27 16:47:40');
+INSERT INTO `lab_results` VALUES (3, 10, 1472, '4.5', NULL, '2025-11-27 16:47:40', '2025-11-27 16:47:40');
+INSERT INTO `lab_results` VALUES (4, 11, 148, '1.4', NULL, '2025-11-27 17:01:47', '2025-11-27 17:01:47');
+INSERT INTO `lab_results` VALUES (5, 12, 281, '1.35', NULL, '2025-11-27 17:01:47', '2025-11-27 17:01:47');
 
 -- ----------------------------
 -- Table structure for materiales
@@ -3962,7 +3988,7 @@ CREATE TABLE `migrations`  (
   `migration` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 42 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of migrations
@@ -4005,8 +4031,6 @@ INSERT INTO `migrations` VALUES (36, '2025_11_25_120000_update_atenciones_add_em
 INSERT INTO `migrations` VALUES (37, '2025_11_25_215435_drop_resultados_laboratorio_table', 16);
 INSERT INTO `migrations` VALUES (38, '2025_11_26_021503_add_sexo_to_usuarios_table', 16);
 INSERT INTO `migrations` VALUES (39, '2025_11_26_120000_add_fecha_nacimiento_to_usuarios_table', 16);
-INSERT INTO `migrations` VALUES (40, '2025_11_27_022659_create_movimiento_inventarios_table', 17);
-INSERT INTO `migrations` VALUES (41, '2025_11_27_022755_add_stock_actual_to_materiales_table', 17);
 
 -- ----------------------------
 -- Table structure for model_has_permissions
@@ -4018,7 +4042,7 @@ CREATE TABLE `model_has_permissions`  (
   `model_id` bigint UNSIGNED NOT NULL,
   PRIMARY KEY (`permission_id`, `model_id`, `model_type`) USING BTREE,
   INDEX `model_has_permissions_model_id_model_type_index`(`model_id`, `model_type`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of model_has_permissions
@@ -4034,7 +4058,7 @@ CREATE TABLE `model_has_roles`  (
   `model_id` bigint UNSIGNED NOT NULL,
   PRIMARY KEY (`role_id`, `model_id`, `model_type`) USING BTREE,
   INDEX `model_has_roles_model_id_model_type_index`(`model_id`, `model_type`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of model_has_roles
@@ -4042,7 +4066,6 @@ CREATE TABLE `model_has_roles`  (
 INSERT INTO `model_has_roles` VALUES (1, 'App\\Models\\User', 1);
 INSERT INTO `model_has_roles` VALUES (2, 'App\\Models\\User', 6);
 INSERT INTO `model_has_roles` VALUES (2, 'App\\Models\\User', 21);
-INSERT INTO `model_has_roles` VALUES (3, 'App\\Models\\User', 21);
 INSERT INTO `model_has_roles` VALUES (4, 'App\\Models\\User', 2);
 INSERT INTO `model_has_roles` VALUES (4, 'App\\Models\\User', 4);
 INSERT INTO `model_has_roles` VALUES (4, 'App\\Models\\User', 10);
@@ -4057,13 +4080,21 @@ INSERT INTO `model_has_roles` VALUES (4, 'App\\Models\\User', 26);
 INSERT INTO `model_has_roles` VALUES (4, 'App\\Models\\User', 27);
 INSERT INTO `model_has_roles` VALUES (4, 'App\\Models\\User', 28);
 INSERT INTO `model_has_roles` VALUES (4, 'App\\Models\\User', 29);
+INSERT INTO `model_has_roles` VALUES (4, 'App\\Models\\User', 32);
+INSERT INTO `model_has_roles` VALUES (4, 'App\\Models\\User', 33);
+INSERT INTO `model_has_roles` VALUES (4, 'App\\Models\\User', 34);
+INSERT INTO `model_has_roles` VALUES (4, 'App\\Models\\User', 35);
+INSERT INTO `model_has_roles` VALUES (5, 'App\\Models\\User', 6);
 INSERT INTO `model_has_roles` VALUES (5, 'App\\Models\\User', 16);
 INSERT INTO `model_has_roles` VALUES (5, 'App\\Models\\User', 21);
 INSERT INTO `model_has_roles` VALUES (5, 'App\\Models\\User', 23);
+INSERT INTO `model_has_roles` VALUES (6, 'App\\Models\\User', 6);
 INSERT INTO `model_has_roles` VALUES (6, 'App\\Models\\User', 21);
 INSERT INTO `model_has_roles` VALUES (6, 'App\\Models\\User', 30);
+INSERT INTO `model_has_roles` VALUES (6, 'App\\Models\\User', 31);
 INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 3);
 INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 5);
+INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 6);
 INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 7);
 INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 8);
 INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 9);
@@ -4073,10 +4104,14 @@ INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 19);
 INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 21);
 INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 24);
 INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 25);
+INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 36);
+INSERT INTO `model_has_roles` VALUES (8, 'App\\Models\\User', 6);
+INSERT INTO `model_has_roles` VALUES (8, 'App\\Models\\User', 16);
 INSERT INTO `model_has_roles` VALUES (8, 'App\\Models\\User', 21);
-INSERT INTO `model_has_roles` VALUES (9, 'App\\Models\\User', 16);
+INSERT INTO `model_has_roles` VALUES (8, 'App\\Models\\User', 23);
+INSERT INTO `model_has_roles` VALUES (9, 'App\\Models\\User', 6);
 INSERT INTO `model_has_roles` VALUES (9, 'App\\Models\\User', 21);
-INSERT INTO `model_has_roles` VALUES (9, 'App\\Models\\User', 23);
+INSERT INTO `model_has_roles` VALUES (9, 'App\\Models\\User', 32);
 
 -- ----------------------------
 -- Table structure for movimiento_inventarios
@@ -4086,12 +4121,12 @@ CREATE TABLE `movimiento_inventarios`  (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `material_id` bigint UNSIGNED NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
-  `tipo` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `cantidad` int NOT NULL,
   `stock_anterior` int NOT NULL DEFAULT 0,
   `stock_nuevo` int NOT NULL DEFAULT 0,
-  `motivo` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `referencia` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `motivo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `referencia` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
@@ -4126,12 +4161,13 @@ CREATE TABLE `pagos_reportados`  (
   INDEX `pagos_reportados_usuario_id_foreign`(`usuario_id`) USING BTREE,
   INDEX `pagos_reportados_reviewed_by_foreign`(`reviewed_by`) USING BTREE,
   INDEX `pagos_reportados_estado_index`(`estado`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of pagos_reportados
 -- ----------------------------
 INSERT INTO `pagos_reportados` VALUES (1, 30, 'V-32649049', '0424-1938055', '2025-11-26', '123456', 2435.73, 'pendiente', NULL, NULL, NULL, '2025-11-26 22:41:57', '2025-11-26 22:41:57');
+INSERT INTO `pagos_reportados` VALUES (2, 31, 'V-21658027', '0424-3562758', '2025-11-27', '99998888', 2446.50, 'aprobado', NULL, 21, '2025-11-27 16:58:19', '2025-11-27 16:57:37', '2025-11-27 16:58:19');
 
 -- ----------------------------
 -- Table structure for password_reset_tokens
@@ -4142,18 +4178,28 @@ CREATE TABLE `password_reset_tokens`  (
   `token` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`email`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of password_reset_tokens
 -- ----------------------------
-INSERT INTO `password_reset_tokens` VALUES ('girlabielys@gmail.com', '$2y$12$XYk65pkrqbVWjTO1Kri0weCPNhkQsKOpbX7ARgX4xV2kzkhHN.8ZC', '2025-11-26 21:28:01');
-INSERT INTO `password_reset_tokens` VALUES ('jponciang@gmail.com', '$2y$12$IjtHb5CLkomoB7CvPqhkwOo8LvmDfVxYgbQYgqUhTZzUWXer39oPm', '2025-11-26 21:20:24');
+INSERT INTO `password_reset_tokens` VALUES ('girlabielys@gmail.com', '$2y$12$dWNXm2R4CoOnk1BJtulG.u3aP2GZY1hd7LnA3FDN/zUpiPUTN8Pb2', '2025-11-27 20:25:03');
+INSERT INTO `password_reset_tokens` VALUES ('jponciang@gmail.com', '$2y$12$aRl1z8IgnPrRP7CT/vU16OK0Py0Q4N5sztLPEo5jAOvfbgFEAfi6a', '2025-11-27 18:18:14');
 INSERT INTO `password_reset_tokens` VALUES ('mariadelccelis@gmail.com', '$2y$12$al8djgnbDONdq9qE2/4ufewZ5P6YzB1IJC/YURTxoVdw/MEMw8v5.', '2025-11-22 18:06:57');
-INSERT INTO `password_reset_tokens` VALUES ('josealejandrocortezmedina@gmail.com', '$2y$12$LCaN9Gb4eNPxG4F9Mx4KB.7NlRA7AuF/QWYBjd1gThCZMp48WcX1m', '2025-11-26 21:28:08');
-INSERT INTO `password_reset_tokens` VALUES ('angelvalera80@gmail.com', '$2y$12$As2TJc.Oc3clVktIxIW7mODD1YW/FHYbCd.JsN0.15./JlA9eYs0O', '2025-11-26 21:28:17');
-INSERT INTO `password_reset_tokens` VALUES ('adonitareyes1691@gmail.com', '$2y$12$R2R7N93cy6YryBw3x0flG.UvUTsYxbcVpT7Eu.97YG.RLV41L9XvC', '2025-11-26 21:28:28');
-INSERT INTO `password_reset_tokens` VALUES ('BENAVIDESSANTISEBAS2020@gmail.com', '$2y$12$tbr5851xyxgcoxBWQsnHn.jPshbAa4tygPzjbWZ.VPo0lsSkYO3uS', '2025-11-26 21:28:40');
+INSERT INTO `password_reset_tokens` VALUES ('josealejandrocortezmedina@gmail.com', '$2y$12$JijJM/WOtN6dhDpbcUOCK.h11pve1btjODIjbJW8aHOO0./3l8hRG', '2025-11-27 20:23:54');
+INSERT INTO `password_reset_tokens` VALUES ('angelvalera80@gmail.com', '$2y$12$wqANZEa/T6ff7VYI4EwKneERAJNrCGaeAmGLBC0iSvog6DHzkbtd.', '2025-11-27 20:24:08');
+INSERT INTO `password_reset_tokens` VALUES ('adonitareyes1691@gmail.com', '$2y$12$ptLY/tHf86N7R3UXxCnSYebWk79S75qtNL.K5t459vwL4xGuYdive', '2025-11-27 20:24:22');
+INSERT INTO `password_reset_tokens` VALUES ('benavidessantisebas2020@gmail.com', '$2y$12$u.7J.WacUt90ctca/o4d2ezlPP6b61qSKYMxofLBbtCrozAfJu7/.', '2025-11-27 20:22:40');
+INSERT INTO `password_reset_tokens` VALUES ('hectorcorrosolorzano@gmail.com', '$2y$12$fV.TdfcqG2XFpTYTf0MBSe2aJTLWsbv9rVOtLpQGGiRzbVP5/KbpG', '2025-11-27 17:49:00');
+INSERT INTO `password_reset_tokens` VALUES ('telefonodevicente@gmail.com', '$2y$12$aDXRA2c/Z.5EBKWLgqYelOfU4rzx5GFQ0dCIXzmHJZ0Ii93.5TDf6', '2025-11-27 18:10:11');
+INSERT INTO `password_reset_tokens` VALUES ('nazarethahernandeza@gmail.com', '$2y$12$JnYIIboqhVimzCQopEkCW.GwLW5zfUWDq3dMGiNvy/jLztzJ2Gh1a', '2025-11-27 20:22:59');
+INSERT INTO `password_reset_tokens` VALUES ('alemedic27@gmail.com', '$2y$12$9IC0qjaceQbgvVsYxyfiNuTN.3m90PXOQblMMc2iE0ufjI6lNEdji', '2025-11-27 20:23:15');
+INSERT INTO `password_reset_tokens` VALUES ('yessis_1121@hotmail.com', '$2y$12$FPmGyZ0l.RSWL0Y9Lkz8p.4rgdjJ/sgt4BA7aFg7gYf6zx20re2HC', '2025-11-27 20:23:32');
+INSERT INTO `password_reset_tokens` VALUES ('doctora.oviedo@gmail.com', '$2y$12$GPMJp3iw1YUgwT4LRimS5e9G6ZD1uljzX7vlNjFlsbegaEXaFrNTy', '2025-11-27 20:24:34');
+INSERT INTO `password_reset_tokens` VALUES ('fernandesannys@gmail.com', '$2y$12$OE.WyxImkD5cFM2Jj6vNGeQ7bnsJegU7JQgT3KExaUHP6C42M6nJC', '2025-11-27 20:24:46');
+INSERT INTO `password_reset_tokens` VALUES ('francibalza1986@gmail.com', '$2y$12$KsZTuCvP2SEda1WhxT65J.7SGrhJFe5odtuKSMc7v22b4QgpkjGWi', '2025-11-27 20:25:23');
+INSERT INTO `password_reset_tokens` VALUES ('arangurenjohandri@gmail.com', '$2y$12$whM1OFkzB0Cy6DqVpWpbCOYjaaw2oek/lluA9TL8gLLrppWT49KW6', '2025-11-27 20:25:43');
+INSERT INTO `password_reset_tokens` VALUES ('luispaulmar@gmail.com', '$2y$12$87../BSF4bkLz/5787Ed7uUGn3KuThT69RT340aG9fEV/pNrzg4QO', '2025-11-27 21:37:56');
 
 -- ----------------------------
 -- Table structure for permissions
@@ -4182,7 +4228,7 @@ CREATE TABLE `role_has_permissions`  (
   `role_id` bigint UNSIGNED NOT NULL,
   PRIMARY KEY (`permission_id`, `role_id`) USING BTREE,
   INDEX `role_has_permissions_role_id_foreign`(`role_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Fixed;
+) ENGINE = MyISAM CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Fixed;
 
 -- ----------------------------
 -- Records of role_has_permissions
@@ -4200,7 +4246,7 @@ CREATE TABLE `roles`  (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `roles_name_guard_name_unique`(`name`, `guard_name`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of roles
@@ -4212,10 +4258,8 @@ INSERT INTO `roles` VALUES (4, 'especialista', 'web', '2025-11-05 10:06:46', '20
 INSERT INTO `roles` VALUES (5, 'laboratorio', 'web', '2025-11-05 10:06:46', '2025-11-05 10:06:46');
 INSERT INTO `roles` VALUES (6, 'paciente', 'web', '2025-11-05 10:06:46', '2025-11-05 10:06:46');
 INSERT INTO `roles` VALUES (7, 'almacen', 'web', '2025-11-25 17:04:14', '2025-11-25 17:04:14');
-INSERT INTO `roles` VALUES (8, 'jefe-almacen', 'web', '2025-11-25 17:04:14', '2025-11-25 17:04:14');
-INSERT INTO `roles` VALUES (9, 'lab-resultados', 'web', '2025-11-25 17:04:14', '2025-11-25 17:04:14');
-INSERT INTO `roles` VALUES (10, 'laboratorio-resul', 'web', '2025-11-27 11:08:34', '2025-11-27 11:08:34');
-INSERT INTO `roles` VALUES (11, 'almacen-jefe', 'web', '2025-11-27 11:08:35', '2025-11-27 11:08:35');
+INSERT INTO `roles` VALUES (8, 'laboratorio-resul', 'web', '2025-11-27 11:31:00', '2025-11-27 11:31:00');
+INSERT INTO `roles` VALUES (9, 'almacen-jefe', 'web', '2025-11-27 11:31:01', '2025-11-27 11:31:01');
 
 -- ----------------------------
 -- Table structure for sessions
@@ -4231,12 +4275,16 @@ CREATE TABLE `sessions`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `sessions_user_id_index`(`user_id`) USING BTREE,
   INDEX `sessions_last_activity_index`(`last_activity`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sessions
 -- ----------------------------
-INSERT INTO `sessions` VALUES ('liJ5WV7CSD2VjIKMCd9WGlGS2dQtMpoy9RjE4wsZ', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiSUc5WTBmMEFXcUZkWk9NdDR0d2VYNXJKOTNldnlRQWhzaDlGUVJVcCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTQ6Imh0dHA6Ly9sb2NhbGhvc3Qvc29tb3NzYWx1ZC9wdWJsaWMvbGFiL29yZGVycy9sb2dvLnBuZyI7czo1OiJyb3V0ZSI7czoxNToibGFiLm9yZGVycy5zaG93Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTtzOjI1OiJwYW5lbF9iaWVudmVuaWRhX21vc3RyYWRhIjtiOjE7fQ==', 1764213089);
+INSERT INTO `sessions` VALUES ('6igAGAvP2ojzSIGdVg5a64kl9Ev55Jc7U2lmfrwp', NULL, '72.14.199.139', 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.122 Mobile Safari/537.36 (compatible; AdsBot-Google-Mobile; +http://www.google.com/mobile/adsbot.html)', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiOGl0bzd6MldUZFZ4aHg1Vzl0Zk5xRFhTRlZJVDk0enhaNlUwakV6ayI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDM6Imh0dHBzOi8vY2xpbmljYXNhbHVkc29ucmlzYS5jb20udmUvcmVnaXN0ZXIiO3M6NToicm91dGUiO3M6ODoicmVnaXN0ZXIiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1764281737);
+INSERT INTO `sessions` VALUES ('3aUnJCNFYJsmOWCk2f7jnoPj9kofHbtWE0QTRIy7', NULL, '82.86.113.138', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoibHprczlsdWRqOW5nbHdYeDA2cjFNTlp2RnlOU1VscTVRMjBTUndocSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTc6Imh0dHBzOi8vY2xpbmljYXNhbHVkc29ucmlzYS5jb20udmUvbG9naW4/cGVyZmlsPWVtcGxlYWRvcyI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1764284988);
+INSERT INTO `sessions` VALUES ('YxWvRjRwsuB4qF1oYhFzrOVywPE5GAi9i64FkQdB', NULL, '38.41.23.21', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVlFZZnJpbXN2VXc3UHlObXB3clRpbms0eXpxMTBaWW9XUm5JZHhkQiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzQ6Imh0dHBzOi8vY2xpbmljYXNhbHVkc29ucmlzYS5jb20udmUiO3M6NToicm91dGUiO047fX0=', 1764279705);
+INSERT INTO `sessions` VALUES ('QgzEqxQOUj4Lceetw7pSu6bFpMwTeI0Z1B7uOxuA', NULL, '38.41.23.21', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiU29JWmFwM1BHWkRMbDhnV2w4QlBnOHFGaE9RMHgwYTdHaWJUYnJ3QiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDE6Imh0dHBzOi8vY2xpbmljYXNhbHVkc29ucmlzYS5jb20udmUvcHVibGljIjtzOjU6InJvdXRlIjtOO319', 1764279763);
+INSERT INTO `sessions` VALUES ('Y9cY7eyI9qankVWFufzCuUS6r0hlstUWH0g4NCfc', NULL, '72.14.199.137', 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.122 Mobile Safari/537.36 (compatible; AdsBot-Google-Mobile; +http://www.google.com/mobile/adsbot.html)', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWXVCMFh6QnRmWGtXNjAwUWVHZ1FRSExmMTJ1S0pEbTNhdjFnQzZVSCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzQ6Imh0dHBzOi8vY2xpbmljYXNhbHVkc29ucmlzYS5jb20udmUiO3M6NToicm91dGUiO047fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1764281497);
 
 -- ----------------------------
 -- Table structure for settings
@@ -4280,12 +4328,13 @@ CREATE TABLE `solicitudes_inventario`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of solicitudes_inventario
 -- ----------------------------
-INSERT INTO `solicitudes_inventario` VALUES (1, 'SOL-2025-0001', 1, 1, 'ENFERMERIA', 'pendiente', 'Observaciones', NULL, NULL, NULL, NULL, NULL, '2025-11-27 01:56:57', '2025-11-27 01:56:57');
+INSERT INTO `solicitudes_inventario` VALUES (1, 'SOL-2025-0001', 21, 1, 'ENFERMERIA', 'aprobada', 'ejemplo numero uno de solicitud de materiales', 'aumente la cantidad de agua. solicitaron una y agregue dos mas para un total de tres', 21, '2025-11-27 16:02:25', NULL, NULL, '2025-11-27 16:01:01', '2025-11-27 16:02:25');
+INSERT INTO `solicitudes_inventario` VALUES (2, 'SOL-2025-0002', 21, 1, 'ENFERMERIA', 'pendiente', 'repocision de material', NULL, NULL, NULL, NULL, NULL, '2025-11-27 16:42:57', '2025-11-27 16:42:57');
 
 -- ----------------------------
 -- Table structure for suscripciones
@@ -4307,11 +4356,12 @@ CREATE TABLE `suscripciones`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `suscripciones_numero_unique`(`numero`) USING BTREE,
   INDEX `suscripciones_usuario_id_foreign`(`usuario_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of suscripciones
 -- ----------------------------
+INSERT INTO `suscripciones` VALUES (1, 31, 1, 'anual', 10.00, '2025-11-27', '2026-11-27', 'activo', 'pago_movil', 'PM-99998888-20251127', '2025-11-27 16:58:19', '2025-11-27 16:58:19');
 
 -- ----------------------------
 -- Table structure for usuarios
@@ -4319,8 +4369,9 @@ CREATE TABLE `suscripciones`  (
 DROP TABLE IF EXISTS `usuarios`;
 CREATE TABLE `usuarios`  (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `representante_id` bigint UNSIGNED NULL DEFAULT NULL,
   `name` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cedula` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cedula` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `fecha_nacimiento` date NULL DEFAULT NULL,
   `sexo` enum('M','F') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `email` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -4333,43 +4384,50 @@ CREATE TABLE `usuarios`  (
   `especialidad_id` bigint UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `usuarios_cedula_unique`(`cedula`) USING BTREE,
-  UNIQUE INDEX `usuarios_email_unique`(`email`) USING BTREE,
   INDEX `usuarios_clinica_id_foreign`(`clinica_id`) USING BTREE,
-  INDEX `usuarios_especialidad_id_foreign`(`especialidad_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+  INDEX `usuarios_especialidad_id_foreign`(`especialidad_id`) USING BTREE,
+  INDEX `fk_usuarios_representante_id`(`representante_id`) USING BTREE,
+  INDEX `usuarios_email_representante_idx`(`email`, `representante_id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of usuarios
 -- ----------------------------
-INSERT INTO `usuarios` VALUES (1, 'Super Administrador', 'V-16912337', NULL, 'M', 'jponciang@gmail.com', '2025-11-26 16:39:54', '$2y$12$Tn0rL8pSAYTcwjhxcKsQvezB.dHylhRccqmMI7jqamCu5Oo/uE2dO', NULL, '2025-11-25 16:39:54', '2025-11-25 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (2, 'Adonis Josefina Reyes Delgado', 'V-16913118', '1991-04-14', 'F', 'adonitareyes1691@gmail.com', NULL, '$2y$12$lVPqbngzI04ftXLnPJj7rOiZOwjKAjW/Op0ogcUh8fIAOYYBbl8na', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (3, 'Adrian Emanuel Alvarado', 'V-21658027', '2000-11-02', 'M', 'adriema337@gmail.com', NULL, '$2y$12$Zhyw/hLqRl6wnxeNJoQfL.Qogr32lq98JjiDTCx5yVHszau0cQmPO', 'kOJszdMXeY0Az53fOMtmzrX6HC8D87pu1ClGfaQ74Ee9xRCd9amb3uzgz7ws', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (4, 'Anais Josefina Oviedo Gutierrez', 'V-14926235', '1981-11-07', 'F', 'doctora.oviedo@gmail.com', NULL, '$2y$12$TLcHUyh0GZfDBQuiFd19s.AWCQmSAfp9064X4hV8o.rC6r89na9A.', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (5, 'Annys Manuela Fernández Meléndez', 'V-19943785', '2000-01-01', 'F', 'fernandesannys@gmail.com', NULL, '$2y$12$kkFAGRiQIAywpi7F7JdQ4OXrL6JhI1MKyHbmX0nzrdqN3K4PNSE7y', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (6, 'Carmen Endey Gutierrez', 'V-10584633', '1969-04-10', 'F', 'chamonixr9@gmail.com', NULL, '$2y$12$TC4m88UfWz4J8dszKCfdHuDLSZ0VTsPw686ErtbVi14N2fbctNfJK', 'ktZCNN2J5xdERTKqPrYIgMcrZc9bULibljMbo1XCvQLb97Vi1rACg3jOXM56', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (7, 'Evelyn Patricia Rivas Ramdial', 'V-18583984', '1986-10-29', 'F', 'BENAVIDESSANTISEBAS2020@gmail.com', NULL, '$2y$12$dDKz.C/i3yufsYwFg8AdCeQ1oveJaRx3AhltBEP.Z3Vx75uNVJAEG', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (8, 'Fanny Mariela Aguirre Ramos', 'V-15481987', '1983-05-12', 'F', 'girlabielys@gmail.com', NULL, '$2y$12$EcMykssiqFRviPSEns7IseIIviA/oOriFASXOTRZlbfV2JMgUCYxu', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (9, 'Franci Zulay Balza Montoya', 'V-18220639', '1986-12-18', 'F', 'francibalza1986@gmail.com', NULL, '$2y$12$ba3BwmOslzkKEiqMtOBO5u149NHwp4gff/ERw2V9pYzyKxQJoCiiK', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (10, 'Johandri Marilu Aranguren Daniel', 'V-19476686', '1988-11-20', 'F', 'arangurenjohandri@gmail.com', NULL, '$2y$12$xlR492jgGYpGsblUUqQy1eC5Cj9lUn.piXMLsqdB02Q2CYOYi0u4S', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (11, 'Karines de Jesus Carvajal Astudillo', 'V-20884344', '1993-01-12', 'F', 'karinescarvajal@gmail.com', NULL, '$2y$12$mJv1F5NkXE7yO1AZlFO7q.vTT8/vBBGniWXNpKMBBAXt2oiWqWZli', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (12, 'Laura Josefina Muñoz Barrios', 'V-8626667', '1967-05-05', 'F', 'lauramuba@hotmail.com', NULL, '$2y$12$FSA4dVHarnNUmmInRuUhs.itq0N55E7YLrBZgXyVdUx7Vn1Q5X4HK', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (13, 'María del Carmen Celis Alfonzo', 'V-17602635', '1980-05-15', 'F', 'mariadelccelis@gmail.com', NULL, '$2y$12$BzXWNP24l6TPz5AjNQ0d0Oq4AWagO74jg2/qsuMHtB6/LQIfK/2F.', 'NWPYc8JvtgEjtgKH2Rae2BKEg4krOVlgZC946bSB1caLpGnG1DRZ5OMkSYFF', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (14, 'Maria Gabriela Parababi Funes', 'V-24662770', '1995-03-30', 'F', 'gabyparababy1995@gmail.com', NULL, '$2y$12$dCpfRkz/b9urkvB4uG/LrOlAYYq8WSsjSkejNcJVDiy5Ok./YCgkG', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (15, 'Mariana Alejandra Pérez', 'V-27331304', '1999-11-29', 'F', 'maricelespd@gmail.com', NULL, '$2y$12$2Pw9XkWdIb.69hHijJQL7e3ME7ri7e9wcBMH2VfTJFC5b5LZzYwlW', 'sKVJ9j71jEVXKh27se2wa0aEVYbBi82cAvNpvPx4ErdnIxO0Gp0wGlp0zj5l', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (16, 'Nerys Yoselin Torres Morales', 'V-16640787', '2000-07-06', 'F', 'nerysyoselin340@gmail.com', NULL, '$2y$12$3lzQaZhtAFawLcnhGE4iN.Ulc8sUgqi0IO5bQX1U3Uc.6b5toMTbe', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (17, 'Reina de Jesus Vega Mercado', 'V-19160669', '1989-01-06', 'F', 'reynavegas1989@gmail.com', NULL, '$2y$12$MeU4gA2J.95wRA6tKW3tNOif/OJUrX5Vzlc3gecFuDp57pUmKEt.2', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (18, 'Ruth Eniddari Mujica Padilla', 'V-18908202', '2000-05-30', 'F', 'ruthmujica391@gmail.com', NULL, '$2y$12$K4dHQLdZVUwrUOzrKJvDzOIJe1F.OXIFfV9RxOCaGt02En03Qia9a', '5p77eZTez38MqNcssOsb7dE1kzXF1X6LOFVNcSeNJ0ro2vZ3OTyzJ408874f', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (19, 'Rutmary Herminia Morales Ruiz', 'V-12476502', '2000-07-07', 'F', 'rutmarymorales60@gmail.com', NULL, '$2y$12$d6W4FWUiNJp3V8QWaedFH.Z4W.l/N6U8XUhLn0Fm8PVAuhtfieTui', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (20, 'Silvia Patricia Bernudez Corona', 'V-18405632', '1988-03-24', 'F', 'silviabermudez2488@gmail.com', NULL, '$2y$12$CL3oWkgc.8yCsQeJezuMKeJ3hzbTHrCbp9pxoIZaRR7sKJxpsrGMC', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (21, 'Vicente Emilio Alfonzo Marcano', 'V-6922095', '1966-10-12', 'M', 'telefonodevicente@gmail.com', NULL, '$2y$12$7Q9OIE.nOYWXr/5deHsJkeW.z/duxH9Hps03.oS/zDDJyP7QB6FJK', 'p9BG2wb4LJHshC8ByfpoFEYNrcEjL5TyrKCHMKWyRpM6paOIdG6OjL1UnJ2n', '2025-11-26 16:39:54', '2025-11-26 22:45:51', 1, NULL);
-INSERT INTO `usuarios` VALUES (22, 'Willian Isaac Guzman Madera', 'V-26752296', '2000-01-01', 'M', 'wili@gmail.com', NULL, '$2y$12$07k1CoKTIgfxnYEWESYZU.2WL2D981x19Shu7XycdmTAUsl0y2Fn2', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (23, 'Winder Jesús González Benavides', 'V-26452252', '2001-10-11', 'M', 'winderjgonzalezb07@gmail.com', NULL, '$2y$12$ViuYSuuff20B7VfrfEOIy.HAekep3xdHb8CyaBaOVidiMmg081KCC', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (24, 'Yeniffer Andreina Rojas Perez', 'V-29791345', '2000-07-01', 'F', 'yenifferrojas09@gmail.com', NULL, '$2y$12$i8nK2bzFzCjvSLPbtd4iLu1c0GwjfBzakkFPFjZ5U/9h6WpOYhV0a', 'iBYdOJJ5TNGqZGgaG34EJkJi4dO1NGzUuQr0EiJxcSjUoJwVw3SLRwbD16rD', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (25, 'YORAIMA  NAZARETH CARRASQUEL', 'V-26752895', '1999-04-29', 'F', 'ynazacr26@gmail.com', NULL, '$2y$12$pIzs09Zpb03HhfKL2t25CO0RM0ha2S/PUttW1odHZijczArnVG2ce', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (26, 'Yoseidy Coromoto Aquino Peña', 'V-18406248', '2000-08-07', 'F', 'licyoseidyaquino@gmail.com', NULL, '$2y$12$VhMM09j9ES.pLVBhSePIYuBNNv3UHUBLStAe1p.10uM/boRxOaBVq', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (27, 'Yuris Josefina Bastidas Verenzuela', 'V-20906301', '1992-09-02', 'F', 'bastidasyury3@gmail.com', NULL, '$2y$12$ES5KYme.TdtFUTSXwkWiJOYmv9oBC3/XENN6P./XP0zcca07ajJXi', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
-INSERT INTO `usuarios` VALUES (28, 'Angel Rafael Valera Campos', 'V-18405531', '2000-01-01', 'M', 'angelvalera80@gmail.com', NULL, '$2y$12$Ci6TU8d.8conwri6trSFHeuU4Qc/McyzsQ2clwTA32fY.Smsbqe86', NULL, '2025-11-26 20:09:09', '2025-11-26 20:09:09', 1, NULL);
-INSERT INTO `usuarios` VALUES (29, 'Jose Alejandro Cortez Medina', 'V-22613465', '1995-08-04', 'M', 'josealejandrocortezmedina@gmail.com', NULL, '$2y$12$VK9okD/hkLCvBwChht0LCuf4/RHU9A8xopfiCa0Ql4V6Oo4nYWH1u', NULL, '2025-11-26 21:27:00', '2025-11-26 21:27:00', 1, NULL);
-INSERT INTO `usuarios` VALUES (30, 'Maria Emilia Alfonzo Aparicio', 'V-32649049', '2008-06-06', 'F', 'maria@gmail.com', NULL, '$2y$12$OBjOUboHbPLEBI9.YIDOA.45YQxrjn5Vkzi3GY0pOg5fNeeU/U1z.', NULL, '2025-11-26 22:40:44', '2025-11-26 22:40:44', 1, NULL);
+INSERT INTO `usuarios` VALUES (1, NULL, 'Super Administrador', 'V-16912337', NULL, 'M', 'jponciang1@gmail.com', '2025-11-26 16:39:54', '$2y$12$Tn0rL8pSAYTcwjhxcKsQvezB.dHylhRccqmMI7jqamCu5Oo/uE2dO', NULL, '2025-11-25 16:39:54', '2025-11-25 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (2, NULL, 'Adonis Josefina Reyes Delgado', 'V-16913118', '1991-04-14', 'F', 'adonitareyes1691@gmail.com', NULL, '$2y$12$lVPqbngzI04ftXLnPJj7rOiZOwjKAjW/Op0ogcUh8fIAOYYBbl8na', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (3, NULL, 'Adrian Emanuel Alvarado', 'V-21658027', '2000-11-02', 'M', 'adriema337@gmail.com', NULL, '$2y$12$Zhyw/hLqRl6wnxeNJoQfL.Qogr32lq98JjiDTCx5yVHszau0cQmPO', 'kOJszdMXeY0Az53fOMtmzrX6HC8D87pu1ClGfaQ74Ee9xRCd9amb3uzgz7ws', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (4, NULL, 'Anais Josefina Oviedo Gutierrez', 'V-14926235', '1981-11-07', 'F', 'doctora.oviedo@gmail.com', NULL, '$2y$12$TLcHUyh0GZfDBQuiFd19s.AWCQmSAfp9064X4hV8o.rC6r89na9A.', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (5, NULL, 'Annys Manuela Fernández Meléndez', 'V-19943785', '2000-01-01', 'F', 'fernandesannys@gmail.com', NULL, '$2y$12$kkFAGRiQIAywpi7F7JdQ4OXrL6JhI1MKyHbmX0nzrdqN3K4PNSE7y', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (6, NULL, 'Carmen Endey Gutierrez', 'V-10584633', '1969-04-10', 'F', 'chamonixr9@gmail.com', NULL, '$2y$12$TC4m88UfWz4J8dszKCfdHuDLSZ0VTsPw686ErtbVi14N2fbctNfJK', 'ktZCNN2J5xdERTKqPrYIgMcrZc9bULibljMbo1XCvQLb97Vi1rACg3jOXM56', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (7, NULL, 'Evelyn Patricia Rivas Ramdial', 'V-18583984', '1986-10-29', 'F', 'benavidessantisebas2020@gmail.com', NULL, '$2y$12$dDKz.C/i3yufsYwFg8AdCeQ1oveJaRx3AhltBEP.Z3Vx75uNVJAEG', NULL, '2025-11-26 16:39:54', '2025-11-27 20:22:26', 1, NULL);
+INSERT INTO `usuarios` VALUES (8, NULL, 'Fanny Mariela Aguirre Ramos', 'V-15481987', '1983-05-12', 'F', 'girlabielys@gmail.com', NULL, '$2y$12$EcMykssiqFRviPSEns7IseIIviA/oOriFASXOTRZlbfV2JMgUCYxu', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (9, NULL, 'Franci Zulay Balza Montoya', 'V-18220639', '1986-12-18', 'F', 'francibalza1986@gmail.com', NULL, '$2y$12$ba3BwmOslzkKEiqMtOBO5u149NHwp4gff/ERw2V9pYzyKxQJoCiiK', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (10, NULL, 'Johandri Marilu Aranguren Daniel', 'V-19476686', '1988-11-20', 'F', 'arangurenjohandri@gmail.com', NULL, '$2y$12$xlR492jgGYpGsblUUqQy1eC5Cj9lUn.piXMLsqdB02Q2CYOYi0u4S', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (11, NULL, 'Karines de Jesus Carvajal Astudillo', 'V-20884344', '1993-01-12', 'F', 'karinescarvajal@gmail.com', NULL, '$2y$12$mJv1F5NkXE7yO1AZlFO7q.vTT8/vBBGniWXNpKMBBAXt2oiWqWZli', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (12, NULL, 'Laura Josefina Muñoz Barrios', 'V-8626667', '1967-05-05', 'F', 'lauramuba@hotmail.com', NULL, '$2y$12$FSA4dVHarnNUmmInRuUhs.itq0N55E7YLrBZgXyVdUx7Vn1Q5X4HK', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (13, NULL, 'María del Carmen Celis Alfonzo', 'V-17602635', '1980-05-15', 'F', 'mariadelccelis@gmail.com', NULL, '$2y$12$BzXWNP24l6TPz5AjNQ0d0Oq4AWagO74jg2/qsuMHtB6/LQIfK/2F.', 'NWPYc8JvtgEjtgKH2Rae2BKEg4krOVlgZC946bSB1caLpGnG1DRZ5OMkSYFF', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (14, NULL, 'Maria Gabriela Parababi Funes', 'V-24662770', '1995-03-30', 'F', 'gabyparababy1995@gmail.com', NULL, '$2y$12$dCpfRkz/b9urkvB4uG/LrOlAYYq8WSsjSkejNcJVDiy5Ok./YCgkG', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (15, NULL, 'Mariana Alejandra Pérez', 'V-27331304', '1999-11-29', 'F', 'maricelespd@gmail.com', NULL, '$2y$12$2Pw9XkWdIb.69hHijJQL7e3ME7ri7e9wcBMH2VfTJFC5b5LZzYwlW', 'sKVJ9j71jEVXKh27se2wa0aEVYbBi82cAvNpvPx4ErdnIxO0Gp0wGlp0zj5l', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (16, NULL, 'Nerys Yoselin Torres Morales', 'V-16640787', '2000-07-06', 'F', 'nerysyoselin340@gmail.com', NULL, '$2y$12$3lzQaZhtAFawLcnhGE4iN.Ulc8sUgqi0IO5bQX1U3Uc.6b5toMTbe', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (17, NULL, 'Reina de Jesus Vega Mercado', 'V-19160669', '1989-01-06', 'F', 'reynavegas1989@gmail.com', NULL, '$2y$12$MeU4gA2J.95wRA6tKW3tNOif/OJUrX5Vzlc3gecFuDp57pUmKEt.2', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (18, NULL, 'Ruth Eniddari Mujica Padilla', 'V-18908202', '2000-05-30', 'F', 'ruthmujica391@gmail.com', NULL, '$2y$12$K4dHQLdZVUwrUOzrKJvDzOIJe1F.OXIFfV9RxOCaGt02En03Qia9a', '5p77eZTez38MqNcssOsb7dE1kzXF1X6LOFVNcSeNJ0ro2vZ3OTyzJ408874f', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (19, NULL, 'Rutmary Herminia Morales Ruiz', 'V-12476502', '2000-07-07', 'F', 'rutmarymorales60@gmail.com', NULL, '$2y$12$d6W4FWUiNJp3V8QWaedFH.Z4W.l/N6U8XUhLn0Fm8PVAuhtfieTui', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (20, NULL, 'Silvia Patricia Bernudez Corona', 'V-18405632', '1988-03-24', 'F', 'silviabermudez2488@gmail.com', NULL, '$2y$12$CL3oWkgc.8yCsQeJezuMKeJ3hzbTHrCbp9pxoIZaRR7sKJxpsrGMC', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (21, NULL, 'Vicente Emilio Alfonzo Marcano', 'V-6922095', '1966-10-12', 'M', 'telefonodevicente@gmail.com', NULL, '$2y$12$zoXlvuZSPL4cnuEFtb084eoXOe6A1d1ykI5NyQG8kksf05iFxQCS.', 'wEg7vMlPs0G19siv4e2HI0Q7zvp2SSqvYlXPgGBIEzT6gO8ic0gzBxZklMwA', '2025-11-26 16:39:54', '2025-11-27 18:18:37', 1, NULL);
+INSERT INTO `usuarios` VALUES (22, NULL, 'Willian Isaac Guzman Madera', 'V-26752296', '2000-01-01', 'M', 'wili@gmail.com', NULL, '$2y$12$07k1CoKTIgfxnYEWESYZU.2WL2D981x19Shu7XycdmTAUsl0y2Fn2', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (23, NULL, 'Winder Jesús González Benavides', 'V-26452252', '2001-10-11', 'M', 'winderjgonzalezb07@gmail.com', NULL, '$2y$12$ViuYSuuff20B7VfrfEOIy.HAekep3xdHb8CyaBaOVidiMmg081KCC', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (24, NULL, 'Yeniffer Andreina Rojas Perez', 'V-29791345', '2000-07-01', 'F', 'yenifferrojas09@gmail.com', NULL, '$2y$12$i8nK2bzFzCjvSLPbtd4iLu1c0GwjfBzakkFPFjZ5U/9h6WpOYhV0a', 'iBYdOJJ5TNGqZGgaG34EJkJi4dO1NGzUuQr0EiJxcSjUoJwVw3SLRwbD16rD', '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (25, NULL, 'YORAIMA  NAZARETH CARRASQUEL', 'V-26752895', '1999-04-29', 'F', 'ynazacr26@gmail.com', NULL, '$2y$12$pIzs09Zpb03HhfKL2t25CO0RM0ha2S/PUttW1odHZijczArnVG2ce', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (26, NULL, 'Yoseidy Coromoto Aquino Peña', 'V-18406248', '2000-08-07', 'F', 'licyoseidyaquino@gmail.com', NULL, '$2y$12$VhMM09j9ES.pLVBhSePIYuBNNv3UHUBLStAe1p.10uM/boRxOaBVq', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (27, NULL, 'Yuris Josefina Bastidas Verenzuela', 'V-20906301', '1992-09-02', 'F', 'bastidasyury3@gmail.com', NULL, '$2y$12$ES5KYme.TdtFUTSXwkWiJOYmv9oBC3/XENN6P./XP0zcca07ajJXi', NULL, '2025-11-26 16:39:54', '2025-11-26 16:39:54', 1, NULL);
+INSERT INTO `usuarios` VALUES (28, NULL, 'Angel Rafael Valera Campos', 'V-18405531', '2000-01-01', 'M', 'angelvalera80@gmail.com', NULL, '$2y$12$Ci6TU8d.8conwri6trSFHeuU4Qc/McyzsQ2clwTA32fY.Smsbqe86', NULL, '2025-11-26 20:09:09', '2025-11-26 20:09:09', 1, NULL);
+INSERT INTO `usuarios` VALUES (29, NULL, 'Jose Alejandro Cortez Medina', 'V-22613465', '1995-08-04', 'M', 'josealejandrocortezmedina@gmail.com', NULL, '$2y$12$VK9okD/hkLCvBwChht0LCuf4/RHU9A8xopfiCa0Ql4V6Oo4nYWH1u', NULL, '2025-11-26 21:27:00', '2025-11-26 21:27:00', 1, NULL);
+INSERT INTO `usuarios` VALUES (30, NULL, 'Maria Emilia Alfonzo Aparicio', 'V-32649049', '2008-06-06', 'F', 'maria@gmail.com', NULL, '$2y$12$OBjOUboHbPLEBI9.YIDOA.45YQxrjn5Vkzi3GY0pOg5fNeeU/U1z.', NULL, '2025-11-26 22:40:44', '2025-11-26 22:40:44', 1, NULL);
+INSERT INTO `usuarios` VALUES (31, NULL, 'Hector Rafael Corro Solorzano', 'V-16075887', '1984-07-12', 'M', 'hectorcorrosolorzano@gmail.com', NULL, '$2y$12$K582fWllG72001lkSIPmgOZ69G8/Qux1/1vBMjoh.cU6AtN33o/.u', NULL, '2025-11-27 16:56:44', '2025-11-27 16:56:44', 1, NULL);
+INSERT INTO `usuarios` VALUES (32, NULL, 'Yessis Patricia Moyetones Camacho', 'V-19476004', '1999-01-01', 'F', 'yessis_1121@hotmail.com', NULL, '$2y$12$TAutjHd2VVidsCgXNQONm.OlEpa1QP5ABqGRhyeO5kJ.I575NXtrK', NULL, '2025-11-27 18:42:50', '2025-11-27 18:57:59', 1, NULL);
+INSERT INTO `usuarios` VALUES (33, NULL, 'Yajaira Coromoto Urbina', 'V-3853680', '1999-01-01', 'F', 'yajaira.c.urbina@gmail.com', NULL, '$2y$12$miAEEkDNcM/IJ2T5cm6PduBd0wyKtLjrMpIYLOnRhBgEa87yvdoL2', NULL, '2025-11-27 18:49:18', '2025-11-27 18:49:18', 1, NULL);
+INSERT INTO `usuarios` VALUES (34, NULL, 'Eric Alejandro Graterol Gil', 'V-20524801', '1998-01-01', 'M', 'alemedic27@gmail.com', NULL, '$2y$12$TjbsXFJcVRbDa2Ek/H/D6uiHUAr/Zc/QHsK/N/hInxMVAjtHhp9zi', NULL, '2025-11-27 18:53:37', '2025-11-27 18:56:31', 1, NULL);
+INSERT INTO `usuarios` VALUES (35, NULL, 'Nazareth Andrimar Hernandez Aguirre', 'V-24235111', '1999-01-01', 'F', 'nazarethahernandeza@gmail.com', NULL, '$2y$12$kfbkq185rf5R7iGgN2MwnusrcHS3BntxgBA8vcx1QsCEov60ZIdzu', NULL, '2025-11-27 19:02:35', '2025-11-27 19:02:35', 1, NULL);
+INSERT INTO `usuarios` VALUES (36, 2, 'Luis Paul Mirabal', 'V-25549837', '1996-05-08', 'M', 'luispaulmar@gmail.com', NULL, '$2y$12$/qwZyEuMDj4lWjKcxU5dNumlxdp1matcVrUEHtLgpK1VAuTiU9m5K', NULL, '2025-11-27 21:37:09', '2025-11-27 21:37:09', 1, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

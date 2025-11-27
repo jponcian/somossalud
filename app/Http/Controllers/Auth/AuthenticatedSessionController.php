@@ -14,9 +14,9 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('auth.login');
+        return view('auth.login', ['perfil' => $request->query('perfil')]);
     }
 
     /**
@@ -30,12 +30,22 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        if ($user && $user->hasRole('paciente')) {
-            $target = route('panel.pacientes', absolute: false);
-        } elseif ($user && $user->hasAnyRole(['super-admin', 'admin_clinica', 'recepcionista', 'especialista', 'laboratorio'])) {
+        $perfil = $request->input('perfil');
+
+        // Lógica de redirección basada en el perfil solicitado y roles
+        if ($perfil === 'empleados' && $user->hasAnyRole(['super-admin', 'admin_clinica', 'recepcionista', 'especialista', 'laboratorio', 'laboratorio-resul', 'almacen', 'almacen-jefe'])) {
             $target = route('panel.clinica', absolute: false);
+        } elseif ($perfil === 'pacientes' && $user->hasRole('paciente')) {
+            $target = route('panel.pacientes', absolute: false);
         } else {
-            $target = route('dashboard', absolute: false);
+            // Fallback original (con roles actualizados)
+            if ($user && $user->hasRole('paciente')) {
+                $target = route('panel.pacientes', absolute: false);
+            } elseif ($user && $user->hasAnyRole(['super-admin', 'admin_clinica', 'recepcionista', 'especialista', 'laboratorio', 'laboratorio-resul', 'almacen', 'almacen-jefe'])) {
+                $target = route('panel.clinica', absolute: false);
+            } else {
+                $target = route('dashboard', absolute: false);
+            }
         }
 
         return redirect()->intended($target);
