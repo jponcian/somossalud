@@ -85,8 +85,11 @@
                                         Representante (Padre/Madre) <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group shadow-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white border-right-0"><i class="fas fa-user-friends text-muted"></i></span>
+                                        </div>
                                         <select name="representante_id" id="representante_id" class="form-control select2-representante" style="width: 100%;">
-                                            <option value="">Buscar representante...</option>
+                                            <option value="">Buscar representante por nombre o cédula...</option>
                                             @foreach($posiblesRepresentantes as $rep)
                                                 <option value="{{ $rep->id }}"
                                                     data-cedula="{{ $rep->cedula }}"
@@ -317,26 +320,52 @@
 @endsection
 
 @push('styles')
-{{-- Select2 CSS --}}
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
+{{-- Select2 CSS: ya se carga globalmente en `layouts.adminlte` --}}
 <style>
-    /* Fix para Select2 dentro de Input Group */
-    .input-group > .select2-container--bootstrap4 {
-        width: auto !important;
-        flex: 1 1 auto;
-    }
-    .input-group > .select2-container--bootstrap4 .select2-selection--single {
+    /* Normalize Select2 appearance to match form controls (conservative rules).
+       Goal: left-align placeholders and content, match input height and padding.
+    */
+    .select2-container--bootstrap4 .select2-selection {
         height: calc(2.25rem + 2px) !important;
-        line-height: 1.5;
-        padding: 0.375rem 0.75rem;
+        padding: 0.375rem 0.75rem !important;
+        display: flex !important;
+        align-items: center !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Ensure rendered text/placeholder are left aligned */
+    .select2-container--bootstrap4 .select2-selection__rendered,
+    .select2-container--bootstrap4 .select2-selection__placeholder {
+        text-align: left !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1.2 !important;
+    }
+
+    /* Multiple select: allow wrapping but keep left alignment */
+    .select2-container--bootstrap4 .select2-selection--multiple {
+        min-height: calc(2.25rem + 2px) !important;
+        padding: 0.25rem 0.5rem !important;
+        align-items: center !important;
+    }
+
+    /* When Select2 is inserted after the original select, ensure it fills available width */
+    .input-group .select2-container--bootstrap4,
+    .flex-grow-1 .select2-container--bootstrap4,
+    #especialidades + .select2-container--bootstrap4,
+    #representante_id + .select2-container--bootstrap4 {
+        width: 100% !important;
+    }
+
+    /* Small tweak: the search input inside Select2 should not force centering */
+    .select2-container--bootstrap4 .select2-search__field {
+        margin-left: 0 !important;
     }
 </style>
 @endpush
 
 @push('scripts')
-{{-- Select2 JS --}}
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+{{-- Select2 JS: cargado globalmente en `layouts.adminlte` --}}
 <script src="{{ asset('js/cedula-validator.js') }}"></script>
 <script>
 $(document).ready(function() {
