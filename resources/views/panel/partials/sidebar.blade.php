@@ -71,13 +71,6 @@
         <!-- SECCIÓN INVENTARIO -->
         @hasanyrole('almacen|almacen-jefe')
         <li class="nav-header">INVENTARIO</li>
-             <li class="nav-item">
-            <a href="{{ route('inventario.solicitudes.create') }}"
-                class="nav-link {{ request()->routeIs('inventario.solicitudes.create') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-plus-circle"></i>
-                <p>Nueva Solicitud</p>
-            </a>
-        </li>   <li class="nav-item">
             <a href="{{ route('inventario.solicitudes.index') }}"
                 class="nav-link {{ request()->routeIs('inventario.solicitudes.index') || request()->routeIs('inventario.solicitudes.show') || request()->routeIs('inventario.solicitudes.edit') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-boxes"></i>

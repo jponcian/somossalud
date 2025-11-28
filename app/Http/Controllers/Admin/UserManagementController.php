@@ -302,7 +302,7 @@ class UserManagementController extends Controller
     {
         $term = trim($request->query('q', ''));
 
-        if (strlen($term) < 3) {
+        if (strlen($term) < 1) {
             return response()->json(['results' => []]);
         }
 

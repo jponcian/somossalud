@@ -110,24 +110,6 @@
     </style>
 @endpush
 
-@section('content-header')
-    <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1 class="m-0">
-                <i class="fas fa-edit text-warning mr-2"></i>
-                Editar Material
-            </h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('panel.clinica') }}">Panel</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('inventario.materiales.index') }}">Materiales</a></li>
-                <li class="breadcrumb-item active">Editar</li>
-            </ol>
-        </div>
-    </div>
-@endsection
-
 @section('content')
     <div class="card">
         <div class="card-header">
