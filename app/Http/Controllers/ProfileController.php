@@ -16,8 +16,26 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $context = $request->input('context');
+        $user = $request->user();
+
+        // Si el contexto es explícitamente 'clinica', mostrar layout de clínica
+        if ($context === 'clinica') {
+            return view('profile.edit_clinic', ['user' => $user]);
+        }
+
+        // Si el contexto es explícitamente 'paciente', mostrar layout de paciente
+        if ($context === 'paciente') {
+            return view('profile.edit', ['user' => $user]);
+        }
+
+        // Fallback: si tiene roles de clínica, mostrar layout de clínica por defecto
+        if ($user->hasAnyRole(['super-admin', 'admin_clinica', 'recepcionista', 'especialista', 'laboratorio', 'laboratorio-resul', 'almacen', 'almacen-jefe'])) {
+            return view('profile.edit_clinic', ['user' => $user]);
+        }
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
@@ -34,7 +52,8 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        $context = $request->query('context');
+        return Redirect::route('profile.edit', ['context' => $context])->with('status', 'profile-updated');
     }
 
     /**

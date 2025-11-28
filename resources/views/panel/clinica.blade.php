@@ -112,7 +112,7 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content border-0 shadow-lg overflow-hidden" style="border-radius: 16px;">
                     <div class="modal-body p-0">
-                        <div class="position-relative p-5 text-center" style="background: linear-gradient(135deg, #f0f9ff 0%, #dcfce7 100%);">
+                        <div class="position-relative p-5 text-center" style="background: #fff;">
                             <div class="position-absolute" style="right: -30px; top: -30px; opacity: 0.15; font-size: 12rem; color: #f59e0b; animation: spin-slow 20s linear infinite;">
                                 <i class="fas fa-sun"></i>
                             </div>

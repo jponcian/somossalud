@@ -12,7 +12,7 @@
                     </a>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('panel.pacientes')" :active="request()->routeIs('panel.pacientes')">
                         <i class="fa-solid fa-house-user me-1 text-emerald-500"></i>
                         {{ __('Panel de pacientes') }}
                     </x-nav-link>
@@ -49,7 +49,7 @@
                         </li>
                         <li>
                             <a class="dropdown-item rounded-3 d-flex align-items-center gap-2 py-2 mb-1 text-secondary"
-                                href="{{ route('profile.edit') }}">
+                                href="{{ route('profile.edit', ['context' => 'paciente']) }}">
                                 <i class="fa-solid fa-user-circle text-primary opacity-75"></i> {{ __('Perfil') }}
                             </a>
                         </li>
@@ -97,7 +97,7 @@
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
             </div>
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
+                <x-responsive-nav-link :href="route('profile.edit', ['context' => 'paciente'])">
                     {{ __('Perfil') }}
                 </x-responsive-nav-link>
                 <form method="POST" action="{{ route('logout') }}">

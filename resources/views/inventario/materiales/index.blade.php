@@ -2,20 +2,177 @@
 
 @section('title', 'Gestión de Materiales')
 
+@push('styles')
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif !important;
+            background-color: #f8fafc;
+        }
+        .content-wrapper {
+            background-color: #f8fafc !important;
+        }
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            background: white;
+            overflow: hidden;
+        }
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .card-header {
+            background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%);
+            border-bottom: 1px solid #cbd5e1;
+            padding: 1.25rem 1.5rem;
+        }
+        .card-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0;
+        }
+        .table thead th {
+            border-top: none;
+            border-bottom: 2px solid #f1f5f9;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+        }
+        .table td {
+            vertical-align: middle;
+            border-top: 1px solid #f1f5f9;
+            padding: 1rem 1.5rem;
+            color: #334155;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f8fafc;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+        .form-group label {
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .form-control, .select2-container--bootstrap4 .select2-selection {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 0.625rem 0.875rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        select.form-control {
+            height: calc(2.75rem + 2px);
+            padding: 0.625rem 0.875rem;
+            line-height: 1.5;
+        }
+        .form-control:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        .btn {
+            border-radius: 8px;
+            padding: 0.625rem 1.25rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            border: none;
+            box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+            transform: translateY(-1px);
+        }
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            color: white;
+        }
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            color: white;
+            transform: translateY(-1px);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border: none;
+        }
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            transform: translateY(-1px);
+        }
+        .badge {
+            padding: 0.5em 0.8em;
+            border-radius: 6px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+        .badge-success {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .badge-warning {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+        .badge-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        .content-header h1 {
+            font-weight: 600;
+            color: #1e293b;
+        }
+    </style>
+@endpush
+
 @section('content-header')
-    <div class="d-flex justify-content-between align-items-center">
-        <h1><i class="fas fa-boxes text-primary"></i> Gestión de Materiales</h1>
-        <a href="{{ route('inventario.materiales.create') }}" class="btn btn-primary shadow-sm">
-            <i class="fas fa-plus"></i> Nuevo Material
-        </a>
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <h1 class="m-0">
+                <i class="fas fa-boxes text-primary mr-2"></i>
+                Gestión de Materiales
+            </h1>
+        </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="{{ route('panel.clinica') }}">Panel</a></li>
+                <li class="breadcrumb-item active">Materiales</li>
+            </ol>
+        </div>
     </div>
-@stop
+@endsection
 
 @section('content')
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-light">
-            <h3 class="card-title text-muted"><i class="fas fa-filter"></i> Filtros de Búsqueda</h3>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-filter text-primary"></i>
+                Filtros de Búsqueda
+            </h3>
             <div class="card-tools">
+                <a href="{{ route('inventario.materiales.create') }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus mr-1"></i>
+                    Nuevo Material
+                </a>
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fas fa-minus"></i>
                 </button>
@@ -26,13 +183,19 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="font-weight-bold text-muted small">BUSCAR</label>
+                            <label>
+                                <i class="fas fa-search text-muted mr-1"></i>
+                                Buscar
+                            </label>
                             <input type="text" name="search" class="form-control" placeholder="Buscar por nombre o código..." value="{{ request('search') }}">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label class="font-weight-bold text-muted small">CATEGORÍA</label>
+                            <label>
+                                <i class="fas fa-folder text-muted mr-1"></i>
+                                Categoría
+                            </label>
                             <select name="categoria" class="form-control select2" data-minimum-results-for-search="Infinity">
                                 <option value="">Todas las categorías</option>
                                 @foreach($categorias as $cat)
@@ -43,7 +206,10 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label class="font-weight-bold text-muted small">ESTADO DE STOCK</label>
+                            <label>
+                                <i class="fas fa-warehouse text-muted mr-1"></i>
+                                Estado de Stock
+                            </label>
                             <select name="stock_status" class="form-control select2" data-minimum-results-for-search="Infinity">
                                 <option value="">Todos</option>
                                 <option value="bajo" {{ request('stock_status') == 'bajo' ? 'selected' : '' }}>Stock Bajo</option>
@@ -56,11 +222,17 @@
         </div>
     </div>
 
-    <div class="card shadow-lg border-0">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-list text-primary"></i>
+                Listado de Materiales
+            </h3>
+        </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover table-striped mb-0">
-                    <thead class="bg-light text-muted">
+                    <thead>
                         <tr>
                             <th class="pl-4">Código</th>
                             <th>Nombre</th>
@@ -85,7 +257,7 @@
             @endif
         </div>
     </div>
-@stop
+@endsection
 
 @push('scripts')
 <script>

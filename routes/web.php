@@ -322,6 +322,7 @@ Route::middleware(['auth', 'verified'])
 
         // Rutas de Materiales (solo almacen-jefe)
         Route::resource('materiales', \App\Http\Controllers\MaterialController::class)
+            ->parameters(['materiales' => 'material'])
             ->middleware('role:super-admin|admin_clinica|almacen-jefe');
 
         // Rutas de Ingresos (solo almacen-jefe)

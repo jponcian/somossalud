@@ -106,9 +106,11 @@
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
+                @role('paciente')
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="{{ route('panel.clinica') }}" class="nav-link">Inicio</a>
+                    <a href="{{ route('panel.pacientes') }}" class="nav-link">Paciente</a>
                 </li>
+                @endrole
             </ul>
 
             <ul class="navbar-nav ml-auto">
@@ -118,7 +120,7 @@
                         <span class="ml-2">{{ auth()->user()->name ?? 'Usuario' }}</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a href="{{ route('profile.edit') }}" class="dropdown-item">
+                        <a href="{{ route('profile.edit', ['context' => 'clinica']) }}" class="dropdown-item">
                             <i class="fas fa-user-cog mr-2"></i> Perfil
                         </a>
                         <div class="dropdown-divider"></div>
