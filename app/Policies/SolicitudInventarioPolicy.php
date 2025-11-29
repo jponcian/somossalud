@@ -12,7 +12,7 @@ class SolicitudInventarioPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin_clinica', 'almacen']);
+        return $user->hasAnyRole(['super-admin', 'admin_clinica', 'almacen', 'almacen-jefe']);
     }
 
     /**
@@ -20,12 +20,12 @@ class SolicitudInventarioPolicy
      */
     public function view(User $user, SolicitudInventario $solicitud): bool
     {
-        // Admin puede ver todas
-        if ($user->hasAnyRole(['super-admin', 'admin_clinica'])) {
+        // Admin y jefe de almacén pueden ver todas
+        if ($user->hasAnyRole(['super-admin', 'admin_clinica', 'almacen-jefe'])) {
             return true;
         }
 
-        // Usuario de almacén solo puede ver sus propias solicitudes
+        // Usuario de almacén regular solo puede ver sus propias solicitudes
         if ($user->hasRole('almacen')) {
             return $solicitud->solicitante_id === $user->id;
         }
@@ -38,7 +38,7 @@ class SolicitudInventarioPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin_clinica', 'almacen']);
+        return $user->hasAnyRole(['super-admin', 'admin_clinica', 'almacen', 'almacen-jefe']);
     }
 
     /**
@@ -46,7 +46,7 @@ class SolicitudInventarioPolicy
      */
     public function approve(User $user, SolicitudInventario $solicitud): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin_clinica'])
+        return $user->hasAnyRole(['super-admin', 'admin_clinica', 'almacen-jefe'])
             && $solicitud->isPendiente();
     }
 
@@ -55,7 +55,7 @@ class SolicitudInventarioPolicy
      */
     public function dispatch(User $user, SolicitudInventario $solicitud): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin_clinica'])
+        return $user->hasAnyRole(['super-admin', 'admin_clinica', 'almacen-jefe'])
             && $solicitud->isAprobada();
     }
 
@@ -65,11 +65,11 @@ class SolicitudInventarioPolicy
     public function delete(User $user, SolicitudInventario $solicitud): bool
     {
         // Solo el solicitante puede eliminar si está pendiente
-        if ($user->hasRole('almacen')) {
+        if ($user->hasRole('almacen') && !$user->hasRole('almacen-jefe')) {
             return $solicitud->solicitante_id === $user->id && $solicitud->isPendiente();
         }
 
-        // Admin puede eliminar cualquiera que esté pendiente
-        return $user->hasAnyRole(['super-admin', 'admin_clinica']) && $solicitud->isPendiente();
+        // Admin y jefe de almacén pueden eliminar cualquiera que esté pendiente
+        return $user->hasAnyRole(['super-admin', 'admin_clinica', 'almacen-jefe']) && $solicitud->isPendiente();
     }
 }

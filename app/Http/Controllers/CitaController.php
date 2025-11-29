@@ -24,61 +24,68 @@ class CitaController extends Controller
     }
 
     public function index()
-    {
-        $user = Auth::user();
-        $usaAdmin = $user->hasRole(['especialista', 'super-admin', 'admin_clinica', 'recepcionista', 'laboratorio']);
-        if ($user->hasRole('especialista')) {
-            // Mostrar solo las citas asignadas a este especialista
-            $citas = Cita::where('especialista_id', $user->id)
-                ->orderBy('fecha', 'desc')
-                ->orderBy('id', 'desc')
-                ->get();
-        } elseif ($user->hasRole('paciente')) {
-            // Unificar Citas y Atenciones del paciente en un solo listado
-            $citasRaw = Cita::with(['especialista'])
-                ->where('usuario_id', $user->id)
-                ->orderBy('fecha', 'desc')
-                ->orderBy('id', 'desc')
-                ->get();
-            $atencionesRaw = \App\Models\Atencion::with(['medico'])
-                ->where('paciente_id', $user->id)
-                ->orderBy('id', 'desc')
-                ->get();
+{
+    $user = Auth::user();
+    
+    // PRIORIDAD: Si el usuario tiene rol paciente, mostrar siempre la vista de paciente
+    // independientemente de si tiene otros roles (admin_clinica, especialista, etc.)
+    if ($user->hasRole('paciente')) {
+        // Unificar Citas y Atenciones del paciente en un solo listado
+        $citasRaw = Cita::with(['especialista'])
+            ->where('usuario_id', $user->id)
+            ->orderBy('fecha', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
+        $atencionesRaw = \App\Models\Atencion::with(['medico'])
+            ->where('paciente_id', $user->id)
+            ->orderBy('id', 'desc')
+            ->get();
 
-            $items = collect();
-            foreach ($citasRaw as $c) {
-                $items->push([
-                    'tipo' => 'cita',
-                    'id' => $c->id,
-                    'momento' => \Carbon\Carbon::parse($c->fecha),
-                    'estado' => $c->estado,
-                    'especialista' => optional($c->especialista)->name,
-                    'tiene_meds' => $c->medicamentos()->exists(),
-                ]);
-            }
-            foreach ($atencionesRaw as $a) {
-                $items->push([
-                    'tipo' => 'atencion',
-                    'id' => $a->id,
-                    'momento' => $a->iniciada_at ?? $a->created_at,
-                    'estado' => $a->estado,
-                    'especialista' => optional($a->medico)->name,
-                    'tiene_meds' => $a->medicamentos()->exists(),
-                ]);
-            }
-            $items = $items->sortByDesc('momento')->values();
-            // Si no hay nada aún, invitar a crear primera cita
-            if ($items->isEmpty()) {
-                return redirect()->route('citas.create')->with('info', 'Crea tu primera cita.');
-            }
-            return view('citas.paciente_index', [
-                'items' => $items,
+        $items = collect();
+        foreach ($citasRaw as $c) {
+            $items->push([
+                'tipo' => 'cita',
+                'id' => $c->id,
+                'momento' => \Carbon\Carbon::parse($c->fecha),
+                'estado' => $c->estado,
+                'especialista' => optional($c->especialista)->name,
+                'tiene_meds' => $c->medicamentos()->exists(),
             ]);
-        } else {
-            $citas = Cita::orderBy('fecha', 'desc')->orderBy('id', 'desc')->get();
         }
-        return view($usaAdmin ? 'citas.admin.index' : 'citas.index', compact('citas'));
+        foreach ($atencionesRaw as $a) {
+            $items->push([
+                'tipo' => 'atencion',
+                'id' => $a->id,
+                'momento' => $a->iniciada_at ?? $a->created_at,
+                'estado' => $a->estado,
+                'especialista' => optional($a->medico)->name,
+                'tiene_meds' => $a->medicamentos()->exists(),
+            ]);
+        }
+        $items = $items->sortByDesc('momento')->values();
+        // Si no hay nada aún, invitar a crear primera cita
+        if ($items->isEmpty()) {
+            return redirect()->route('citas.create')->with('info', 'Crea tu primera cita.');
+        }
+        return view('citas.paciente_index', [
+            'items' => $items,
+        ]);
     }
+    
+    // Si no es paciente, determinar si usa vista administrativa
+    $usaAdmin = $user->hasRole(['especialista', 'super-admin', 'admin_clinica', 'recepcionista', 'laboratorio']);
+    
+    if ($user->hasRole('especialista')) {
+        // Mostrar solo las citas asignadas a este especialista
+        $citas = Cita::where('especialista_id', $user->id)
+            ->orderBy('fecha', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
+    } else {
+        $citas = Cita::orderBy('fecha', 'desc')->orderBy('id', 'desc')->get();
+    }
+    return view($usaAdmin ? 'citas.admin.index' : 'citas.index', compact('citas'));
+}
 
     public function create()
     {
@@ -548,15 +555,22 @@ class CitaController extends Controller
     }
 
     // Receta legible para paciente (y especialista)
-    public function receta(Request $request, Cita $cita)
-    {
-        $user = Auth::user();
-        $puedeVer = ($cita->usuario_id === $user->id) || ($cita->especialista_id === $user->id) || ($user->hasRole(['super-admin', 'admin_clinica']));
-        if (!$puedeVer)
-            abort(403);
+public function receta(Request $request, Cita $cita)
+{
+    $user = Auth::user();
+    $puedeVer = ($cita->usuario_id === $user->id) || ($cita->especialista_id === $user->id) || ($user->hasRole(['super-admin', 'admin_clinica']));
+    if (!$puedeVer)
+        abort(403);
 
-        $cita->load(['medicamentos', 'especialista', 'clinica']);
-        $usaAdmin = $user->hasRole(['especialista', 'super-admin', 'admin_clinica', 'recepcionista', 'laboratorio']);
-        return view($usaAdmin ? 'citas.admin.receta' : 'citas.receta', compact('cita'));
+    $cita->load(['medicamentos', 'especialista', 'clinica']);
+    
+    // PRIORIDAD: Si el usuario es el paciente dueño de la cita, mostrar vista de paciente
+    // independientemente de si tiene otros roles
+    if ($cita->usuario_id === $user->id) {
+        return view('citas.receta', compact('cita'));
     }
+    
+    // Si no es el paciente, usar vista administrativa
+    return view('citas.admin.receta', compact('cita'));
+}
 }

@@ -37,27 +37,30 @@ class SolicitudInventarioController extends Controller
             $query->whereDate('created_at', '<=', $request->fecha_hasta);
         }
         
-        // Si es usuario de almacén, solo ver sus propias solicitudes
-        if (auth()->user()->hasRole('almacen')) {
+        // Si es usuario de almacén regular (no jefe), solo ver sus propias solicitudes
+        // El jefe de almacén puede ver todas las solicitudes
+        if (auth()->user()->hasRole('almacen') && !auth()->user()->hasRole('almacen-jefe')) {
             $query->where('solicitante_id', auth()->id());
         }
         
         $solicitudes = $query->paginate(15);
         
         // Estadísticas
-    $stats = [
-        'pendientes' => SolicitudInventario::pendientes()
-            ->where('clinica_id', auth()->user()->clinica_id)
-            ->count(),
-        'aprobadas' => SolicitudInventario::aprobadas()
-            ->where('clinica_id', auth()->user()->clinica_id)
-            ->count(),
-        'despachadas_mes' => SolicitudInventario::despachadas()
-            ->where('clinica_id', auth()->user()->clinica_id)
-            ->whereYear('fecha_despacho', now()->year)
-            ->whereMonth('fecha_despacho', now()->month)
-            ->count(),
-    ];
+        $statsQuery = SolicitudInventario::where('clinica_id', auth()->user()->clinica_id);
+        
+        // Aplicar el mismo filtro de rol que en la consulta principal
+        if (auth()->user()->hasRole('almacen') && !auth()->user()->hasRole('almacen-jefe')) {
+            $statsQuery->where('solicitante_id', auth()->id());
+        }
+        
+        $stats = [
+            'pendientes' => (clone $statsQuery)->pendientes()->count(),
+            'aprobadas' => (clone $statsQuery)->aprobadas()->count(),
+            'despachadas_mes' => (clone $statsQuery)->despachadas()
+                ->whereYear('fecha_despacho', now()->year)
+                ->whereMonth('fecha_despacho', now()->month)
+                ->count(),
+        ];
         
         return view('inventario.solicitudes.index', compact('solicitudes', 'stats'));
     }
