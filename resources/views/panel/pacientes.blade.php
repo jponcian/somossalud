@@ -134,13 +134,13 @@
         }
 
         .status-card {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
             color: white;
             border-radius: 1.5rem;
             padding: 1.5rem;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.3);
+            box-shadow: 0 10px 30px -5px rgba(14, 165, 233, 0.3);
         }
 
         .status-card::after {
@@ -235,7 +235,7 @@
                                 </a>
                             @endif
                         </div>
-                        <i class="fas fa-crown text-white-50 fa-3x"></i>
+                        <i class="fas fa-crown fa-3x" style="color: #fbbf24; opacity: 0.9;"></i>
                     </div>
                 </div>
             @endif
