@@ -22,26 +22,51 @@
         </div>
         <div class="col-12">
             <div class="card shadow-sm border-0 rounded-lg overflow-hidden">
-                <div class="card-header border-0 d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%); border-bottom: 1px solid #cbd5e1;">
-                    <h3 class="card-title font-weight-bold text-primary mb-0">
-                        <i class="fas fa-users mr-2"></i> Usuarios registrados
-                    </h3>
-                    <div class="d-flex align-items-center">
-                        <form method="GET" action="{{ route('admin.users.index') }}" class="form-inline mr-3">
-                            <label class="mr-2 text-muted small font-weight-bold text-uppercase">Filtrar:</label>
-                            <select name="rol" class="custom-select custom-select-sm border-0 shadow-sm bg-white text-dark font-weight-bold" onchange="this.form.submit()" style="min-width: 150px;">
-                                <option value="">Todos los roles</option>
-                                @foreach ($roles ?? [] as $rol)
-                                    <option value="{{ $rol }}" {{ ($filtroRol ?? '') === $rol ? 'selected' : '' }}>{{ ucfirst(str_replace('_',' ', $rol)) }}</option>
-                                @endforeach
-                            </select>
-                            @if(request('rol'))
-                                <a href="{{ route('admin.users.index') }}" class="btn btn-link btn-sm text-danger ml-2" title="Limpiar filtro"><i class="fas fa-times"></i></a>
-                            @endif
-                        </form>
-                        <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm font-weight-bold shadow-sm rounded-pill px-3">
-                            <i class="fas fa-user-plus mr-1"></i> Nuevo usuario
-                        </a>
+                <div class="card-header border-0" style="background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%); border-bottom: 1px solid #cbd5e1;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center flex-grow-1">
+                            <h3 class="card-title font-weight-bold text-primary mb-0 mr-4">
+                                <i class="fas fa-users mr-2"></i> Usuarios registrados
+                            </h3>
+                            <form method="GET" action="{{ route('admin.users.index') }}" class="form-inline mr-3">
+                                <label class="mr-2 text-muted small font-weight-bold text-uppercase">Filtrar:</label>
+                                <select name="rol" class="custom-select custom-select-sm border-0 shadow-sm bg-white text-dark font-weight-bold" onchange="this.form.submit()" style="min-width: 150px;">
+                                    <option value="">Todos los roles</option>
+                                    @foreach ($roles ?? [] as $rol)
+                                        <option value="{{ $rol }}" {{ ($filtroRol ?? '') === $rol ? 'selected' : '' }}>{{ ucfirst(str_replace('_',' ', $rol)) }}</option>
+                                    @endforeach
+                                </select>
+                                @if(request('rol'))
+                                    <a href="{{ route('admin.users.index') }}" class="btn btn-link btn-sm text-danger ml-2" title="Limpiar filtro"><i class="fas fa-times"></i></a>
+                                @endif
+                                <input type="hidden" name="buscar" value="{{ request('buscar') }}" id="hidden-buscar">
+                            </form>
+                            <div class="form-inline">
+                                <div class="input-group input-group-sm shadow-sm" style="min-width: 250px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-white border-0">
+                                            <i class="fas fa-search text-muted"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" id="search-input" class="form-control border-0" placeholder="Buscar por nombre, email o cédula..." value="{{ request('buscar') }}">
+                                    <div class="input-group-append" id="clear-search-btn" style="display: {{ request('buscar') ? 'flex' : 'none' }};">
+                                        <button type="button" class="btn btn-sm bg-white border-0 text-danger" title="Limpiar búsqueda">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="input-group-append" id="search-spinner" style="display: none;">
+                                        <span class="input-group-text bg-white border-0">
+                                            <i class="fas fa-spinner fa-spin text-primary"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm font-weight-bold shadow-sm rounded-pill px-3">
+                                <i class="fas fa-user-plus mr-1"></i> Nuevo usuario
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -141,3 +166,90 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const clearBtn = document.getElementById('clear-search-btn');
+    const spinner = document.getElementById('search-spinner');
+    const hiddenBuscar = document.getElementById('hidden-buscar');
+    let searchTimeout;
+
+    // Función para realizar la búsqueda
+    function performSearch() {
+        const searchValue = searchInput.value.trim();
+        const currentRol = new URLSearchParams(window.location.search).get('rol') || '';
+        
+        // Construir la URL con los parámetros
+        const params = new URLSearchParams();
+        if (currentRol) params.append('rol', currentRol);
+        if (searchValue) params.append('buscar', searchValue);
+        
+        // Actualizar el campo hidden del formulario de roles
+        if (hiddenBuscar) {
+            hiddenBuscar.value = searchValue;
+        }
+        
+        // Redirigir con los nuevos parámetros
+        const newUrl = `{{ route('admin.users.index') }}${params.toString() ? '?' + params.toString() : ''}`;
+        window.location.href = newUrl;
+    }
+
+    // Event listener para el input de búsqueda con debounce
+    searchInput.addEventListener('input', function() {
+        const searchValue = this.value.trim();
+        
+        // Mostrar/ocultar botón de limpiar
+        if (searchValue.length > 0) {
+            clearBtn.style.display = 'flex';
+        } else {
+            clearBtn.style.display = 'none';
+        }
+
+        // Limpiar timeout anterior
+        clearTimeout(searchTimeout);
+        
+        // Si el campo está vacío y había búsqueda previa, limpiar inmediatamente
+        if (searchValue.length === 0 && '{{ request('buscar') }}') {
+            spinner.style.display = 'flex';
+            performSearch();
+            return;
+        }
+        
+        // Solo buscar si hay al menos 2 caracteres
+        if (searchValue.length >= 2) {
+            // Mostrar spinner
+            spinner.style.display = 'flex';
+            
+            // Esperar 500ms antes de buscar
+            searchTimeout = setTimeout(function() {
+                performSearch();
+            }, 500);
+        }
+    });
+
+    // Event listener para el botón de limpiar
+    if (clearBtn) {
+        clearBtn.querySelector('button').addEventListener('click', function() {
+            searchInput.value = '';
+            clearBtn.style.display = 'none';
+            spinner.style.display = 'flex';
+            performSearch();
+        });
+    }
+
+    // Permitir buscar con Enter
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            clearTimeout(searchTimeout);
+            if (this.value.trim().length >= 2 || this.value.trim().length === 0) {
+                spinner.style.display = 'flex';
+                performSearch();
+            }
+        }
+    });
+});
+</script>
+@endpush

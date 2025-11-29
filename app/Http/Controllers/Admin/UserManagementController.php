@@ -20,6 +20,7 @@ class UserManagementController extends Controller
         $usuarioActual = Auth::user();
         $roles = \Spatie\Permission\Models\Role::where('name', '!=', 'super-admin')->orderBy('name')->pluck('name');
         $filtroRol = request('rol');
+        $buscar = request('buscar');
         $usuariosQuery = User::with(['roles', 'especialidad'])
             ->whereDoesntHave('roles', function ($q) {
                 $q->where('name', 'super-admin');
@@ -42,7 +43,20 @@ class UserManagementController extends Controller
                 $q->where('name', $filtroRol);
             });
         }
-        $usuarios = $usuariosQuery->orderByDesc('created_at')->paginate(12)->appends(['rol' => $filtroRol]);
+
+        // Filtro de búsqueda por nombre, email o cédula
+        if ($buscar) {
+            $usuariosQuery->where(function ($q) use ($buscar) {
+                $q->where('name', 'LIKE', "%{$buscar}%")
+                  ->orWhere('email', 'LIKE', "%{$buscar}%")
+                  ->orWhere('cedula', 'LIKE', "%{$buscar}%");
+            });
+        }
+
+        $usuarios = $usuariosQuery->orderByDesc('created_at')->paginate(12)->appends([
+            'rol' => $filtroRol,
+            'buscar' => $buscar
+        ]);
 
         return view('admin.users.index', [
             'usuarios' => $usuarios,
