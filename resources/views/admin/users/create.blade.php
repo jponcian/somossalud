@@ -84,7 +84,7 @@
                                     <label for="representante_id" class="font-weight-bold text-dark small text-uppercase">
                                         Representante (Padre/Madre) <span class="text-danger">*</span>
                                     </label>
-                                    <div class="input-group shadow-sm">
+                                    <div class="input-group shadow-sm flex-nowrap">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text bg-white border-right-0"><i class="fas fa-user-friends text-muted"></i></span>
                                         </div>
@@ -273,22 +273,20 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="especialidades" class="font-weight-bold text-dark small text-uppercase">Especialidades <span class="text-muted font-weight-normal text-lowercase">(Solo para especialistas)</span></label>
-                                    <div class="d-flex align-items-stretch shadow-sm border rounded overflow-hidden bg-white">
-                                        <div class="d-flex align-items-center px-3 bg-white border-right">
-                                            <i class="fas fa-stethoscope text-muted"></i>
+                                    <div class="input-group shadow-sm flex-nowrap">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white border-right-0"><i class="fas fa-stethoscope text-muted"></i></span>
                                         </div>
-                                        <div class="flex-grow-1">
-                                            <select name="especialidades[]" id="especialidades" class="form-control border-0 @error('especialidades') is-invalid @enderror" multiple {{ (auth()->user()->hasRole('recepcionista') && !auth()->user()->hasAnyRole(['super-admin','admin_clinica'])) ? 'disabled' : '' }} style="width: 100%;">
-                                                @php
-                                                    $selectedEspecialidades = old('especialidades', []);
-                                                @endphp
-                                                @foreach ($especialidades as $especialidad)
-                                                    <option value="{{ $especialidad->id }}" {{ in_array($especialidad->id, $selectedEspecialidades) ? 'selected' : '' }}>
-                                                        {{ $especialidad->nombre }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                        <select name="especialidades[]" id="especialidades" class="form-control border-left-0 @error('especialidades') is-invalid @enderror" multiple {{ (auth()->user()->hasRole('recepcionista') && !auth()->user()->hasAnyRole(['super-admin','admin_clinica'])) ? 'disabled' : '' }} style="width: 100%;">
+                                            @php
+                                                $selectedEspecialidades = old('especialidades', []);
+                                            @endphp
+                                            @foreach ($especialidades as $especialidad)
+                                                <option value="{{ $especialidad->id }}" {{ in_array($especialidad->id, $selectedEspecialidades) ? 'selected' : '' }}>
+                                                    {{ $especialidad->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <small class="form-text text-muted mt-1">
                                         @if (auth()->user()->hasRole('recepcionista') && !auth()->user()->hasAnyRole(['super-admin','admin_clinica']))
@@ -320,64 +318,158 @@
 @endsection
 
 @push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 {{-- Select2 CSS: ya se carga globalmente en `layouts.adminlte` --}}
 <style>
-    /* Normalize Select2 appearance to match form controls (conservative rules).
-       Goal: left-align placeholders and content, match input height and padding.
-    */
+    /* Normalize Select2 appearance to match form controls */
     .select2-container--bootstrap4 .select2-selection {
-        height: calc(2.25rem + 2px) !important;
+        border: 1px solid #ced4da !important;
+        border-left: 0 !important; /* Merge with icon */
+        border-radius: 0 0.25rem 0.25rem 0 !important;
+        min-height: calc(2.25rem + 2px) !important;
         padding: 0.375rem 0.75rem !important;
         display: flex !important;
         align-items: center !important;
-        box-sizing: border-box !important;
     }
 
-    /* Ensure rendered text/placeholder are left aligned */
-    .select2-container--bootstrap4 .select2-selection__rendered,
-    .select2-container--bootstrap4 .select2-selection__placeholder {
-        text-align: left !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        line-height: 1.2 !important;
+    /* Focus state */
+    .select2-container--bootstrap4.select2-container--focus .select2-selection {
+        border-color: #80bdff !important;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
     }
 
-    /* Multiple select: allow wrapping but keep left alignment */
+    /* Multiple select specific */
     .select2-container--bootstrap4 .select2-selection--multiple {
-        min-height: calc(2.25rem + 2px) !important;
         padding: 0.25rem 0.5rem !important;
-        align-items: center !important;
     }
 
-    /* When Select2 is inserted after the original select, ensure it fills available width */
-    .input-group .select2-container--bootstrap4,
-    .flex-grow-1 .select2-container--bootstrap4,
-    #especialidades + .select2-container--bootstrap4,
-    #representante_id + .select2-container--bootstrap4 {
+    /* Chips styling */
+    .select2-container--bootstrap4 .select2-selection__choice {
+        background-color: #e3f2fd !important;
+        border: 1px solid #90caf9 !important;
+        color: #1565c0 !important;
+        border-radius: 20px !important;
+        padding: 2px 8px !important;
+        font-size: 0.85rem !important;
+        margin-top: 4px !important;
+        margin-right: 4px !important;
+    }
+
+    .select2-container--bootstrap4 .select2-selection__choice__remove {
+        color: #1565c0 !important;
+        margin-right: 5px !important;
+        font-weight: bold !important;
+    }
+
+    .select2-container--bootstrap4 .select2-selection__choice__remove:hover {
+        color: #0d47a1 !important;
+    }
+
+    /* Dropdown styling */
+    .select2-container--bootstrap4 .select2-dropdown {
+        border-color: #ced4da !important;
+        border-radius: 0.25rem !important;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .select2-results__option {
+        padding: 8px 12px !important;
+        font-size: 0.95rem !important;
+    }
+
+    .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+        background-color: #0ea5e9 !important; /* Premium blue */
+        background: linear-gradient(to right, #0ea5e9, #0284c7) !important;
+    }
+
+    /* Ensure full width in input groups */
+    .input-group .select2-container--bootstrap4 {
+        flex: 1 1 auto !important;
+        width: 1% !important; /* Force flex behavior */
+    }
+
+    /* Fix search field alignment and text position */
+    .select2-container--bootstrap4 .select2-search__field {
+        text-align: left !important;
+        margin-top: 7px !important;
+        margin-left: 4px !important;
+    }
+
+    /* Ensure the container aligns items to the start */
+    .select2-container--bootstrap4 .select2-selection__rendered {
+        text-align: left !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
         width: 100% !important;
     }
 
-    /* Small tweak: the search input inside Select2 should not force centering */
-    .select2-container--bootstrap4 .select2-search__field {
-        margin-left: 0 !important;
+    /* Choices.js Custom Styles for Premium Look */
+    .choices {
+        flex-grow: 1;
+        margin-bottom: 0;
+        width: 1% !important; /* Force flex behavior in input-group */
     }
+    
+    .choices__inner {
+        min-height: calc(2.25rem + 2px);
+        padding: 0.25rem 0.75rem;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-left: 0;
+        border-radius: 0 0.25rem 0.25rem 0;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .choices.is-focused .choices__inner {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .choices__list--multiple .choices__item {
+        background: linear-gradient(to right, #0ea5e9, #0284c7);
+        border: none;
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 0.85rem;
+        margin-right: 5px;
+    }
+
+    .choices__list--multiple .choices__item.is-highlighted {
+        background: #0284c7;
+        border: none;
+    }
+
+    .choices__input {
+        background-color: transparent;
+        margin-bottom: 0;
+        padding: 4px 0;
+    }
+
+    .choices__list--dropdown {
+        border-color: #ced4da;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        border-radius: 0.25rem;
+        margin-top: 5px;
+    }
+
+    .choices__list--dropdown .choices__item--selectable.is-highlighted {
+        background-color: #e3f2fd;
+        color: #0284c7;
+    }
+
 </style>
 @endpush
 
 @push('scripts')
-{{-- Select2 JS: cargado globalmente en `layouts.adminlte` --}}
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script src="{{ asset('js/cedula-validator.js') }}"></script>
 <script>
 $(document).ready(function() {
-    // Inicializar Select2 para especialidades
-    $('#especialidades').select2({
-        theme: 'bootstrap4',
-        placeholder: "Selecciona especialidades",
-        allowClear: true,
-        width: '100%'
-    });
-
-    // Inicializar Select2 para representante
+    // Inicializar Select2 para representante (Mantenemos Select2 aquí por su soporte AJAX robusto)
     $('.select2-representante').select2({
         theme: 'bootstrap4',
         placeholder: 'Buscar representante por nombre o cédula...',
@@ -392,21 +484,42 @@ $(document).ready(function() {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Lógica para roles y especialidades
-    const roleCheckboxes = Array.from(document.querySelectorAll('.role-checkbox'));
+    // Inicializar Choices.js para especialidades
     const especialidadSelect = document.getElementById('especialidades');
+    let choicesInstance = null;
 
     if (especialidadSelect) {
+        choicesInstance = new Choices(especialidadSelect, {
+            removeItemButton: true,
+            placeholder: true,
+            placeholderValue: 'Selecciona especialidades',
+            searchPlaceholderValue: 'Buscar especialidad...',
+            itemSelectText: '',
+            noResultsText: 'No se encontraron resultados',
+            noChoicesText: 'No hay más opciones',
+            loadingText: 'Cargando...',
+        });
+
+        // Lógica para roles y especialidades
+        const roleCheckboxes = Array.from(document.querySelectorAll('.role-checkbox'));
+
         function toggleEspecialidad() {
             const specialistSelected = roleCheckboxes.some(function (checkbox) {
                 return checkbox.checked && checkbox.value === 'especialista';
             });
-            especialidadSelect.disabled = !specialistSelected;
+            
+            if (specialistSelected) {
+                choicesInstance.enable();
+            } else {
+                choicesInstance.disable();
+            }
         }
 
         roleCheckboxes.forEach(function (checkbox) {
             checkbox.addEventListener('change', toggleEspecialidad);
         });
+        
+        // Ejecutar al inicio
         toggleEspecialidad();
     }
 
