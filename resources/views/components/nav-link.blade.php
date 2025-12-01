@@ -1,12 +1,14 @@
 @props(['active'])
 
 @php
-$classes = ($active ?? false)
-    ? 'nav-link-active inline-flex items-center px-3 pt-1 pb-1 text-sm font-bold text-white shadow-lg'
-    : 'inline-flex items-center px-1 pt-1 pb-1 text-sm font-medium text-secondary';
+    $classes = ($active ?? false)
+        ? 'nav-link-active inline-flex items-center px-3 pt-1 pb-1 text-sm font-bold text-white shadow-lg'
+        : 'inline-flex items-center px-1 pt-1 pb-1 text-sm font-medium text-secondary';
 
-// CSS en línea para el nav-link activo
-?><style>
+@endphp
+
+<!-- CSS en línea para el nav-link activo -->
+<style>
     .nav-link-active {
         background: transparent;
         color: #1976d2 !important;
@@ -16,8 +18,7 @@ $classes = ($active ?? false)
         position: relative;
         z-index: 2;
     }
-</style><?php
-@endphp
+</style>
 
 <a {{ $attributes->merge(['class' => $classes]) }}>
     {{ $slot }}
