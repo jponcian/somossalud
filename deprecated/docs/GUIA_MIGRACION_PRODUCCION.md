@@ -1,5 +1,6 @@
 ````markdown
 # Guía de Ejecución - Migración de Roles en Producción
+
 ## Clínica SaludSonrisa
 
 ---
@@ -12,11 +13,11 @@ Esta guía te ayudará a aplicar la migración de roles en el servidor de produc
 
 ## 📋 Pre-requisitos
 
-- [ ] Acceso SSH al servidor de producción
-- [ ] Acceso a la base de datos MySQL/MariaDB
-- [ ] Permisos de administrador
-- [ ] Tiempo estimado: 10-15 minutos
-- [ ] Ventana de mantenimiento programada (opcional pero recomendado)
+-   [ ] Acceso SSH al servidor de producción
+-   [ ] Acceso a la base de datos MySQL/MariaDB
+-   [ ] Permisos de administrador
+-   [ ] Tiempo estimado: 10-15 minutos
+-   [ ] Ventana de mantenimiento programada (opcional pero recomendado)
 
 ---
 
@@ -108,6 +109,7 @@ mysql -u usuario_db -p nombre_base_datos < /ruta/temporal/migracion_roles_produc
 El script incluye verificaciones automáticas. Revisa la salida y confirma:
 
 ### Verificación 1: Nuevos roles creados
+
 ```
 Debe mostrar:
 - laboratorio-resul (ID 10)
@@ -115,11 +117,13 @@ Debe mostrar:
 ```
 
 ### Verificación 2: Roles antiguos eliminados
+
 ```
 Debe mostrar: 0 roles antiguos restantes
 ```
 
 ### Verificación 3: Usuarios migrados
+
 ```
 Debe mostrar los usuarios con sus nuevos roles:
 - Usuario ID 16: laboratorio-resul
@@ -128,6 +132,7 @@ Debe mostrar los usuarios con sus nuevos roles:
 ```
 
 ### Verificación 4: Sin asignaciones huérfanas
+
 ```
 Debe mostrar: 0 asignaciones con roles inexistentes
 ```
@@ -163,29 +168,32 @@ php artisan optimize
 ### Prueba 1: Login de usuarios afectados
 
 Probar login con los usuarios:
-- Usuario ID 16
-- Usuario ID 21
-- Usuario ID 23
+
+-   Usuario ID 16
+-   Usuario ID 21
+-   Usuario ID 23
 
 ### Prueba 2: Verificar accesos
 
 **Para usuarios con rol `laboratorio-resul`:**
-- [ ] Pueden acceder a "Resultados Pendientes"
-- [ ] Pueden cargar resultados
-- [ ] NO pueden crear órdenes nuevas
-- [ ] Solo ven órdenes pendientes o recientes (últimos 2 días)
+
+-   [ ] Pueden acceder a "Resultados Pendientes"
+-   [ ] Pueden cargar resultados
+-   [ ] NO pueden crear órdenes nuevas
+-   [ ] Solo ven órdenes pendientes o recientes (últimos 2 días)
 
 **Para usuarios con rol `almacen-jefe`:**
-- [ ] Ven todas las opciones del menú de inventario
-- [ ] Pueden crear solicitudes
-- [ ] Pueden aprobar/rechazar solicitudes
-- [ ] Pueden acceder a gestión de materiales
-- [ ] Pueden registrar ingresos
+
+-   [ ] Ven todas las opciones del menú de inventario
+-   [ ] Pueden crear solicitudes
+-   [ ] Pueden aprobar/rechazar solicitudes
+-   [ ] Pueden acceder a gestión de materiales
+-   [ ] Pueden registrar ingresos
 
 ### Prueba 3: Verificar menú lateral
 
-- [ ] El menú muestra las opciones correctas según el rol
-- [ ] No hay errores 403 al acceder a las opciones
+-   [ ] El menú muestra las opciones correctas según el rol
+-   [ ] No hay errores 403 al acceder a las opciones
 
 ---
 
@@ -214,24 +222,27 @@ php artisan permission:cache-reset
 ## 📊 CHECKLIST DE EJECUCIÓN
 
 ### Antes de ejecutar:
-- [ ] Backup completo creado
-- [ ] Backup verificado (archivo no vacío)
-- [ ] Script SQL subido al servidor
-- [ ] Usuarios notificados (opcional)
-- [ ] Ventana de mantenimiento programada (opcional)
+
+-   [ ] Backup completo creado
+-   [ ] Backup verificado (archivo no vacío)
+-   [ ] Script SQL subido al servidor
+-   [ ] Usuarios notificados (opcional)
+-   [ ] Ventana de mantenimiento programada (opcional)
 
 ### Durante la ejecución:
-- [ ] Script ejecutado sin errores
-- [ ] Verificaciones automáticas revisadas
-- [ ] Resultados correctos confirmados
+
+-   [ ] Script ejecutado sin errores
+-   [ ] Verificaciones automáticas revisadas
+-   [ ] Resultados correctos confirmados
 
 ### Después de ejecutar:
-- [ ] Caché de Laravel limpiado
-- [ ] Caché de permisos limpiado
-- [ ] Pruebas de login realizadas
-- [ ] Accesos verificados
-- [ ] Menú lateral verificado
-- [ ] Usuarios notificados del cambio
+
+-   [ ] Caché de Laravel limpiado
+-   [ ] Caché de permisos limpiado
+-   [ ] Pruebas de login realizadas
+-   [ ] Accesos verificados
+-   [ ] Menú lateral verificado
+-   [ ] Usuarios notificados del cambio
 
 ---
 
@@ -275,25 +286,28 @@ _____________________
 Una vez completada la migración, estos serán los cambios en producción:
 
 ### Roles Creados:
-- ✅ `laboratorio-resul` (ID 10)
-- ✅ `almacen-jefe` (ID 11)
+
+-   ✅ `laboratorio-resul` (ID 10)
+-   ✅ `almacen-jefe` (ID 11)
 
 ### Roles Eliminados:
-- ❌ `lab-resultados` (ID 9)
-- ❌ `jefe-almacen` (ID 8)
+
+-   ❌ `lab-resultados` (ID 9)
+-   ❌ `jefe-almacen` (ID 8)
 
 ### Usuarios Migrados:
-- Usuario ID 16: `lab-resultados` → `laboratorio-resul`
-- Usuario ID 21: `lab-resultados` + `jefe-almacen` → `laboratorio-resul` + `almacen-jefe`
-- Usuario ID 23: `lab-resultados` → `laboratorio-resul`
+
+-   Usuario ID 16: `lab-resultados` → `laboratorio-resul`
+-   Usuario ID 21: `lab-resultados` + `jefe-almacen` → `laboratorio-resul` + `almacen-jefe`
+-   Usuario ID 23: `lab-resultados` → `laboratorio-resul`
 
 ### Archivos de Código Actualizados:
-- `routes/web.php` - Rutas actualizadas
-- `app/Http/Controllers/LabOrderController.php` - Lógica de restricción de 2 días
-- `resources/views/panel/partials/sidebar.blade.php` - Menú adaptativo
+
+-   `routes/web.php` - Rutas actualizadas
+-   `app/Http/Controllers/LabOrderController.php` - Lógica de restricción de 2 días
+-   `resources/views/panel/partials/sidebar.blade.php` - Menú adaptativo
 
 ---
 
 **¡Buena suerte con la migración!** 🚀
-
 ````

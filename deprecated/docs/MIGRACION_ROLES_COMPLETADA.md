@@ -1,5 +1,6 @@
 ````markdown
 # Migración de Roles Antiguos a Nuevos
+
 ## Clínica SaludSonrisa
 
 ### 📋 Problema Identificado
@@ -7,21 +8,25 @@
 Se detectó que existían roles duplicados en la base de datos:
 
 #### Roles Antiguos (creados anteriormente)
-- **ID 8**: `jefe-almacen` → 1 usuario asignado (ID 21)
-- **ID 9**: `lab-resultados` → 3 usuarios asignados (IDs 16, 21, 23)
+
+-   **ID 8**: `jefe-almacen` → 1 usuario asignado (ID 21)
+-   **ID 9**: `lab-resultados` → 3 usuarios asignados (IDs 16, 21, 23)
 
 #### Roles Nuevos (recién creados)
-- **ID 10**: `laboratorio-resul`
-- **ID 11**: `almacen-jefe`
+
+-   **ID 10**: `laboratorio-resul`
+-   **ID 11**: `almacen-jefe`
 
 ---
 
 ## ✅ Solución Implementada
 
 ### 1. Creación del Seeder de Migración
+
 **Archivo**: `database/seeders/MigrateOldRolesToNewRolesSeeder.php`
 
 Este seeder realiza las siguientes acciones:
+
 1. Identifica usuarios con roles antiguos
 2. Asigna los nuevos roles correspondientes
 3. Elimina las asignaciones de roles antiguos
@@ -29,9 +34,9 @@ Este seeder realiza las siguientes acciones:
 
 ### 2. Mapeo de Roles
 
-| Rol Antiguo | Rol Nuevo | Usuarios Migrados |
-|-------------|-----------|-------------------|
-| `jefe-almacen` (ID 8) | `almacen-jefe` (ID 11) | 1 usuario (ID 21) |
+| Rol Antiguo             | Rol Nuevo                   | Usuarios Migrados           |
+| ----------------------- | --------------------------- | --------------------------- |
+| `jefe-almacen` (ID 8)   | `almacen-jefe` (ID 11)      | 1 usuario (ID 21)           |
 | `lab-resultados` (ID 9) | `laboratorio-resul` (ID 10) | 3 usuarios (IDs 16, 21, 23) |
 
 ---
@@ -43,6 +48,7 @@ php artisan db:seed --class=MigrateOldRolesToNewRolesSeeder
 ```
 
 ### Resultado:
+
 ```
 🔄 Iniciando migración de roles...
 📋 Migrando 1 usuario(s) de 'jefe-almacen' a 'almacen-jefe':
@@ -66,40 +72,44 @@ php artisan db:seed --class=MigrateOldRolesToNewRolesSeeder
 
 ### Roles Activos en el Sistema
 
-| ID | Nombre | Descripción |
-|----|--------|-------------|
-| 1 | `super-admin` | Administrador del sistema |
-| 2 | `admin_clinica` | Administrador de clínica |
-| 3 | `recepcionista` | Recepcionista |
-| 4 | `especialista` | Médico especialista |
-| 5 | `laboratorio` | Personal de laboratorio (acceso completo) |
-| 6 | `paciente` | Paciente |
-| 7 | `almacen` | Personal de almacén (acceso limitado) |
-| 10 | `laboratorio-resul` | Personal que solo carga resultados |
-| 11 | `almacen-jefe` | Jefe de almacén (acceso completo) |
+| ID  | Nombre              | Descripción                               |
+| --- | ------------------- | ----------------------------------------- |
+| 1   | `super-admin`       | Administrador del sistema                 |
+| 2   | `admin_clinica`     | Administrador de clínica                  |
+| 3   | `recepcionista`     | Recepcionista                             |
+| 4   | `especialista`      | Médico especialista                       |
+| 5   | `laboratorio`       | Personal de laboratorio (acceso completo) |
+| 6   | `paciente`          | Paciente                                  |
+| 7   | `almacen`           | Personal de almacén (acceso limitado)     |
+| 10  | `laboratorio-resul` | Personal que solo carga resultados        |
+| 11  | `almacen-jefe`      | Jefe de almacén (acceso completo)         |
 
 ### Roles Eliminados
-- ~~ID 8: `jefe-almacen`~~ → Migrado a `almacen-jefe`
-- ~~ID 9: `lab-resultados`~~ → Migrado a `laboratorio-resul`
+
+-   ~~ID 8: `jefe-almacen`~~ → Migrado a `almacen-jefe`
+-   ~~ID 9: `lab-resultados`~~ → Migrado a `laboratorio-resul`
 
 ---
 
 ## 👥 Usuarios Afectados
 
 ### Usuario ID 21
-- **Antes**: `jefe-almacen` + `lab-resultados`
-- **Ahora**: `almacen-jefe` + `laboratorio-resul`
-- **Efecto**: Mantiene los mismos permisos con nombres estandarizados
+
+-   **Antes**: `jefe-almacen` + `lab-resultados`
+-   **Ahora**: `almacen-jefe` + `laboratorio-resul`
+-   **Efecto**: Mantiene los mismos permisos con nombres estandarizados
 
 ### Usuario ID 16
-- **Antes**: `lab-resultados`
-- **Ahora**: `laboratorio-resul`
-- **Efecto**: Mismo acceso, nombre estandarizado
+
+-   **Antes**: `lab-resultados`
+-   **Ahora**: `laboratorio-resul`
+-   **Efecto**: Mismo acceso, nombre estandarizado
 
 ### Usuario ID 23
-- **Antes**: `lab-resultados`
-- **Ahora**: `laboratorio-resul`
-- **Efecto**: Mismo acceso, nombre estandarizado
+
+-   **Antes**: `lab-resultados`
+-   **Ahora**: `laboratorio-resul`
+-   **Efecto**: Mismo acceso, nombre estandarizado
 
 ---
 
@@ -151,5 +161,4 @@ php artisan tinker
 **Fecha de migración:** 27 de noviembre de 2025
 **Ejecutado por:** Sistema automatizado
 **Estado:** ✅ COMPLETADO EXITOSAMENTE
-
 ````
