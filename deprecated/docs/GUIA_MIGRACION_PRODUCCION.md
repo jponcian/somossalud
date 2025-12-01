@@ -1,3 +1,4 @@
+````markdown
 # Guía de Ejecución - Migración de Roles en Producción
 ## Clínica SaludSonrisa
 
@@ -294,3 +295,5 @@ Una vez completada la migración, estos serán los cambios en producción:
 ---
 
 **¡Buena suerte con la migración!** 🚀
+
+````

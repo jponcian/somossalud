@@ -1,3 +1,4 @@
+````markdown
 # Script de Verificación - Roles Granulares
 # Clínica SaludSonrisa
 
@@ -167,3 +168,5 @@ php artisan cache:clear
 
 **Estado:** ✅ IMPLEMENTACIÓN COMPLETADA
 **Fecha:** 27 de noviembre de 2025
+
+````

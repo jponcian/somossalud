@@ -1,3 +1,4 @@
+````markdown
 # Migración de Roles Antiguos a Nuevos
 ## Clínica SaludSonrisa
 
@@ -150,3 +151,5 @@ php artisan tinker
 **Fecha de migración:** 27 de noviembre de 2025
 **Ejecutado por:** Sistema automatizado
 **Estado:** ✅ COMPLETADO EXITOSAMENTE
+
+````

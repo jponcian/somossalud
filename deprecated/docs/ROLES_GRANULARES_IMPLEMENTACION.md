@@ -1,3 +1,4 @@
+````markdown
 # Sistema de Roles Granulares - Laboratorio y Almacén
 ## Clínica SaludSonrisa
 
@@ -233,3 +234,5 @@ Route::middleware('role:super-admin|admin_clinica|almacen-jefe')
 
 **Fecha de implementación:** 27 de noviembre de 2025
 **Desarrollado para:** Clínica SaludSonrisa
+
+````
