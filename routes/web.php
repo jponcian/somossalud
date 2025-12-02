@@ -97,6 +97,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcion
     ->name('admin.')
     ->group(function () {
         Route::post('users/{user}/password-reset', [UserManagementController::class, 'sendPasswordResetLink'])->name('users.password-reset');
+        Route::post('users/{user}/whatsapp-test', [UserManagementController::class, 'sendWhatsAppTest'])->name('users.whatsapp-test');
         Route::get('users/next-dependent-number/{representante}', [UserManagementController::class, 'getNextDependentNumber'])->name('users.next-dependent-number');
         Route::get('users/search-representantes', [UserManagementController::class, 'searchRepresentantes'])->name('users.search-representantes');
         Route::resource('users', UserManagementController::class)->only(['index', 'create', 'store', 'edit', 'update']);

@@ -149,6 +149,24 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="telefono" class="font-weight-bold text-dark small text-uppercase">Teléfono <span class="text-muted font-weight-normal text-lowercase">(WhatsApp)</span></label>
+                                    <div class="input-group shadow-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white border-right-0"><i class="fab fa-whatsapp text-muted"></i></span>
+                                        </div>
+                                        <input type="text" name="telefono" id="telefono" value="{{ old('telefono') }}"
+                                            class="form-control border-left-0 @error('telefono') is-invalid @enderror" 
+                                            placeholder="Ej: 0414-1234567" maxlength="20">
+                                    </div>
+                                    <small class="form-text text-muted mt-1"><i class="fas fa-info-circle mr-1"></i>Formato: 0414-1234567 (Movistar, Digitel, Movilnet)</small>
+                                    @error('telefono')
+                                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="fecha_nacimiento" class="font-weight-bold text-dark small text-uppercase">Fecha de Nacimiento <span class="text-danger">*</span></label>
                                     <div class="input-group shadow-sm">
                                         <div class="input-group-prepend">

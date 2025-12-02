@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Especialidad;
 use App\Models\User;
+use App\Services\WhatsAppService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -114,6 +115,7 @@ class UserManagementController extends Controller
                 'regex:/^[VEJGP]-\d{6,8}(-H\d+)?$/i' // Acepta V-12345678 o V-12345678-H1
             ],
             'email' => ['required', 'string', 'email', 'max:255'], // Removido unique para permitir emails compartidos
+            'telefono' => ['nullable', 'regex:/^0(41[24]|42[246])\d{7}$/'], // Números venezolanos
             'fecha_nacimiento' => ['required', 'date', 'before:today'],
             'sexo' => ['required', 'in:M,F'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -123,6 +125,7 @@ class UserManagementController extends Controller
         ], [
             'cedula.regex' => 'El formato de la cédula debe ser: V-12345678 o V-12345678-H1 (para hijos). Letras permitidas: V, E, J, G, P',
             'cedula.unique' => 'Esta cédula ya está registrada en el sistema',
+            'telefono.regex' => 'El formato del teléfono debe ser: 0414-1234567 (Movistar: 0414/0424, Digitel: 0412/0422, Movilnet: 0416/0426)',
             'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
             'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida',
             'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy',
@@ -217,6 +220,7 @@ class UserManagementController extends Controller
                 'regex:/^[VEJGP]-\d{6,8}(-H\d+)?$/i' // Acepta V-12345678 o V-12345678-H1
             ],
             'email' => ['required', 'string', 'email', 'max:255'], // Removido unique para permitir emails compartidos
+            'telefono' => ['nullable', 'regex:/^0(41[24]|42[246])\d{7}$/'], // Números venezolanos
             'fecha_nacimiento' => ['required', 'date', 'before:today'],
             'sexo' => ['required', 'in:M,F'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
@@ -226,6 +230,7 @@ class UserManagementController extends Controller
         ], [
             'cedula.regex' => 'El formato de la cédula debe ser: V-12345678 o V-12345678-H1 (para hijos). Letras permitidas: V, E, J, G, P',
             'cedula.unique' => 'Esta cédula ya está registrada en el sistema',
+            'telefono.regex' => 'El formato del teléfono debe ser: 0414-1234567 (Movistar: 0414/0424, Digitel: 0412/0422, Movilnet: 0416/0426)',
             'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria',
             'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida',
             'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy',
@@ -245,6 +250,7 @@ class UserManagementController extends Controller
         $user->name = $validated['name'];
         $user->cedula = $cedula;
         $user->email = $validated['email'];
+        $user->telefono = $validated['telefono'] ?? null;
         $user->fecha_nacimiento = $validated['fecha_nacimiento'];
         $user->sexo = $validated['sexo'];
         $user->especialidad_id = $esEspecialista ? ($validated['especialidad_id'] ?? null) : null;
@@ -339,5 +345,88 @@ class UserManagementController extends Controller
         });
 
         return response()->json(['results' => $results]);
+    }
+
+    /**
+     * Enviar mensaje de prueba por WhatsApp
+     * 
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendWhatsAppTest(User $user): \Illuminate\Http\JsonResponse
+    {
+        // Verificar que el usuario tenga teléfono
+        if (empty($user->telefono)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El usuario no tiene un número de teléfono registrado'
+            ], 400);
+        }
+
+        $whatsappService = new WhatsAppService();
+
+        // Convertir el teléfono a formato internacional si es necesario
+        $phoneNumber = $this->formatPhoneNumber($user->telefono);
+        
+        if (!$phoneNumber) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El formato del teléfono no es válido. Debe ser: 0414-1234567 o +584141234567'
+            ], 400);
+        }
+        
+        $message = "¡Hola {$user->name}! 👋\n\n";
+        $message .= "Este es un mensaje de prueba desde SomosSalud.\n\n";
+        $message .= "Tu información:\n";
+        $message .= "📧 Email: {$user->email}\n";
+        $message .= "📱 Teléfono: {$user->telefono}\n";
+        $message .= "📅 Fecha: " . now()->format('d/m/Y H:i');
+
+        $result = $whatsappService->sendMessage($phoneNumber, $message);
+
+        if ($result['success']) {
+            return response()->json([
+                'success' => true,
+                'message' => "Mensaje enviado a {$user->name} ({$phoneNumber})",
+                'data' => $result['data']
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al enviar mensaje: ' . ($result['error'] ?? 'Error desconocido')
+            ], 500);
+        }
+    }
+
+    /**
+     * Formatear número de teléfono venezolano a formato internacional
+     * Convierte: 0414-1234567 → +584141234567
+     * Operadoras: Movistar (0414, 0424), Digitel (0412, 0422), Movilnet (0416, 0426)
+     * 
+     * @param string $phone
+     * @return string|null
+     */
+    private function formatPhoneNumber($phone)
+    {
+        // Limpiar el número (quitar espacios, guiones, paréntesis)
+        $phone = preg_replace('/[^0-9+]/', '', $phone);
+        
+        // Si ya tiene el formato internacional correcto
+        // +58 + (0414|0424|0412|0422|0416|0426) + 7 dígitos
+        if (preg_match('/^\+58(41[24]|42[246])\d{7}$/', $phone)) {
+            return $phone;
+        }
+        
+        // Si es formato local venezolano: 04XX-XXXXXXX
+        if (preg_match('/^0(41[24]|42[246])(\d{7})$/', $phone, $matches)) {
+            return '+58' . $matches[1] . $matches[2];
+        }
+        
+        // Si ya tiene 58 pero sin el +
+        if (preg_match('/^58(41[24]|42[246])\d{7}$/', $phone)) {
+            return '+' . $phone;
+        }
+        
+        return null;
     }
 }

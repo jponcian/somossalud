@@ -25,6 +25,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'telefono',
         'password',
         'clinica_id',
         'cedula',
@@ -126,5 +127,15 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
+
+    /**
+     * Route notifications for the WhatsApp channel.
+     *
+     * @return string
+     */
+    public function routeNotificationForWhatsapp()
+    {
+        return \App\Channels\WhatsAppChannel::class;
     }
 }

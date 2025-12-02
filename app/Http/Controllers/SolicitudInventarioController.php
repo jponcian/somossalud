@@ -289,10 +289,35 @@ class SolicitudInventarioController extends Controller
         
         DB::beginTransaction();
         try {
-            // Actualizar cantidades despachadas
+            // Actualizar cantidades despachadas y descontar del inventario
             foreach ($validated['items'] as $itemData) {
-                ItemSolicitudInventario::where('id', $itemData['id'])
-                    ->update(['cantidad_despachada' => $itemData['cantidad_despachada']]);
+                $item = ItemSolicitudInventario::with('material')->findOrFail($itemData['id']);
+                $cantidadDespachada = (int) $itemData['cantidad_despachada'];
+                
+                // Actualizar cantidad despachada del item
+                $item->update(['cantidad_despachada' => $cantidadDespachada]);
+                
+                // Descontar del inventario si hay cantidad despachada
+                if ($cantidadDespachada > 0) {
+                    $material = $item->material;
+                    $stockAnterior = $material->stock_actual;
+                    $stockNuevo = $stockAnterior - $cantidadDespachada;
+                    
+                    // Actualizar stock del material
+                    $material->update(['stock_actual' => $stockNuevo]);
+                    
+                    // Registrar movimiento de inventario
+                    \App\Models\MovimientoInventario::create([
+                        'material_id' => $material->id,
+                        'user_id' => auth()->id(),
+                        'tipo' => 'SALIDA',
+                        'cantidad' => $cantidadDespachada,
+                        'stock_anterior' => $stockAnterior,
+                        'stock_nuevo' => $stockNuevo,
+                        'motivo' => 'DESPACHO DE SOLICITUD',
+                        'referencia' => $solicitud->numero_solicitud,
+                    ]);
+                }
             }
             
             $solicitud->update([
@@ -305,7 +330,7 @@ class SolicitudInventarioController extends Controller
             
             return redirect()
                 ->route('inventario.solicitudes.show', $solicitud)
-                ->with('success', 'Solicitud despachada exitosamente.');
+                ->with('success', 'Solicitud despachada exitosamente. Inventario actualizado.');
                 
         } catch (\Exception $e) {
             DB::rollBack();

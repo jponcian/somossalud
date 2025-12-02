@@ -141,6 +141,15 @@
                                             <a href="{{ route('admin.users.edit', $usuario) }}" class="btn btn-sm btn-light text-primary shadow-sm rounded-circle" title="Editar usuario">
                                                 <i class="fas fa-user-edit"></i>
                                             </a>
+                                            @hasanyrole('super-admin|admin_clinica')
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-light text-success shadow-sm rounded-circle btn-whatsapp" 
+                                                    title="Enviar WhatsApp"
+                                                    data-user-id="{{ $usuario->id }}"
+                                                    data-user-name="{{ $usuario->name }}">
+                                                <i class="fab fa-whatsapp"></i>
+                                            </button>
+                                            @endhasanyrole
                                         </td>
                                     </tr>
                                 @empty
@@ -249,6 +258,82 @@ document.addEventListener('DOMContentLoaded', function() {
                 performSearch();
             }
         }
+    });
+});
+
+// Manejo de botones de WhatsApp
+document.addEventListener('DOMContentLoaded', function() {
+    const whatsappButtons = document.querySelectorAll('.btn-whatsapp');
+    
+    whatsappButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            const userName = this.dataset.userName;
+            const originalHtml = this.innerHTML;
+            
+            // Mostrar loader en el botón
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            // Enviar solicitud AJAX con la URL correcta
+            const url = `{{ url('admin/users') }}/${userId}/whatsapp-test`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Restaurar botón
+                this.disabled = false;
+                this.innerHTML = originalHtml;
+                
+                if (data.success) {
+                    // Mostrar mensaje de éxito
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Mensaje enviado!',
+                            text: data.message,
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        alert(data.message);
+                    }
+                } else {
+                    // Mostrar mensaje de error
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message
+                        });
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                }
+            })
+            .catch(error => {
+                // Restaurar botón
+                this.disabled = false;
+                this.innerHTML = originalHtml;
+                
+                console.error('Error:', error);
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al enviar el mensaje'
+                    });
+                } else {
+                    alert('Error al enviar el mensaje');
+                }
+            });
+        });
     });
 });
 </script>
