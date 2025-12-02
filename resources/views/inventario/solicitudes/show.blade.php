@@ -55,7 +55,23 @@
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="card-header bg-white border-bottom-0">
-                    <h3 class="card-title text-primary font-weight-bold"><i class="fas fa-list-alt"></i> Items de la Solicitud</h3>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="card-title text-primary font-weight-bold"><i class="fas fa-list-alt"></i> Items de la Solicitud</h3>
+                        
+                        @if($solicitud->isAprobada() && auth()->user()->can('dispatch', $solicitud))
+                            <form action="{{ route('inventario.solicitudes.despachar', $solicitud) }}" method="POST" style="display:inline-block" id="formDespacho">
+                                @csrf
+                                @foreach($solicitud->items as $item)
+                                    <input type="hidden" name="items[{{ $loop->index }}][id]" value="{{ $item->id }}">
+                                    <input type="hidden" name="items[{{ $loop->index }}][cantidad_despachada]" value="{{ $item->cantidad_aprobada }}">
+                                @endforeach
+                                
+                                <button type="button" class="btn btn-success shadow-sm" onclick="confirmarDespacho()">
+                                    <i class="fas fa-truck-loading"></i> Despachar Todo
+                                </button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
