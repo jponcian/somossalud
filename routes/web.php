@@ -92,7 +92,7 @@ Route::middleware(['auth', 'verified', 'role:especialista'])
     });
 
 // Gestión de usuarios: también accesible por recepcionista (limitado a pacientes en el controlador)
-Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcionista'])
+Route::middleware(['auth', 'verified', 'role:super-admin|admin_clinica|recepcionista|laboratorio|laboratorio-resul'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {

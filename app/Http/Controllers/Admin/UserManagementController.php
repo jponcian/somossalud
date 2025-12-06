@@ -88,7 +88,7 @@ class UserManagementController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         // Si es recepcionista (y no admin), forzar rol paciente y sin especialidad
         if (Auth::user()->hasRole('recepcionista') && !Auth::user()->hasAnyRole(['super-admin', 'admin_clinica'])) {
@@ -143,9 +143,10 @@ class UserManagementController extends Controller
         }
 
         $usuario = User::create([
-            'name' => $validated['name'],
+            'name' => strtoupper($validated['name']),
             'cedula' => $cedula,
-            'email' => $validated['email'],
+            'email' => strtoupper($validated['email']),
+            'telefono' => $validated['telefono'] ?? null,
             'fecha_nacimiento' => $validated['fecha_nacimiento'],
             'sexo' => $validated['sexo'],
             'password' => Hash::make($validated['password']),
@@ -158,6 +159,20 @@ class UserManagementController extends Controller
         // Sincronizar especialidades múltiples (solo si es especialista)
         if ($esEspecialista && $request->has('especialidades')) {
             $usuario->especialidades()->sync($request->input('especialidades', []));
+        }
+
+        // Si es una petición AJAX, devolver JSON
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario registrado correctamente.',
+                'user' => [
+                    'id' => $usuario->id,
+                    'name' => $usuario->name,
+                    'cedula' => $usuario->cedula,
+                    'email' => $usuario->email,
+                ]
+            ], 201);
         }
 
         return redirect()
@@ -247,9 +262,9 @@ class UserManagementController extends Controller
             ]);
         }
 
-        $user->name = $validated['name'];
+        $user->name = strtoupper($validated['name']);
         $user->cedula = $cedula;
-        $user->email = $validated['email'];
+        $user->email = strtoupper($validated['email']);
         $user->telefono = $validated['telefono'] ?? null;
         $user->fecha_nacimiento = $validated['fecha_nacimiento'];
         $user->sexo = $validated['sexo'];
